@@ -1,0 +1,22 @@
+{{- if .Values.service.enable }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+  {{- with .Values.service.annotations }}
+  annotations:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "deployment.labels" . | nindent 4 }}
+    {{- with .Values.service.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    app: {{ .Release.Name }}
+  ports:
+  - protocol: TCP
+    port: {{ .Values.deployment.container.containerPort }}
+    targetPort: {{ .Values.deployment.container.containerPort }}
+{{- end }}

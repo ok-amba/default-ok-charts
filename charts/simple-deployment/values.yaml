@@ -1,0 +1,117 @@
+global:
+  # Add labels from a parent chart to all manifests.
+  labels: {}
+
+##################################################
+#                  Deployment                    #
+##################################################
+
+deployment:
+  # Labels on the Deployment definition.
+  labels: {}
+
+  # Annotations on the Deployment definition.
+  annotations: {}
+
+  # Pod Replicas
+  replicas: 1
+
+  # Pod Annotations
+  podAnnotations: {}
+
+  # Pod Labels
+  podLabels: {}
+
+  # Array of imagePullSecret's
+  imagePullSecrets: []
+    #- secret-name-here
+
+  # Main container configuration
+  container:
+    name: example
+    image: example-image:latest
+    containerPort: 8080
+    resources:
+      requests:
+        memory: 1000Mi
+        cpu: 400m
+      limits:
+        memory: 2000Mi
+        cpu: 1000m
+
+    environment: []
+      # SOME_ENV: some-value
+
+    # Below list of kubernetes secret names will be mounted into the container
+    # under the path /secrets/<secret-name>/<secret-key>
+    secrets: []
+    # - very-secret
+
+    # Below list of configmaps will be mounted into he container.
+    configMaps: []
+    # - name: some-configmap
+    #   mountPath: /some/path
+
+    # Below additional volumes vil be mounted in the container at mountPath.
+    additionalVolumeMounts: []
+    # - name: cache-volume
+    #   mountPath: /some/path
+
+  # Add additional volumes.
+  additionalVolumes: []
+  # - name: cache-volume
+  #   emptyDir: {}
+
+  # Enable the Google Cloud SQL Proxy sidecar
+  cloudSQLProxy:
+    enable: false
+    imageTag: 1.30.0
+    projectId: google-project-id
+    region: europe-west3
+    instanceName: sqlinstance-name
+    secretKeyName: google-service-account-key
+
+##################################################
+#                    Service                     #
+##################################################
+
+service:
+  enable: false
+  # Labels on the Service definition.
+  labels: {}
+
+  # Annotations on the Service definition.
+  annotations: {}
+
+
+##################################################
+#                    Ingress                     #
+##################################################
+
+ingress:
+  # Enable the ingress definition.
+  enable: false
+
+  # Annotations on the Ingress definition.
+  annotations:
+    cert-manager.io/cluster-issuer: nginx-http01
+
+  # Labels on the Ingress definition.
+  labels: {}
+
+  # Ingress Class
+  ingressClassName: nginx
+
+  # URL of the application
+  host: example.org
+
+  # By default, this chart will create a pathType: Prefix on "/" for the service above.
+  # If you want additional paths eg. a path to a BFF, add them below.
+  addtionalPaths: {}
+  # - path: /api/
+  #   pathType: Prefix
+  #   backend:
+  #     service:
+  #       name: backend-for-frontend
+  #       port:
+  #         number: 3000

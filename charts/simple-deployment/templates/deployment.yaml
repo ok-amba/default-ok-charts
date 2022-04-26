@@ -1,0 +1,113 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  {{- with .Values.deployment.annotations }}
+  annotations:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "deployment.labels" . | nindent 4 }}
+    {{- with .Values.deployment.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  replicas: {{ .Values.deployment.replicas }}
+  template:
+    metadata:
+      {{- with .Values.deployment.podAnnotations }}
+      annotations:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "deployment.labels" . | nindent 8 }}
+        {{- with .Values.deployment.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.deployment.imagePullSecrets }}
+      imagePullSecrets:
+      {{- range $secret := . }}
+        - name: {{ $secret }}
+      {{- end }}
+      {{- end }}
+      containers:
+      {{- with .Values.deployment.container }}
+      - name: {{ .name }}
+        image: {{ .image }}
+        {{- with .resources }}
+        resources:
+        {{- toYaml . | nindent 10 }}
+        {{- end }}
+        ports:
+          - containerPort: {{ .containerPort }}
+        {{- with .environment }}
+        env:
+          {{- range $name, $value := . }}
+          - name: {{ $name }}
+            value: {{ $value | quote }}
+          {{- end }}
+        {{- end }}
+        {{- if or (.secrets) (.configMaps) (.additionalVolumeMounts) }}
+        volumeMounts:
+          {{- range $secret := .secrets }}
+          - name: {{ $secret }}
+            mountPath: /secrets/{{ $secret }}
+            readOnly: true
+          {{- end }}
+          {{- range $configMap := .configMaps }}
+          - name: {{ $configMap.name }}
+            mountPath: {{ $configMap.mountPath }}
+          {{- end }}
+          {{- range $volumeMount := .additionalVolumeMounts }}
+          - name: {{ $volumeMount.name }}
+            mountPath: {{ $volumeMount.mountPath }}
+          {{- end }}
+          {{- end }}
+        {{ end }}
+      {{- if .Values.deployment.cloudSQLProxy.enable }}
+      - name: cloud-sql-proxy
+        image: gcr.io/cloudsql-docker/gce-proxy:{{ .Values.deployment.cloudSQLProxy.imageTag }}
+        command:
+          - "/cloud_sql_proxy"
+          - "-instances={{ .Values.deployment.cloudSQLProxy.projectId }}:{{ .Values.deployment.cloudSQLProxy.region }}:{{ .Values.deployment.cloudSQLProxy.instanceName }}=tcp:5432"
+          - "-credential_file=/secrets/{{ .Values.deployment.cloudSQLProxy.secretKeyName }}/key.json"
+          - "-enable_iam_login"
+        securityContext:
+          runAsNonRoot: true
+        volumeMounts:
+          - name: {{ .Values.deployment.cloudSQLProxy.secretKeyName }}
+            mountPath: /secrets/{{ .Values.deployment.cloudSQLProxy.secretKeyName }}
+            readOnly: true
+      {{ end }}
+      {{- with .Values.deployment }}
+      {{- if or (.cloudSQLProxy.enable) (.container.secrets) (.container.configMaps) (.additionalVolumes) }}
+      volumes:
+        {{- if .cloudSQLProxy.enable }}
+        - name: {{ .cloudSQLProxy.secretKeyName }}
+          secret:
+            secretName: {{ .cloudSQLProxy.secretKeyName }}
+        {{- end }}
+
+        {{- with .container }}
+        {{- range $secret := .secrets }}
+        - name: {{ $secret }}
+          secret:
+            secretName: {{ $secret }}
+        {{- end }}
+        {{- range $configMap := .configMaps }}
+        - name: {{ $configMap.name }}
+          configMap:
+            name: {{ $configMap.name }}
+        {{- end }}
+        {{- end }}
+
+        {{- with .additionalVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- end }}
+        {{- end }}
+
