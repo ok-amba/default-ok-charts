@@ -90,7 +90,7 @@ deployment:
     - very-secret
     - client-secret
 
-    configMaps: []
+    configMaps:
     - name: some-configmap
       mountPath: /some/path
 
