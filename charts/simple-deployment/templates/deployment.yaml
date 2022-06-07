@@ -36,8 +36,8 @@ spec:
       {{- end }}
       containers:
       {{- with .Values.deployment.container }}
-      - name: {{ .Release.Name }}
-        image: {{ .image }}
+      - name: {{ $.Release.Name }}
+        image: {{ .image }}:{{ .tag }}
         {{- with .resources }}
         resources:
         {{- toYaml . | nindent 10 }}

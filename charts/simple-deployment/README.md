@@ -17,8 +17,8 @@ First example is a very simple deployment of a pod.
 deployment:
   replicas: 1
   container:
-    name: my-application
     image: my-image:v0.1.5
+    tag: latest
 ```
 
 ## Examples 2
@@ -29,8 +29,8 @@ Below example enables the Google Cloud SQL Proxy sidecar in the pod.
 deployment:
   replicas: 1
   container:
-    name: my-application
     image: my-image:v0.1.5
+    tag: latest
     environment:
       ConnectionString: Host=localhost;Port=5432;Database=mydb;...
 
@@ -51,8 +51,8 @@ Below example enables a service and an ingress definition with the deployment. B
 deployment:
   replicas: 1
   container:
-    name: my-application
     image: my-image:v0.1.5
+    tag: latest
     containerPort: 8080
 
 service:
@@ -72,8 +72,8 @@ ingress:
 deployment:
   replicas: 1
   container:
-    name: my-application
     image: my-image:v0.1.5
+    tag: latest
     containerPort: 8080
     resources:
       requests:

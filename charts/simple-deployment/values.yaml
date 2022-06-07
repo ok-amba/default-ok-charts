@@ -28,8 +28,8 @@ deployment:
 
   # Main container configuration
   container:
-    name: example
-    image: example-image:latest
+    image: example-image
+    tag: latest
     containerPort: 8080
     resources:
       requests:
