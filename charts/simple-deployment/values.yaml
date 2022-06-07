@@ -39,7 +39,7 @@ deployment:
         memory: 2000Mi
         cpu: 1000m
 
-    environment: []
+    environment: {}
       # SOME_ENV: some-value
 
     # Below list of kubernetes secret names will be mounted into the container
