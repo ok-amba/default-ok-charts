@@ -25,7 +25,7 @@ spec:
           port:
             number: {{ .Values.deployment.container.containerPort | required "A container port is required in the deployment" }}
     {{- with .Values.ingress.addtionalPaths }}
-    {{ . | toYaml | nindent 4}}
+    {{ toYaml . | nindent 4}}
     {{- end }}
   tls:
   - hosts:

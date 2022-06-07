@@ -107,7 +107,7 @@ ingress:
 
   # By default, this chart will create a pathType: Prefix on "/" for the service above.
   # If you want additional paths eg. a path to a BFF, add them below.
-  addtionalPaths: {}
+  addtionalPaths: []
   # - path: /api/
   #   pathType: Prefix
   #   backend:
