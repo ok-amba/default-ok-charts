@@ -16,6 +16,7 @@ spec:
     matchLabels:
       app: {{ .Release.Name }}
   replicas: {{ .Values.deployment.replicas }}
+  revisionHistoryLimit: {{ .Values.deployment.revisionHistoryLimit }}
   template:
     metadata:
       {{- with .Values.deployment.podAnnotations }}
