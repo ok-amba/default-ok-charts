@@ -2,6 +2,14 @@ apiVersion: v1
 entries:
   simple-deployment:
   - apiVersion: v2
+    created: "2022-06-13T14:15:45.414741871+02:00"
+    description: A Helm chart for a simple deployment, incl. service and ingress.
+    digest: 3c47c4fe633a21783beb71708b88e73af2c44949719cc106a22fec6c6cf4490f
+    name: simple-deployment
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/simple-deployment-0.3.0/simple-deployment-0.3.0.tgz
+    version: 0.3.0
+  - apiVersion: v2
     created: "2022-06-09T13:52:31.568822123+02:00"
     description: A Helm chart for a simple deployment, incl. service and ingress.
     digest: 9f7a656f7b25b4ddb647bc2d475b60ab5f8cee8cc007ebbfd82ac0d10a851868
@@ -9,6 +17,22 @@ entries:
     urls:
     - https://github.com/ok-amba/default-ok-charts/releases/download/simple-deployment-0.2.4/simple-deployment-0.2.4.tgz
     version: 0.2.4
+  - apiVersion: v2
+    created: "2022-06-13T14:15:45.079220463+02:00"
+    description: A Helm chart for a simple deployment, incl. service and ingress.
+    digest: 84e598893d95751a90499a25d4d6b04ffc3dab417124c3d01c303da7903e6fee
+    name: simple-deployment
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/simple-deployment-0.2.3/simple-deployment-0.2.3.tgz
+    version: 0.2.3
+  - apiVersion: v2
+    created: "2022-06-13T14:15:44.89019169+02:00"
+    description: A Helm chart for a simple deployment, incl. service and ingress.
+    digest: 63568184ab3e7cf5c6213ea782a091c01008a6284ce1bc4281fc3054fd860986
+    name: simple-deployment
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/simple-deployment-0.2.2/simple-deployment-0.2.2.tgz
+    version: 0.2.2
   - apiVersion: v2
     created: "2022-06-07T12:16:29.86513372+02:00"
     description: A Helm chart for a simple deployment, incl. service and ingress.
@@ -33,4 +57,4 @@ entries:
     urls:
     - https://ok-amba.github.io/default-ok-charts/.cr-release-packages/simple-deployment-0.1.0.tgz
     version: 0.1.0
-generated: "2022-06-09T13:52:31.568866237+02:00"
+generated: "2022-06-13T14:15:45.414821839+02:00"
