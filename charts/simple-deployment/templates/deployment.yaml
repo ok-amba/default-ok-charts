@@ -45,6 +45,29 @@ spec:
         {{- end }}
         ports:
           - containerPort: {{ .containerPort }}
+        {{- if .livenessProbe.enable }}
+        livenessProbe:
+          httpGet:
+            path: {{ .livenessProbe.httpGet.path }}
+            port: {{ .containerPort }}
+          initialDelaySeconds: {{ .livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .livenessProbe.periodSeconds }}
+          timeoutSeconds: {{ .livenessProbe.timeoutSeconds }}
+          successThreshold: 1
+          failureThreshold: {{ .livenessProbe.failureThreshold }}
+        {{- end }}
+
+        {{- if .readinessProbe.enable }}
+        readinessProbe:
+          httpGet:
+            path: {{ .readinessProbe.httpGet.path }}
+            port: {{ .containerPort }}
+          initialDelaySeconds: {{ .readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .readinessProbe.periodSeconds }}
+          timeoutSeconds: {{ .readinessProbe.timeoutSeconds }}
+          successThreshold: {{ .readinessProbe.successThreshold }}
+          failureThreshold: {{ .readinessProbe.failureThreshold }}
+        {{- end }}
         {{- with .environment }}
         env:
           {{- range $name, $value := . }}

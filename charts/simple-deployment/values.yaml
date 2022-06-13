@@ -42,6 +42,26 @@ deployment:
         memory: 2000Mi
         cpu: 1000m
 
+    # https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes
+    livenessProbe:
+      enable: true
+      httpGet:
+        path: /healthz
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      timeoutSeconds: 1
+      failureThreshold: 3
+
+    readinessProbe:
+      enable: true
+      httpGet:
+        path: /ready
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      timeoutSeconds: 1
+      successThreshold: 1
+      failureThreshold: 3
+
     environment: {}
       # SOME_ENV: some-value
 
