@@ -68,11 +68,17 @@ spec:
           successThreshold: {{ .readinessProbe.successThreshold }}
           failureThreshold: {{ .readinessProbe.failureThreshold }}
         {{- end }}
-        {{- with .environment }}
+        {{- if or (.environment) (.fieldRefEnvironment) }}
         env:
-          {{- range $name, $value := . }}
+          {{- range $name, $value := .environment }}
           - name: {{ $name }}
             value: {{ $value | quote }}
+          {{- end }}
+          {{- range $name, $value := .fieldRefEnvironment }}
+          - name: {{ $name }}
+            valueFrom:
+              fieldRef:
+                fieldPath: {{ $value }}
           {{- end }}
         {{- end }}
         {{- if or (.secrets) (.configMaps) (.additionalVolumeMounts) }}
