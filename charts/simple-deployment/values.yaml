@@ -64,6 +64,9 @@ deployment:
 
     environment: {}
       # SOME_ENV: some-value
+    
+    fieldRefEnvironment: {}
+      # SOME_ENV: some-field-reference
 
     # Below list of kubernetes secret names will be mounted into the container
     # under the path /secrets/<secret-name>/<secret-key>
