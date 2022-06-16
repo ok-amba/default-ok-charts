@@ -43,8 +43,10 @@ spec:
         resources:
         {{- toYaml . | nindent 10 }}
         {{- end }}
+        {{- if .containerPort }}
         ports:
           - containerPort: {{ .containerPort }}
+        {{- end }}
         {{- if .livenessProbe.enable }}
         livenessProbe:
           httpGet:

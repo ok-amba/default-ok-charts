@@ -1,4 +1,4 @@
-{{- if .Values.ingress.enable }}
+{{- if and (.Values.ingress.enable) (.Values.service.enable) }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -24,7 +24,7 @@ spec:
           service:
             name: {{ .Release.Name }}
             port:
-              number: {{ .Values.deployment.container.containerPort | required "A container port is required in the deployment" }}
+              number: {{ .Values.deployment.container.containerPort | required "A container port is required on the container." }}
         {{- with .Values.ingress.addtionalPaths }}
         {{ toYaml . | nindent 6}}
         {{- end }}

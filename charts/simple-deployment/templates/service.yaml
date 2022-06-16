@@ -17,6 +17,6 @@ spec:
     app: {{ .Release.Name }}
   ports:
   - protocol: TCP
-    port: {{ .Values.deployment.container.containerPort }}
-    targetPort: {{ .Values.deployment.container.containerPort }}
+    port: {{ .Values.deployment.container.containerPort | required "A container port is required on the container." }}
+    targetPort: {{ .Values.deployment.container.containerPort | required "A container port is required on the container." }}
 {{- end }}
