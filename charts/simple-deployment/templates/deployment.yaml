@@ -126,9 +126,11 @@ spec:
 
         {{- with .container }}
         {{- range $secret := .secrets }}
+        {{- if not (and $.Values.deployment.cloudSQLProxy.enable (eq $.Values.deployment.cloudSQLProxy.secretKeyName $secret))}}
         - name: {{ $secret }}
           secret:
             secretName: {{ $secret }}
+        {{- end }}
         {{- end }}
         {{- range $configMap := .configMaps }}
         - name: {{ $configMap.name }}
