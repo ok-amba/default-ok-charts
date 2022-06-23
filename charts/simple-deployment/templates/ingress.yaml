@@ -7,6 +7,9 @@ metadata:
   annotations:
   {{- toYaml . | nindent 4 }}
   {{- end }}
+  {{- if and .Values.ingress.wwwRedirect (eq .Values.ingress.ingressClassName "nginx") }}
+    nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
+  {{- end }}
   labels:
     {{- include "deployment.labels" . | nindent 4 }}
     {{- with .Values.ingress.labels }}
@@ -31,5 +34,8 @@ spec:
   tls:
   - hosts:
     - {{ .Values.ingress.host }}
+    {{- if and .Values.ingress.wwwRedirect (eq .Values.ingress.ingressClassName "nginx") }}
+    - www.{{ .Values.ingress.host }}
+    {{- end }}
     secretName: {{ .Values.ingress.host | replace "." "-" }}-cert
 {{- end }}
