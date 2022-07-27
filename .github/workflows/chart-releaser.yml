@@ -2,6 +2,8 @@ name: Chart Releaser
 
 on:
   push:
+    branches:
+      - main
     paths:
       - '**/Chart.yaml'
 
