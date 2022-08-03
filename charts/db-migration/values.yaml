@@ -14,12 +14,18 @@ argoAnnotations:
   syncWave: -2
   hookDeletePolicy: HookSucceeded
 
-job:
-  # Labels on the Job definition.
-  labels: {}
+# Enable DataDog logging.
+dataDogLogs:
+  enable: true
 
-  # Annotations on the Job definition.
+job:
+  # Labels and Annotations on the Job definition.
+  labels: {}
   annotations: {}
+
+  # Labels and Annotations on the Pod template.
+  podLabels: {}
+  podAnnotations: {}
 
   imagePullSecrets: []
     #- secret-name-here

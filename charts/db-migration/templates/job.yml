@@ -22,6 +22,28 @@ spec:
   ttlSecondsAfterFinished: {{ .Values.job.ttlSecondsAfterFinished }}
   backoffLimit: {{ .Values.job.backoffLimit }}
   template:
+    metadata:
+      {{- if or .Values.job.podAnnotations .Values.dataDogLogs.enable }}
+      annotations:
+        {{- if.Values.dataDogLogs.enable }}
+        ad.datadoghq.com/{{ .Release.Name }}-dbup.logs: '[{"source": "{{ .Release.Name }}-dbup"}]'
+        ad.datadoghq.com/{{ .Release.Name }}-dbup.tags: '{"service": "{{ .Release.Name }}-dbup"}'
+        {{- end }}
+        {{- with .Values.job.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- end }}
+
+      {{- if or .Values.job.podLabels .Values.dataDogLogs.enable }}
+      labels:
+        {{- if.Values.dataDogLogs.enable }}
+        tags.datadoghq.com/service: {{ .Release.Name }}-dbup
+        tags.datadoghq.com/version: {{ .Values.job.container.tag }}
+        {{- end }}
+        {{- with .Values.job.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- end }}
     spec:
       {{- if .Values.job.imagePullSecrets }}
       imagePullSecrets:
@@ -30,7 +52,7 @@ spec:
       restartPolicy: {{ .Values.job.restartPolicy }}
       shareProcessNamespace: {{ .Values.job.shareProcessNamespace }}
       containers:
-        - name: dbup
+        - name: {{ .Release.Name }}-dbup
           image: "{{ .Values.job.container.image }}:{{ .Values.job.container.tag }}"
           {{- with .Values.job.environment }}
           env:
