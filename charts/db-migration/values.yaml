@@ -1,0 +1,62 @@
+global:
+  # Add labels from a parent chart to all manifests.
+  labels: {}
+
+##################################################
+#                      Job                       #
+##################################################
+
+# Below properties sets a ArgoCD Sync/Hook annotation.
+# https://argo-cd.readthedocs.io/en/stable/user-guide/sync-waves/
+argoAnnotations:
+  enable: true
+  syncPhase: Sync
+  syncWave: -2
+  hookDeletePolicy: HookSucceeded
+
+# Enable DataDog logging.
+dataDogLogs:
+  enable: true
+
+job:
+  # Labels and Annotations on the Job definition.
+  labels: {}
+  annotations: {}
+
+  # Labels and Annotations on the Pod template.
+  podLabels: {}
+  podAnnotations: {}
+
+  imagePullSecrets: []
+    #- secret-name-here
+
+  container:
+    image: example-image
+    tag: latest
+
+  environment: {}
+    # SOME_ENV: some-value
+
+  secrets: []
+  # - very-secret
+
+  # Time to live in seconds after the job has finished.
+  ttlSecondsAfterFinished: 120
+
+  # backoffLimit specifies the number of re-tries before job controller gives up.
+  backoffLimit: 2
+
+  # Restart policy of pod fails.
+  restartPolicy: Never
+
+  # Share the same process namespace for all containers in the pod.
+  shareProcessNamespace: true
+
+  # Enable the Google Cloud SQL Proxy container.
+  cloudSQLProxy:
+    enable: true
+    imageTag: 1.31.0
+    projectId: google-project-id
+    region: europe-west3
+    instanceName: sqlinstance-name
+    secretKeyName: google-service-account-key
