@@ -1,5 +1,14 @@
 apiVersion: v1
 entries:
+  db-migration:
+  - apiVersion: v2
+    created: "2022-08-03T12:42:07.218218326Z"
+    description: A Helm chart for a running a DB migration.
+    digest: 6d972a5c55a2e73eb0a00f5784053748fae0a7d0fe558293041c3109a6565886
+    name: db-migration
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/db-migration-0.0.1/db-migration-0.0.1.tgz
+    version: 0.0.1
   simple-deployment:
   - apiVersion: v2
     created: "2022-07-27T12:34:48.925153396Z"
@@ -105,4 +114,4 @@ entries:
     urls:
     - https://ok-amba.github.io/default-ok-charts/.cr-release-packages/simple-deployment-0.1.0.tgz
     version: 0.1.0
-generated: "2022-07-27T12:34:48.925327209Z"
+generated: "2022-08-03T12:42:07.218323526Z"
