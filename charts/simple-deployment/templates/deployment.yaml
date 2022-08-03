@@ -19,14 +19,24 @@ spec:
   revisionHistoryLimit: {{ .Values.deployment.revisionHistoryLimit }}
   template:
     metadata:
-      {{- with .Values.deployment.podAnnotations }}
+    {{- if or .Values.deployment.podAnnotations .Values.deployment.dataDogLogs.enable }}
       annotations:
-      {{- toYaml . | nindent 8 }}
+        {{- with .Values.deployment.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- if .Values.deployment.dataDogLogs.enable }}
+        ad.datadoghq.com/{{ .Release.Name }}.logs: '[{"source": "{{ .Release.Name }}"}]'
+        ad.datadoghq.com/{{ .Release.Name }}.tags: '{"service": "{{ .Release.Name }}"}'
+        {{- end }}
       {{- end }}
       labels:
         {{- include "deployment.labels" . | nindent 8 }}
         {{- with .Values.deployment.podLabels }}
         {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- if .Values.deployment.dataDogLogs.enable }}
+        tags.datadoghq.com/service: {{ .Release.Name }}
+        tags.datadoghq.com/version: {{ .Values.deployment.container.tag }}
         {{- end }}
     spec:
       {{- with .Values.deployment.imagePullSecrets }}
