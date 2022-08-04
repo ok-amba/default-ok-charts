@@ -13,9 +13,16 @@ deployment:
   # Annotations on the Deployment definition.
   annotations: {}
 
-  # Enable DataDog logging.
-  dataDogLogs:
-    enable: false
+
+  dataDog:
+    # Enable DataDog logging. Please make sure that your logs comply with the okamba standard ruleset.
+    # If in doubt, ask a collauge or the infrastructure team.
+    enableLogs: false
+
+    # Enable DataDog tracing with correlated logs.
+    # Enabling tracing will override and enable the above DataDog logs.
+    # Make sure your logs comply with the okamba standard ruleset.
+    enableTracing: false
 
   # Pod Replicas
   replicas: 1
@@ -96,7 +103,7 @@ deployment:
   # Enable the Google Cloud SQL Proxy sidecar
   # Find the latest version here, https://gcr.io/cloudsql-docker/gce-proxy
   cloudSQLProxy:
-    enable: false
+    enable: true
     imageTag: 1.31.0
     projectId: google-project-id
     region: europe-west3

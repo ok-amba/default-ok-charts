@@ -1,3 +1,10 @@
+{{- $logsEnabled := false }}
+{{- if .Values.deployment.dataDog.enableTracing }}
+{{- $logsEnabled = true }}
+{{- else }}
+{{- $logsEnabled = .Values.deployment.dataDog.enableLogs }}
+{{- end }}
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,14 +26,13 @@ spec:
   revisionHistoryLimit: {{ .Values.deployment.revisionHistoryLimit }}
   template:
     metadata:
-    {{- if or .Values.deployment.podAnnotations .Values.deployment.dataDogLogs.enable }}
+    {{- if or .Values.deployment.podAnnotations $logsEnabled }}
       annotations:
         {{- with .Values.deployment.podAnnotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-        {{- if .Values.deployment.dataDogLogs.enable }}
-        ad.datadoghq.com/{{ .Release.Name }}.logs: '[{"source": "{{ .Release.Name }}"}]'
-        ad.datadoghq.com/{{ .Release.Name }}.tags: '{"service": "{{ .Release.Name }}"}'
+        {{- if $logsEnabled }}
+        {{- include "deployment.dataDogAnnotations" $ | nindent 8 }}
         {{- end }}
       {{- end }}
       labels:
@@ -34,9 +40,8 @@ spec:
         {{- with .Values.deployment.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-        {{- if .Values.deployment.dataDogLogs.enable }}
-        tags.datadoghq.com/service: {{ .Release.Name }}
-        tags.datadoghq.com/version: {{ .Values.deployment.container.tag }}
+        {{- if $logsEnabled }}
+        {{- include "deployment.dataDogLabels" $ | nindent 8 }}
         {{- end }}
     spec:
       {{- with .Values.deployment.imagePullSecrets }}
@@ -48,7 +53,7 @@ spec:
       containers:
       {{- with .Values.deployment.container }}
       - name: {{ $.Release.Name }}
-        image: {{ .image }}:{{ .tag }}
+        image: "{{ .image }}:{{ .tag }}"
         {{- with .resources }}
         resources:
         {{- toYaml . | nindent 10 }}
@@ -59,28 +64,13 @@ spec:
         {{- end }}
         {{- if .livenessProbe.enable }}
         livenessProbe:
-          httpGet:
-            path: {{ .livenessProbe.httpGet.path }}
-            port: {{ .containerPort }}
-          initialDelaySeconds: {{ .livenessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .livenessProbe.periodSeconds }}
-          timeoutSeconds: {{ .livenessProbe.timeoutSeconds }}
-          successThreshold: 1
-          failureThreshold: {{ .livenessProbe.failureThreshold }}
+        {{- include "deployment.livenessProbe" . | nindent 10 }}
         {{- end }}
-
         {{- if .readinessProbe.enable }}
         readinessProbe:
-          httpGet:
-            path: {{ .readinessProbe.httpGet.path }}
-            port: {{ .containerPort }}
-          initialDelaySeconds: {{ .readinessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .readinessProbe.periodSeconds }}
-          timeoutSeconds: {{ .readinessProbe.timeoutSeconds }}
-          successThreshold: {{ .readinessProbe.successThreshold }}
-          failureThreshold: {{ .readinessProbe.failureThreshold }}
+        {{- include "deployment.livenessProbe" . | nindent 10 }}
         {{- end }}
-        {{- if or (.environment) (.fieldRefEnvironment) }}
+        {{- if or .environment .fieldRefEnvironment $.Values.deployment.dataDog.enableTracing }}
         env:
           {{- range $name, $value := .environment }}
           - name: {{ $name }}
@@ -92,8 +82,11 @@ spec:
               fieldRef:
                 fieldPath: {{ $value }}
           {{- end }}
+          {{- if $.Values.deployment.dataDog.enableTracing }}
+          {{- include "deployment.dataDogEnvs" $ | nindent 8 }}
+          {{- end }}
         {{- end }}
-        {{- if or (.secrets) (.configMaps) (.additionalVolumeMounts) }}
+        {{- if or .secrets .configMaps .additionalVolumeMounts $.Values.deployment.dataDog.enableTracing }}
         volumeMounts:
           {{- range $secret := .secrets }}
           - name: {{ $secret }}
@@ -108,25 +101,17 @@ spec:
           - name: {{ $volumeMount.name }}
             mountPath: {{ $volumeMount.mountPath }}
           {{- end }}
+          {{- if $.Values.deployment.dataDog.enableTracing }}
+          - name: apmsocketpath
+            mountPath: /var/run/datadog
           {{- end }}
-        {{ end }}
+        {{- end }}
+      {{- end }}
       {{- if .Values.deployment.cloudSQLProxy.enable }}
-      - name: cloud-sql-proxy
-        image: gcr.io/cloudsql-docker/gce-proxy:{{ .Values.deployment.cloudSQLProxy.imageTag }}
-        command:
-          - "/cloud_sql_proxy"
-          - "-instances={{ .Values.deployment.cloudSQLProxy.projectId }}:{{ .Values.deployment.cloudSQLProxy.region }}:{{ .Values.deployment.cloudSQLProxy.instanceName }}=tcp:5432"
-          - "-credential_file=/secrets/{{ .Values.deployment.cloudSQLProxy.secretKeyName }}/key.json"
-          - "-enable_iam_login"
-        securityContext:
-          runAsNonRoot: true
-        volumeMounts:
-          - name: {{ .Values.deployment.cloudSQLProxy.secretKeyName }}
-            mountPath: /secrets/{{ .Values.deployment.cloudSQLProxy.secretKeyName }}
-            readOnly: true
-      {{ end }}
+      {{- include "deployment.cloudSQLProxy" .Values.deployment | nindent 6 }}
+      {{- end }}
       {{- with .Values.deployment }}
-      {{- if or (.cloudSQLProxy.enable) (.container.secrets) (.container.configMaps) (.additionalVolumes) }}
+      {{- if or .cloudSQLProxy.enable .container.secrets .container.configMaps .additionalVolumes .dataDog.enableTracing }}
       volumes:
         {{- if .cloudSQLProxy.enable }}
         - name: {{ .cloudSQLProxy.secretKeyName }}
@@ -148,10 +133,14 @@ spec:
             name: {{ $configMap.name }}
         {{- end }}
         {{- end }}
-
         {{- with .additionalVolumes }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
+        {{- if .dataDog.enableTracing }}
+        - hostPath:
+            path: /var/run/datadog
+          name: apmsocketpath
         {{- end }}
-        {{- end }}
+      {{- end }}
+      {{- end }}
 
