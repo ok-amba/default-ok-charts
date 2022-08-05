@@ -83,7 +83,7 @@ spec:
                 fieldPath: {{ $value }}
           {{- end }}
           {{- if $.Values.deployment.dataDog.enableTracing }}
-          {{- include "deployment.dataDogEnvs" $ | nindent 8 }}
+          {{- include "deployment.dataDogEnvs" $ | nindent 10 }}
           {{- end }}
         {{- end }}
         {{- if or .secrets .configMaps .additionalVolumeMounts $.Values.deployment.dataDog.enableTracing }}
