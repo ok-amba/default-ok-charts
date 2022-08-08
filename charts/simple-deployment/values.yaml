@@ -132,6 +132,10 @@ ingress:
   # Enable the ingress definition.
   enable: false
 
+  # Creating DNS records is only supported in our test environment.
+  # If needed, only enable this setting on the specific enrionment value file.
+  createDNSRecord: false
+
   # Annotations on the Ingress definition.
   annotations:
     cert-manager.io/cluster-issuer: nginx-http01
