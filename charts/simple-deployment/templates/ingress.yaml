@@ -8,7 +8,7 @@ kind: Ingress
 metadata:
   name: {{ .Release.Name }}
   {{- with .Values.ingress }}
-  {{- if or .annotations .wwwRedirect .createDNSRecord }}
+  {{- if or .annotations .wwwRedirect }}
   annotations:
     {{- with.annotations }}
     {{- toYaml . | nindent 4 }}
@@ -16,14 +16,14 @@ metadata:
     {{- if and .wwwRedirect (eq .ingressClassName "nginx") }}
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
     {{- end }}
-    {{- if .createDNSRecord }}
-    external-dns.alpha.kubernetes.io/hostname: {{ .host }}
-    {{- end }}
   {{- end }}
   labels:
     {{- include "deployment.labels" $ | nindent 4 }}
     {{- with .labels }}
     {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- if .createDNSRecord }}
+    external-dns-create: "true"
     {{- end }}
   {{- end }}
 spec:
