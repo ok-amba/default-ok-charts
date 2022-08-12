@@ -54,6 +54,9 @@ spec:
       {{- with .Values.deployment.container }}
       - name: {{ $.Release.Name }}
         image: "{{ .image }}:{{ .tag }}"
+        {{- if .command }}
+        command: {{ .command | toJson }}
+        {{- end }}
         {{- with .resources }}
         resources:
         {{- toYaml . | nindent 10 }}
