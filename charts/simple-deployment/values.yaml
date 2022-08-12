@@ -2,6 +2,9 @@ global:
   # Add labels from a parent chart to all manifests.
   labels: {}
 
+# Will rename all resources.
+fullnameOverride: ""
+
 ##################################################
 #                  Deployment                    #
 ##################################################
@@ -43,6 +46,7 @@ deployment:
   # Main container configuration
   container:
     image: example-image
+    #command: ["my-command", "with", "--params=yes"]
     tag: latest
     # containerPort needs to be set if the container has to receive traffic.
     containerPort: null

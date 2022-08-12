@@ -1,5 +1,9 @@
+{{- define "deployment.name" -}}
+{{ .Values.fullnameOverride | default .Release.Name | trunc 63 | trimSuffix "-"}}
+{{- end -}}
+
 {{- define "deployment.labels" -}}
-app: {{ .Release.Name }}
+app: {{ include "deployment.name" $ }}
 chart-name: {{ .Chart.Name }}
 chart-version: {{ .Chart.Version }}
 {{- with .Values.global.labels }}
@@ -23,7 +27,7 @@ chart-version: {{ .Chart.Version }}
 - name: DD_LOGS_INJECTION
   value: 'true'
 - name: DD_SERVICE
-  value: {{ .Release.Name }}
+  value: {{ include "deployment.name" $ }}
 - name: DD_VERSION
   value: {{ .Values.deployment.container.tag }}
 - name: DD_AGENT_HOST
@@ -33,12 +37,12 @@ chart-version: {{ .Chart.Version }}
 {{- end -}}
 
 {{- define "deployment.dataDogAnnotations" -}}
-ad.datadoghq.com/{{ .Release.Name }}.logs: '[{"source": "{{ .Release.Name }}"}]'
-ad.datadoghq.com/{{ .Release.Name }}.tags: '{"service": "{{ .Release.Name }}"}'
+ad.datadoghq.com/{{ include "deployment.name" $ }}.logs: '[{"source": "{{ include "deployment.name" $ }}"}]'
+ad.datadoghq.com/{{ include "deployment.name" $ }}.tags: '{"service": "{{ include "deployment.name" $ }}"}'
 {{- end -}}
 
 {{- define "deployment.dataDogLabels" -}}
-tags.datadoghq.com/service: {{ .Release.Name }}
+tags.datadoghq.com/service: {{ include "deployment.name" $ }}
 tags.datadoghq.com/version: {{ .Values.deployment.container.tag }}
 {{- end -}}
 

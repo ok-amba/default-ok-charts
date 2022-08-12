@@ -6,7 +6,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ include "deployment.name" $ }}
   {{- with .Values.ingress }}
   {{- if or .annotations .wwwRedirect }}
   annotations:
@@ -36,7 +36,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: {{ .Release.Name }}
+            name: {{ include "deployment.name" $ }}
             port:
               number: {{ .Values.deployment.container.containerPort | required "A container port is required on the container." }}
         {{- with .Values.ingress.addtionalPaths }}
@@ -48,5 +48,5 @@ spec:
     {{- if and .Values.ingress.wwwRedirect (eq .Values.ingress.ingressClassName "nginx") }}
     - "www.{{ .Values.ingress.host }}"
     {{- end }}
-    secretName: {{ .Values.ingress.host | replace "." "-" }}-cert
+    secretName: "le-cert-{{ .Values.ingress.host | replace "." "-" | trunc 54 | trimSuffix "-" }}"
 {{- end }}
