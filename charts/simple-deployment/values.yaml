@@ -2,6 +2,9 @@ global:
   # Add labels from a parent chart to all manifests.
   labels: {}
 
+# Will rename all resources.
+fullnameOverride: ""
+
 ##################################################
 #                  Deployment                    #
 ##################################################
