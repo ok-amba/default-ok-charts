@@ -54,9 +54,14 @@ spec:
       {{- with .Values.deployment.container }}
       - name: {{ $.Values.fullnameOverride | default $.Release.Name }}
         image: "{{ .image }}:{{ .tag }}"
+
         {{- if .command }}
         command: {{ .command | toJson }}
+        {{- if .args }}
+        args: {{ .args | toJson }}
         {{- end }}
+        {{- end }}
+
         {{- with .resources }}
         resources:
         {{- toYaml . | nindent 10 }}

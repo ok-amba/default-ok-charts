@@ -46,8 +46,12 @@ deployment:
   # Main container configuration
   container:
     image: example-image
-    #command: ["my-command", "with", "--params=yes"]
     tag: latest
+
+    # Enable custom command
+    #command: ["my-command"]
+    #args: ["with", "--params=yes"]
+
     # containerPort needs to be set if the container has to receive traffic.
     containerPort: null
     resources:
