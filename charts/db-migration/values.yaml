@@ -2,6 +2,9 @@ global:
   # Add labels from a parent chart to all manifests.
   labels: {}
 
+# Override name of job/pod. If not set 'generate-name: db-migrate-' will be used.
+fullnameOverride: ""
+
 ##################################################
 #                      Job                       #
 ##################################################

@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: db-migrate-
+  name: {{ include "db-migration.name" $ }}
   {{- if or (.Values.job.annotations) (.Values.argoAnnotations.enable) }}
   annotations:
     {{- with .Values.job.annotations }}
