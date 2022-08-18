@@ -37,7 +37,7 @@ chart-version: {{ .Chart.Version }}
 {{- end -}}
 
 {{- define "deployment.dataDogAnnotations" -}}
-ad.datadoghq.com/{{ include "deployment.name" $ }}.logs: '[{"source": "{{ .Release.Name }}", "service": "{{ .Release.Name }}"}]'
+ad.datadoghq.com/{{ include "deployment.name" $ }}.logs: '[{"source": "{{ include "deployment.name" $ }}", "service": "{{ include "deployment.name" $ }}"}]'
 {{- end -}}
 
 {{- define "deployment.dataDogLabels" -}}
