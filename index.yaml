@@ -19,6 +19,14 @@ entries:
     version: 0.0.1
   simple-deployment:
   - apiVersion: v2
+    created: "2022-10-28T10:35:40.766553707Z"
+    description: A Helm chart for a simple deployment, incl. service and ingress.
+    digest: 6f7c83b4bc838acc8cac4768004fada2b8717f405764a09487fa5f877f6c8c6a
+    name: simple-deployment
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/simple-deployment-0.6.3/simple-deployment-0.6.3.tgz
+    version: 0.6.3
+  - apiVersion: v2
     created: "2022-08-18T14:27:18.356671111Z"
     description: A Helm chart for a simple deployment, incl. service and ingress.
     digest: e30bc2b6ccdb5640143c9fe2650d49afda6c765de945b5596879fa4f3b84bbb7
@@ -194,4 +202,4 @@ entries:
     urls:
     - https://ok-amba.github.io/default-ok-charts/.cr-release-packages/simple-deployment-0.1.0.tgz
     version: 0.1.0
-generated: "2022-08-18T14:27:18.356838611Z"
+generated: "2022-10-28T10:35:40.76671721Z"
