@@ -76,7 +76,7 @@ spec:
         {{- end }}
         {{- if .readinessProbe.enable }}
         readinessProbe:
-        {{- include "deployment.livenessProbe" . | nindent 10 }}
+        {{- include "deployment.readinessProbe" . | nindent 10 }}
         {{- end }}
         {{- if or .environment .fieldRefEnvironment $.Values.deployment.dataDog.enableTracing }}
         env:
