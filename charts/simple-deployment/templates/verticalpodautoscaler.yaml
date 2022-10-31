@@ -7,10 +7,10 @@ metadata:
   {{- toYaml . | nindent 4 }}
   {{- end }}
   labels:
-  {{- include "deployment.labels" . | nindent 4 }}
-  {{- with .Values.deployment.labels }
-  {{- toYaml . | nindent 4 }}
-  {{- end }}
+    {{- include "deployment.labels" . | nindent 4 }}
+    {{- with .Values.deployment.labels }
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
   targetRef:
     apiVersion: "apps/v1"
@@ -25,5 +25,5 @@ spec:
         cpu: "1m"
         memory: "1Mi"
       maxAllowed:
-        cpu: "1"
-        memory: "2Gi"
+        cpu: "400m"
+        memory: "1000Mi"
