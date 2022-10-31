@@ -1,0 +1,29 @@
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: {{ include "deployment.name" $ }}
+  {{- with .Values.deployment.annotations }}
+  annotations:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+  {{- include "deployment.labels" . | nindent 4 }}
+  {{- with .Values.deployment.labels }
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind:       Deployment
+    name:       {{ include "deployment.name" $ }}
+  updatePolicy:
+    updateMode: "Auto"  
+  resourcePolicy:
+    containerPolicies:
+    - containerName: "*"
+      minAllowed:
+        cpu: "1m"
+        memory: "1Mi"
+      maxAllowed:
+        cpu: "1"
+        memory: "2Gi"
