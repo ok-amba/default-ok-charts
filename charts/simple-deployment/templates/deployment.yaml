@@ -44,6 +44,11 @@ spec:
         {{- include "deployment.dataDogLabels" $ | nindent 8 }}
         {{- end }}
     spec:
+      {{- with .Values.deployment }}
+      {{- if .kubernetesServiceAccount }}
+      serviceAccountName: {{ .kubernetesServiceAccount | toJson }}
+      {{- end }}
+      {{- end }}
       {{- with .Values.deployment.imagePullSecrets }}
       imagePullSecrets:
       {{- range $secret := . }}

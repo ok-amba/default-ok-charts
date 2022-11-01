@@ -108,6 +108,9 @@ deployment:
   # - name: cache-volume
   #   emptyDir: {}
 
+  # Service account for accessing the Kubernetes API from the container
+  #kubernetesServiceAccount: k8s-api-sa
+
   # Enable the Google Cloud SQL Proxy sidecar
   # Find the latest version here, https://gcr.io/cloudsql-docker/gce-proxy
   cloudSQLProxy:
