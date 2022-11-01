@@ -108,6 +108,9 @@ deployment:
   # - name: cache-volume
   #   emptyDir: {}
 
+  # Assign a Kubernetes service account.
+  # serviceAccountName: default
+
   # Enable the Google Cloud SQL Proxy sidecar
   # Find the latest version here, https://gcr.io/cloudsql-docker/gce-proxy
   cloudSQLProxy:

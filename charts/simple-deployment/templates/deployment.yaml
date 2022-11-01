@@ -44,6 +44,9 @@ spec:
         {{- include "deployment.dataDogLabels" $ | nindent 8 }}
         {{- end }}
     spec:
+      {{- if .Values.deployment.serviceAccountName }}
+      serviceAccountName: {{ .Values.deployment.serviceAccountName }}
+      {{- end }}
       {{- with .Values.deployment.imagePullSecrets }}
       imagePullSecrets:
       {{- range $secret := . }}
