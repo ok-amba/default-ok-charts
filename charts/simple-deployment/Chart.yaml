@@ -1,4 +1,4 @@
 apiVersion: v2
 name: simple-deployment
 description: A Helm chart for a simple deployment, incl. service and ingress.
-version: 0.6.3
+version: 0.6.4
