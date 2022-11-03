@@ -172,3 +172,15 @@ ingress:
   #       name: backend-for-frontend
   #       port:
   #         number: 3000
+
+##################################################
+#             Vertical Pod Autoscaler            #
+##################################################
+
+verticalPodAutoscaler:
+  enable: true
+  # Labels on the Service definition.
+  labels: {}
+
+  # Annotations on the Service definition.
+  annotations: {}

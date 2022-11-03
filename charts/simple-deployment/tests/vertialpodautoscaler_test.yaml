@@ -1,0 +1,63 @@
+# https://github.com/vbehar/helm3-unittest
+suite: test verticalpodautoscaler
+templates:
+  - verticalpodautoscaler.yaml
+tests:
+  - it: should be default VerticalPodAutoscaler
+    asserts:
+      - isKind:
+          of: VerticalPodAutoscaler
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME
+      - equal:
+          path: metadata.annotations
+          value: null
+      - equal:
+          path: metadata.labels.app
+          value: RELEASE-NAME
+      - isNotEmpty:
+          path: metadata.labels.chart-name
+      - isNotEmpty:
+          path: metadata.labels.chart-version
+      - isAPIVersion:
+          of: autoscaling.k8s.io/v1
+  - it: should change name to test
+    set:
+      fullnameOverride: test
+    asserts:
+      - equal:
+          path: metadata.name
+          value: test
+      - equal:
+          path: metadata.labels.app
+          value: test
+      - equal:
+          path: metadata.labels.app
+          value: test
+  - it: should add its own annotations
+    set:
+      verticalPodAutoscaler.annotations: 
+        annotation1: 'test'
+    asserts:
+      - equal:
+          path: metadata.annotations.annotation1
+          value: 'test'
+  - it: should add its own labels
+    set:
+      verticalPodAutoscaler.labels: 
+        label1: 'test'
+    asserts:
+      - equal:
+          path: metadata.labels.label1
+          value: 'test'
+      - isNotEmpty:
+          path: metadata.labels.chart-name
+      - isNotEmpty:
+          path: metadata.labels.chart-version
+  - it: should be disabled
+    set:
+      verticalPodAutoscaler.enable: false
+    asserts:
+      - hasDocuments:
+          count: 0
