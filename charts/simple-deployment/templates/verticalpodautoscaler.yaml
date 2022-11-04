@@ -18,7 +18,8 @@ spec:
     kind:       Deployment
     name:       {{ include "deployment.name" $ }}
   updatePolicy:
-    updateMode: "Auto"  
+    updateMode: "Auto"
+    minReplicas: 1
   resourcePolicy:
     containerPolicies:
     - containerName: "*"
