@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  {{- with .Values.frontend.deployment }}
+  name: {{ include "devx.name" $ }}-portal
+  annotations:
+  {{- with .annotations }}
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "devx.labels" $ | nindent 4 }}
+    {{- with .labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      devx-portal: {{ include "devx.name" $ }}
+  replicas: {{ .replicas }}
+  revisionHistoryLimit: 3
+  template:
+    metadata:
+      annotations:
+        {{- include "devx.dataDogAnnotations" $ | nindent 8 }}
+        {{- with .podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        devx-portal: {{ include "devx.name" $ }}
+        {{- include "devx.labels" $ | nindent 8 }}
+        {{- include "devx.dataDogLabels" $ | nindent 8 }}
+        {{- with .podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      containers:
+      - name: portal
+        image: "{{ .container.image }}:{{ .container.tag }}"
+        resources:
+          limits:
+            cpu: 600m
+            memory: 512Mi
+          requests:
+            cpu: 200m
+            memory: 256Mi
+        ports:
+          - containerPort: 80
+        livenessProbe:
+          httpGet:
+            path: /index.html
+            port: 80
+        readinessProbe:
+          httpGet:
+            path: /index.html
+            port: 80
+        env:
+        - name: AZURE_CLIENTID
+          value: {{ $.Values.frontend.auth.clientId }}
+        - name: AZURE_SCOPE
+          value: {{ $.Values.frontend.auth.oauthScope }}
+        - name: VIEWER_GROUPS
+          value: {{ join "," $.Values.viewerGroups }}
+        - name: ADMINISTRATOR_GROUPS
+          value: {{ join "," $.Values.administratorGroups }}
+        {{- range $name, $value := .container.environment }}
+        - name: {{ $name }}
+          value: {{ $value | quote }}
+        {{- end }}
+  {{- end }}

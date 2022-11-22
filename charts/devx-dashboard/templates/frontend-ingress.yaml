@@ -1,0 +1,47 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  {{- with .Values.frontend.ingress }}
+  name: {{ include "devx.name" $ }}-portal
+  annotations:
+    cert-manager.io/cluster-issuer: {{ .certManagerClusterIssuer | required "cluster issuer is required" }}
+  {{- with .annotations }}
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "devx.labels" $ | nindent 4 }}
+    {{- with .labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  ingressClassName: {{ .ingressClassName }}
+  rules:
+  - host: {{ .hostname }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ include "devx.name" $ }}-portal
+            port:
+              number: 80
+      - backend:
+          service:
+            name: {{ include "devx.name" $ }}-backend
+            port:
+              number: 80
+        path: /swagger/
+        pathType: Prefix
+      - backend:
+          service:
+            name: {{ include "devx.name" $ }}-backend
+            port:
+              number: 80
+        path: /api/
+        pathType: Prefix
+  tls:
+  - hosts:
+    - {{ .hostname }}
+    secretName: "le-cert-{{ .hostname | replace "." "-" | trunc 54 | trimSuffix "-" }}"
+  {{- end }}
