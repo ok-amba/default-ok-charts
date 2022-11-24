@@ -1,0 +1,16 @@
+apiVersion: v2
+name: devx-dashboard
+description: A developer dashboard for releasing software
+version: 0.0.1
+dependencies:
+- name: iam-service-account
+  version: 1.1.4
+  repository: https://ok-amba.github.io/config-connector-helm
+  alias: iamServiceAccount
+- name: sqlinstance
+  version: 2.1.4
+  repository: https://ok-amba.github.io/config-connector-helm
+- name: db-migration
+  version: 0.2.0
+  repository: https://ok-amba.github.io/default-ok-charts
+  alias: dbMigration

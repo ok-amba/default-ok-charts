@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "devx.name" $ }}-appsettings
+data:
+  appsettings.configmap.json: |
+    {
+      "Authentication": {
+        "VirtualRoles": {
+          "Viewer": {{ .Values.viewerGroups | toPrettyJson | nindent 12 }},
+          "Administrator": {{ .Values.administratorGroups | toPrettyJson | nindent 12 }}
+        }
+      },
+      "Database": {
+        "ConnectionString": "Host=localhost;Port=5432;Database={{ .Values.sqlinstance.name }};Username={{ .Values.iamServiceAccount.name }}@{{ .Values.googleProject.projectId }}.iam;Max Auto Prepare=100;"
+      },
+      "Swagger": {
+        "ClientId": "{{ .Values.frontend.auth.clientId }}",
+        "Authority": "https://login.microsoftonline.com/",
+        "TenantId": "{{ .Values.azure.tenantId }}",
+        "Scope": "{{ .Values.frontend.auth.oauthScope }}"
+      },
+      "AzureAd": {
+        "Instance": "https://login.microsoftonline.com/",
+        "Domain": "{{ .Values.azure.domain }}",
+        "ClientId": "{{ .Values.backend.auth.clientId }}",
+        "TenantId": "{{ .Values.azure.tenantId }}",
+        "ClientSecret": "",
+        "ClientSecretPath": "/secrets/{{ .Values.backend.auth.k8sSecretName }}/client-secret"
+      },
+      "AzureDevOps": {
+        "QueryId": "{{ .Values.azureDevOps.boardsQueryId }}",
+        "Project": "{{ .Values.azureDevOps.project }}",
+        "BaseUrl": "{{ .Values.azureDevOps.baseUrl }}",
+        "Scopes": "499b84ac-1321-427f-aa17-267ca6975798/.default",
+        "ProdTestPipelines": {{ .Values.pipelines.prodTest | toPrettyJson | nindent 10 }}
+      },
+      "PubSubDeadLetter": {
+        "Enable": true,
+        "Emulator": false,
+        "DefaultProjectId": "{{ .Values.googleProject.projectId }}",
+        "DefaultCredentialsPath": "/secrets/{{ .Values.iamServiceAccount.name }}-key/key.json",
+        "Subscriptions": {{ .Values.deadLetterSubscriptions | toPrettyJson | nindent 10 }}
+      }
+    }

@@ -1,0 +1,113 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  {{- with .Values.backend.deployment }}
+  name: {{ include "devx.name" $ }}-backend
+  annotations:
+  {{- with .annotations }}
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "devx.labels" $ | nindent 4 }}
+    {{- with .labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      devx-backend: {{ include "devx.name" $ }}
+  replicas: {{ .replicas }}
+  revisionHistoryLimit: 3
+  template:
+    metadata:
+      annotations:
+        {{- include "devx.dataDogAnnotations" $ | nindent 8 }}
+        {{- with .podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        devx-backend: {{ include "devx.name" $ }}
+        {{- include "devx.labels" $ | nindent 8 }}
+        {{- include "devx.dataDogLabels" $ | nindent 8 }}
+        {{- with .podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      containers:
+      - name: backend
+        image: "{{ .container.image }}:{{ .container.tag }}"
+        resources:
+          limits:
+            cpu: 600m
+            memory: 512Mi
+          requests:
+            cpu: 200m
+            memory: 256Mi
+        ports:
+          - containerPort: 80
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 80
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 80
+        env:
+          {{- range $name, $value := .container.environment }}
+          - name: {{ $name }}
+            value: {{ $value | quote }}
+          {{- end }}
+        volumeMounts:
+          - name: app-reg-client-secret 
+            mountPath: "/secrets/{{ $.Values.backend.auth.k8sSecretName }}"
+            readOnly: true
+          - name: {{ $.Values.iamServiceAccount.name }}-key
+            mountPath: "/secrets/{{ $.Values.iamServiceAccount.name }}-key"
+            readOnly: true
+          - name: {{ include "devx.name" $ }}-appsettings
+            mountPath: "/app/Config/"
+      - name: cloud-sql-proxy
+        image: "gcr.io/cloudsql-docker/gce-proxy:1.31.0"
+        command:
+          - "/cloud_sql_proxy"
+          - "-instances={{ $.Values.googleProject.projectId }}:europe-west3:{{ $.Values.sqlinstance.name }}=tcp:5432"
+          - "-credential_file=/secrets/{{ $.Values.iamServiceAccount.name }}-key/key.json"
+          - "-enable_iam_login"
+        securityContext:
+          runAsNonRoot: true
+        volumeMounts:
+          - name: {{ $.Values.iamServiceAccount.name }}-key
+            mountPath: "/secrets/{{ $.Values.iamServiceAccount.name }}-key"
+            readOnly: true
+      volumes:
+        - name: app-reg-client-secret
+          secret:
+            secretName: {{ $.Values.backend.auth.k8sSecretName }}
+        - name: {{ $.Values.iamServiceAccount.name }}-key
+          secret:
+            secretName: {{ $.Values.iamServiceAccount.name }}-key
+        - name: {{ include "devx.name" $ }}-appsettings
+          configMap:
+            name: {{ include "devx.name" $ }}-appsettings
+  {{- end }}
+{{- range .Values.deadLetterSubscriptions }}
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPartialPolicy
+metadata:
+  name: "sub-role-{{ .PubSubSubscriptionName }}"
+  annotations:
+    argocd.argoproj.io/sync-wave: "-5"
+  labels:
+    app: {{ include "devx.name" $ }}
+spec:
+  resourceRef:
+    apiVersion: pubsub.cnrm.cloud.google.com/v1beta1
+    kind: PubSubSubscription
+    name: {{ .PubSubSubscriptionName }}
+  bindings:
+    - role: roles/pubsub.subscriber
+      members:
+        - member:  "serviceAccount:{{ $.Values.iamServiceAccount.name }}@{{ $.Values.googleProject.projectId }}.iam.gserviceaccount.com"
+{{- end }}
