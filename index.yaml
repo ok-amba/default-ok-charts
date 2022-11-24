@@ -17,6 +17,27 @@ entries:
     urls:
     - https://github.com/ok-amba/default-ok-charts/releases/download/db-migration-0.0.1/db-migration-0.0.1.tgz
     version: 0.0.1
+  devx-dashboard:
+  - apiVersion: v2
+    created: "2022-11-24T10:33:39.762494005Z"
+    dependencies:
+    - alias: iamServiceAccount
+      name: iam-service-account
+      repository: https://ok-amba.github.io/config-connector-helm
+      version: 1.1.4
+    - name: sqlinstance
+      repository: https://ok-amba.github.io/config-connector-helm
+      version: 2.1.4
+    - alias: dbMigration
+      name: db-migration
+      repository: https://ok-amba.github.io/default-ok-charts
+      version: 0.2.0
+    description: A developer dashboard for releasing software
+    digest: dcb454e28e74274d4eed02c5297c8c911a9128bb8b6377ab28f1f56de31693a7
+    name: devx-dashboard
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/devx-dashboard-0.0.1/devx-dashboard-0.0.1.tgz
+    version: 0.0.1
   simple-deployment:
   - apiVersion: v2
     created: "2022-11-01T17:53:59.005809042Z"
@@ -210,4 +231,4 @@ entries:
     urls:
     - https://ok-amba.github.io/default-ok-charts/.cr-release-packages/simple-deployment-0.1.0.tgz
     version: 0.1.0
-generated: "2022-11-01T17:53:59.006048042Z"
+generated: "2022-11-24T10:33:39.762592204Z"
