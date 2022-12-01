@@ -182,8 +182,3 @@ ingress:
 
 verticalPodAutoscaler:
   enable: true
-  # Labels on the Service definition.
-  labels: {}
-
-  # Annotations on the Service definition.
-  annotations: {}
