@@ -4,6 +4,7 @@
 ### Helm ###
 # Chart dependencies
 **/charts/*.tgz
+/charts/*/tests/__snapshot__
 
 ### VisualStudioCode ###
 .vscode/*
