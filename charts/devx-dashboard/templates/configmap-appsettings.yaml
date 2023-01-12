@@ -11,9 +11,6 @@ data:
           "Administrator": {{ .Values.administratorGroups | toPrettyJson | nindent 12 }}
         }
       },
-      "Database": {
-        "ConnectionString": "Host=localhost;Port=5432;Database={{ .Values.sqlinstance.name }};Username={{ .Values.iamServiceAccount.name }}@{{ .Values.googleProject.projectId }}.iam;Max Auto Prepare=100;"
-      },
       "Swagger": {
         "ClientId": "{{ .Values.frontend.auth.clientId }}",
         "Authority": "https://login.microsoftonline.com/",
@@ -25,21 +22,29 @@ data:
         "Domain": "{{ .Values.azure.domain }}",
         "ClientId": "{{ .Values.backend.auth.clientId }}",
         "TenantId": "{{ .Values.azure.tenantId }}",
+        {{ if .Values.releaseBoard.enabled }}
         "ClientSecret": "",
         "ClientSecretPath": "/secrets/{{ .Values.backend.auth.k8sSecretName }}/client-secret"
+        {{ end }}
       },
+      {{ if .Values.releaseBoard.enabled }}
       "AzureDevOps": {
-        "QueryId": "{{ .Values.azureDevOps.boardsQueryId }}",
-        "Project": "{{ .Values.azureDevOps.project }}",
-        "BaseUrl": "{{ .Values.azureDevOps.baseUrl }}",
+        "QueryId": "{{ .Values.releaseBoard.azureDevOps.boardsQueryId }}",
+        "Project": "{{ .Values.releaseBoard.azureDevOps.project }}",
+        "BaseUrl": "{{ .Values.releaseBoard.azureDevOps.baseUrl }}",
         "Scopes": "499b84ac-1321-427f-aa17-267ca6975798/.default",
-        "ProdTestPipelines": {{ .Values.pipelines.prodTest | toPrettyJson | nindent 10 }}
+        "ProdTestPipelines": {{ .Values.releaseBoard.pipelines.prodTest | toPrettyJson | nindent 10 }}
+      },
+      {{ end }}
+      {{ if .Values.deadLetter.enabled }}
+      "Database": {
+        "ConnectionString": "Host=localhost;Port=5432;Database={{ .Values.sqlinstance.name }};Username={{ .Values.iamServiceAccount.name }}@{{ .Values.googleProject.projectId }}.iam;Max Auto Prepare=100;"
       },
       "PubSubDeadLetter": {
-        "Enable": true,
         "Emulator": false,
         "DefaultProjectId": "{{ .Values.googleProject.projectId }}",
         "DefaultCredentialsPath": "/secrets/{{ .Values.iamServiceAccount.name }}-key/key.json",
-        "Subscriptions": {{ .Values.deadLetterSubscriptions | toPrettyJson | nindent 10 }}
+        "Subscriptions": {{ .Values.deadLetter.deadLetterSubscriptions | toPrettyJson | nindent 10 }}
       }
+      {{ end }}
     }

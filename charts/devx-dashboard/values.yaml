@@ -1,46 +1,10 @@
+############################################################
+#                   General configuration                  #
+############################################################
+
 global:
   # Add labels from a parent chart to all manifests.
   labels: {}
-
-# Configuration of service account
-iamServiceAccount:
-  name: <example-service-devx>
-  spec:
-    description: "Service account for DevX Dashboard"
-    displayName: DevX Service Account
-  keyFile:
-    create: true
-
-# Configuration of sqlinstance
-sqlinstance:
-  name: <example-service-devx>
-  spec:
-    databaseVersion: POSTGRES_14
-    settings:
-      tier: db-f1-micro
-  serviceAccounts:
-    - name: <example-service-devx>
-      projectId: <project-id>
-
-# Configuration of migration
-dbMigration:
-  job:
-    container:
-      image: <devx-dbup-image>
-      tag: <devx-version>
-    environment:
-      DbUp_MillisecondsBetweenRetrying: 5000
-      DbUp_NumberOfMigrationTries: 3
-      DbUp_ConnectionString: Host=localhost;Port=5432;Database=<example-service-devx>;Username=<example-service-devx>@<project-id>.iam;Max Auto Prepare=100;
-
-    secrets:
-      - <example-service-devx>-key
-
-    cloudSQLProxy:
-      projectId: <project-id>
-      instanceName: <example-service-devx>
-      secretKeyName: <example-service-devx>-key
-  
 
 # Override release name.
 fullnameOverride: ""
@@ -52,7 +16,12 @@ dataDog:
 # Below is the Google project where resources should be deployed
 googleProject:
   projectId: <project-id>
-  
+
+# Azure configuration
+azure:
+  tenantId: <tenant-id-uuid>
+  domain: <org-name.onmicrosoft.com>
+
 # Below groups gives viewer access to the portal
 viewerGroups:
   - <group-name>
@@ -61,31 +30,13 @@ viewerGroups:
 administratorGroups:
   - <group-name>
 
-# Dead letter subscriptions. CredentialsPath and ProjectId only needed if different from default
-# which they are most likely not.
-deadLetterSubscriptions: []
-  # - PubSubSubscriptionName: deadletter-subscription-name
-  #   CredentialsPath: /secret/another-secret
-  #   ProjectId: another-gcp
-
-azure:
-  tenantId: <tenant-id-uuid>
-  domain: <org-name.onmicrosoft.com>
-
-azureDevOps:
-  # Azure DevOps base url, eg. https://dev.azure.com/org-name/
-  baseUrl: <url>
-  # The name of the Azure DevOps group
-  project: <project-name>
-  # The UUID of the Azure Boards Query to get data from.
-  boardsQueryId: <uuid>
-
-# Below lists are lists of pipelines that you want to able to start.
-# The requirements are a repository name and a pipeline ID.
-pipelines:
-  prod: {}
-  prodTest: {}
-  # some-repository-name: pipeline-id (int)
+backend:
+  auth:
+    # The client ID of the App Registration belonging to the backend.
+    clientId: <client-id>
+    # The name of the Kubernetes secret containing the client secret.
+    # The key containing the secret must be named "client-secret".
+    k8sSecretName: <secret-name>
 
 frontend:
   auth:
@@ -127,16 +78,15 @@ frontend:
     certManagerClusterIssuer: nginx-http01
     ingressClassName: nginx
 
-backend:
-  auth:
-    # The client ID of the App Registration belonging to the backend.
-    clientId: <client-id>
-    # The name of the Kubernetes secret containing the client secret.
-    # The key containing the secret must be named "client-secret".
-    k8sSecretName: <secret-name>
+############################################################
+#                   Release board module                   #
+############################################################
 
+# Configuration for release board module
+releaseBoard:
+  enabled: true
   deployment:
-    # Labels and annotations on the deployment.
+    # Labels and annotations on the deployment
     labels: {}
     annotations: {}
 
@@ -147,13 +97,99 @@ backend:
     replicas: 1
 
     container:
-      image: <container-image>
-      tag: latest # Dont use latest
-
-      # Environment variables
+      image: europe-west3-docker.pkg.dev/tinkerbell-329710/ok-shared-registry/devx/ok.devx.dashboard.releaseboard # TODO
+      tag: latest
       environment: {}
 
   service:
-    # Labels and annotations on the deployment.
+    # Labels and annotations on the service
     labels: {}
     annotations: {}
+
+  azureDevOps:
+    # Azure DevOps base url, eg. https://dev.azure.com/org-name/
+    baseUrl: <url>
+    # The name of the Azure DevOps group
+    project: <project-name>
+    # The UUID of the Azure Boards Query to get data from.
+    boardsQueryId: <uuid>
+  
+  # Below lists are lists of pipelines that you want to able to start.
+  # The requirements are a repository name and a pipeline ID.
+  pipelines:
+    prod: {}
+    prodTest: {}
+    # some-repository-name: pipeline-id (int)
+
+############################################################
+#                    Dead letter module                    #
+############################################################
+
+# Configuration for dead letter module
+deadLetter:
+  enabled: false
+  deployment:
+    # Labels and annotations on the deployment
+    labels: {}
+    annotations: {}
+
+    # Labels and annotations on the pod.
+    podLabels: {}
+    podAnnotations: {}
+
+    replicas: 1
+    container: 
+      image: europe-west3-docker.pkg.dev/tinkerbell-329710/ok-shared-registry/devx/ok.devx.dashboard.deadletter # TODO
+      tag: latest
+      environment: {}
+
+  service:
+    # Labels and annotations on the service
+    labels: {}
+    annotations: {}
+
+  deadLetterSubscriptions: []
+    # - PubSubSubscriptionName: deadletter-subscription-name
+    #   CredentialsPath: /secret/another-secret
+    #   ProjectId: another-gcp
+    
+# Configuration of service account - Not required if dead letter is disabled
+iamServiceAccount:
+  name: <example-service-devx>
+  spec:
+    description: "Service account for DevX Dashboard"
+    displayName: DevX Service Account
+  keyFile:
+    create: true
+
+# Configuration of sqlinstance - Not required if dead letter is disabled
+sqlinstance:
+  name: <example-service-devx>
+  spec:
+    databaseVersion: POSTGRES_14
+    settings:
+      tier: db-f1-micro
+  serviceAccounts:
+    - name: <example-service-devx>
+      projectId: <project-id>
+
+# Configuration of migration - Not required if dead letter is disabled
+dbMigration:
+  job:
+    container:
+      image: <devx-dbup-image>
+      tag: <devx-version>
+    environment:
+      DbUp_MillisecondsBetweenRetrying: 5000
+      DbUp_NumberOfMigrationTries: 3
+      DbUp_ConnectionString: Host=localhost;Port=5432;Database=<example-service-devx>;Username=<example-service-devx>@<project-id>.iam;Max Auto Prepare=100;
+
+    secrets:
+      - <example-service-devx>-key
+
+    cloudSQLProxy:
+      projectId: <project-id>
+      instanceName: <example-service-devx>
+      secretKeyName: <example-service-devx>-key
+
+

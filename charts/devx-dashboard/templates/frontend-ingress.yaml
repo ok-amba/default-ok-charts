@@ -28,14 +28,14 @@ spec:
               number: 80
       - backend:
           service:
-            name: {{ include "devx.name" $ }}-backend
+            name: {{ include "devx.name" $ }}-dead-letter-backend
             port:
               number: 80
-        path: /swagger/
+        path: /api/v1/dead-letters/
         pathType: Prefix
       - backend:
           service:
-            name: {{ include "devx.name" $ }}-backend
+            name: {{ include "devx.name" $ }}-release-board-backend
             port:
               number: 80
         path: /api/
