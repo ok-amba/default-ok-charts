@@ -62,6 +62,10 @@ spec:
           value: {{ join "," $.Values.viewerGroups }}
         - name: ADMINISTRATOR_GROUPS
           value: {{ join "," $.Values.administratorGroups }}
+        - name: DEAD_LETTER_MODULE_ENABLED
+          value: {{ $.Values.deadLetter.enabled | quote }}
+        - name: RELEASE_BOARD_MODULE_ENABLED
+          value: {{ $.Values.releaseBoard.enabled | quote }}
         {{- range $name, $value := .container.environment }}
         - name: {{ $name }}
           value: {{ $value | quote }}

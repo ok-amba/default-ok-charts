@@ -60,6 +60,9 @@ spec:
             value: {{ $value | quote }}
           {{- end }}
         volumeMounts:
+          - name: app-reg-client-secret 
+            mountPath: "/secrets/{{ $.Values.backend.auth.k8sSecretName }}"
+            readOnly: true
           - name: {{ $.Values.iamServiceAccount.name }}-key
             mountPath: "/secrets/{{ $.Values.iamServiceAccount.name }}-key"
             readOnly: true
@@ -79,6 +82,9 @@ spec:
             mountPath: "/secrets/{{ $.Values.iamServiceAccount.name }}-key"
             readOnly: true
       volumes:
+        - name: app-reg-client-secret
+          secret:
+            secretName: {{ $.Values.backend.auth.k8sSecretName }}
         - name: {{ $.Values.iamServiceAccount.name }}-key
           secret:
             secretName: {{ $.Values.iamServiceAccount.name }}-key
