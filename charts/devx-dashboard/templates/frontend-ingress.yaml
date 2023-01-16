@@ -26,7 +26,7 @@ spec:
             name: {{ include "devx.name" $ }}-portal
             port:
               number: 80
-      {{- if .Values.deadLetter.enabled }} 
+      {{- if $.Values.deadLetter.enabled }} 
       - backend:
           service:
             name: {{ include "devx.name" $ }}-dead-letter-backend
@@ -35,7 +35,7 @@ spec:
         path: /api/v1/dead-letters/
         pathType: Prefix
       {{- end }}
-      {{- if .Values.releaseBoard.enabled }} 
+      {{- if $.Values.releaseBoard.enabled }} 
       - backend:
           service:
             name: {{ include "devx.name" $ }}-release-board-backend
