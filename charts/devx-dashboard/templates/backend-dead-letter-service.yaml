@@ -1,0 +1,24 @@
+{{- if .Values.deadLetter.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  {{- with .Values.deadLetter.service }}
+  name: {{ include "devx.name" $ }}-dead-letter-backend
+  {{- with .annotations }}
+  annotations:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "devx.labels" $ | nindent 4 }}
+    {{- with .labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    devx-dead-letter-backend: {{ include "devx.name" $ }}
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  {{- end }}
+{{- end }}

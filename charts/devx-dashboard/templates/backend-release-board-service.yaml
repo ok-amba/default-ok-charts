@@ -1,8 +1,9 @@
+{{- if .Values.releaseBoard.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
-  {{- with .Values.backend.service }}
-  name: {{ include "devx.name" $ }}-backend
+  {{- with .Values.releaseBoard.service }}
+  name: {{ include "devx.name" $ }}-release-board-backend
   {{- with .annotations }}
   annotations:
   {{- toYaml . | nindent 4 }}
@@ -14,11 +15,10 @@ metadata:
     {{- end }}
 spec:
   selector:
-    devx-backend: {{ include "devx.name" $ }}
+    devx-release-board-backend: {{ include "devx.name" $ }}
   ports:
   - protocol: TCP
     port: 80
     targetPort: 80
   {{- end }}
-
-
+{{- end }}

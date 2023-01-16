@@ -1,8 +1,9 @@
+{{- if .Values.releaseBoard.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-{{- with .Values.frontend.deployment }}
-  name: {{ include "devx.name" $ }}-portal
+{{- with .Values.releaseBoard.deployment }}
+  name: {{ include "devx.name" $ }}-dead-letter-backend
   annotations:
   {{- with .annotations }}
   {{- toYaml . | nindent 4 }}
@@ -15,7 +16,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      devx-portal: {{ include "devx.name" $ }}
+      devx-release-board-backend: {{ include "devx.name" $ }}
   replicas: {{ .replicas }}
   revisionHistoryLimit: 3
   template:
@@ -26,7 +27,7 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
       labels:
-        devx-portal: {{ include "devx.name" $ }}
+        devx-release-board-backend: {{ include "devx.name" $ }}
         {{- include "devx.labels" $ | nindent 8 }}
         {{- include "devx.dataDogLabels" $ | nindent 8 }}
         {{- with .podLabels }}
@@ -34,7 +35,7 @@ spec:
         {{- end }}
     spec:
       containers:
-      - name: portal
+      - name: backend
         image: "{{ .container.image }}:{{ .container.tag }}"
         resources:
           limits:
@@ -47,23 +48,29 @@ spec:
           - containerPort: 80
         livenessProbe:
           httpGet:
-            path: /index.html
+            path: /healthz
             port: 80
         readinessProbe:
           httpGet:
-            path: /index.html
+            path: /readyz
             port: 80
         env:
-        - name: AZURE_CLIENTID
-          value: {{ $.Values.frontend.auth.clientId }}
-        - name: AZURE_SCOPE
-          value: {{ $.Values.frontend.auth.oauthScope }}
-        - name: VIEWER_GROUPS
-          value: {{ join "," $.Values.viewerGroups }}
-        - name: ADMINISTRATOR_GROUPS
-          value: {{ join "," $.Values.administratorGroups }}
-        {{- range $name, $value := .container.environment }}
-        - name: {{ $name }}
-          value: {{ $value | quote }}
-        {{- end }}
+          {{- range $name, $value := .container.environment }}
+          - name: {{ $name }}
+            value: {{ $value | quote }}
+          {{- end }}
+        volumeMounts:
+          - name: app-reg-client-secret 
+            mountPath: "/secrets/{{ $.Values.backend.auth.k8sSecretName }}"
+            readOnly: true
+          - name: {{ include "devx.name" $ }}-appsettings
+            mountPath: "/app/Config/"
+      volumes:
+        - name: app-reg-client-secret
+          secret:
+            secretName: {{ $.Values.backend.auth.k8sSecretName }}
+        - name: {{ include "devx.name" $ }}-appsettings
+          configMap:
+            name: {{ include "devx.name" $ }}-appsettings
+{{- end }}
 {{- end }}
