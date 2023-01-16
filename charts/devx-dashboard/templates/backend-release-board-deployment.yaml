@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
 {{- with .Values.releaseBoard.deployment }}
-  name: {{ include "devx.name" $ }}-dead-letter-backend
+  name: {{ include "devx.name" $ }}-release-board-backend
   annotations:
   {{- with .annotations }}
   {{- toYaml . | nindent 4 }}
