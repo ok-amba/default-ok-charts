@@ -1,8 +1,8 @@
-{{ if .Values.releaseBoard.enabled }}
+{{- if .Values.releaseBoard.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  {{- with .Values.releaseBoard.deployment }}
+{{- with .Values.releaseBoard.deployment }}
   name: {{ include "devx.name" $ }}-dead-letter-backend
   annotations:
   {{- with .annotations }}
@@ -72,5 +72,5 @@ spec:
         - name: {{ include "devx.name" $ }}-appsettings
           configMap:
             name: {{ include "devx.name" $ }}-appsettings
-  {{- end }}
-{{ end }}
+{{- end }}
+{{- end }}

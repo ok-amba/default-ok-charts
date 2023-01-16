@@ -1,8 +1,8 @@
-{{ if .Values.deadLetter.enabled }}
+{{- if .Values.deadLetter.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  {{- with .Values.deadLetter.deployment }}
+{{- with .Values.deadLetter.deployment }}
   name: {{ include "devx.name" $ }}-dead-letter-backend
   annotations:
   {{- with .annotations }}
@@ -85,7 +85,7 @@ spec:
         - name: {{ include "devx.name" $ }}-appsettings
           configMap:
             name: {{ include "devx.name" $ }}-appsettings
-  {{- end }}
+{{- end }}
 {{- range .Values.deadLetter.deadLetterSubscriptions }}
 ---
 apiVersion: iam.cnrm.cloud.google.com/v1beta1
@@ -106,4 +106,4 @@ spec:
       members:
         - member:  "serviceAccount:{{ $.Values.iamServiceAccount.name }}@{{ $.Values.googleProject.projectId }}.iam.gserviceaccount.com"
 {{- end }}
-{{ end }}
+{{- end }}

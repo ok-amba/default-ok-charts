@@ -1,4 +1,4 @@
-{{ if .Values.releaseBoard.enabled }}
+{{- if .Values.releaseBoard.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -21,4 +21,4 @@ spec:
     port: 80
     targetPort: 80
   {{- end }}
-{{ end }}
+{{- end }}

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  {{- with .Values.frontend.deployment }}
+{{- with .Values.frontend.deployment }}
   name: {{ include "devx.name" $ }}-portal
   annotations:
   {{- with .annotations }}
@@ -66,4 +66,4 @@ spec:
         - name: {{ $name }}
           value: {{ $value | quote }}
         {{- end }}
-  {{- end }}
+{{- end }}
