@@ -20,7 +20,7 @@ ad.datadoghq.com/{{ include "devx.name" $ }}.logs: '[{"source": "{{ include "dev
 {{- define "devx.dataDogLabels" -}}
 {{- if $.Values.dataDog.enableLogs -}}
 tags.datadoghq.com/service: {{ include "devx.name" $ }}
-tags.datadoghq.com/version: {{ .Chart.Version }}
+tags.datadoghq.com/version: {{ .Chart.AppVersion }}
 {{- end -}}
 {{- end -}}
 
