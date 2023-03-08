@@ -36,7 +36,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: "{{ .container.image }}:{{ .container.tag }}"
+        image: "{{ .container.image }}:{{ .container.tag | default $.Chart.AppVersion }}"
         resources:
           limits:
             cpu: 600m
