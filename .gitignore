@@ -31,3 +31,6 @@
 
 # Chart Releaser
 .cr-release-packages
+
+# Rider
+.idea/
