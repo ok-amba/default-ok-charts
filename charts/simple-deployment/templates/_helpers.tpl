@@ -3,11 +3,11 @@
 {{- end -}}
 
 {{- define "deployment.labels" -}}
-app: {{ include "deployment.name" $ }}
-chart-name: {{ .Chart.Name }}
-chart-version: {{ .Chart.Version }}
-{{- with .Values.global.labels }}
-  {{- toYaml . }}
+app: {{ include "deployment.name" $ | quote }}
+chart-name: {{ .Chart.Name | quote }}
+chart-version: {{ .Chart.Version | quote }}
+{{- range $k, $v := .Values.global.labels }}
+{{ printf "%s: %s" $k ($v | quote) }}
 {{- end -}}
 {{- end -}}
 
@@ -41,8 +41,8 @@ ad.datadoghq.com/{{ include "deployment.name" $ }}.logs: '[{"source": "{{ includ
 {{- end -}}
 
 {{- define "deployment.dataDogLabels" -}}
-tags.datadoghq.com/service: {{ include "deployment.name" $ }}
-tags.datadoghq.com/version: {{ .Values.deployment.container.tag }}
+tags.datadoghq.com/service: {{ include "deployment.name" $ | quote }}
+tags.datadoghq.com/version: {{ .Values.deployment.container.tag | quote }}
 {{- end -}}
 
 {{- define "deployment.livenessProbe" -}}

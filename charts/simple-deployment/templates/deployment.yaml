@@ -15,8 +15,8 @@ metadata:
   {{- end }}
   labels:
     {{- include "deployment.labels" . | nindent 4 }}
-    {{- with .Values.deployment.labels }}
-    {{- toYaml . | nindent 4 }}
+    {{- range $k, $v := .Values.deployment.labels }}
+    {{- printf "%s: %s" $k ($v | quote) | nindent 4 }}
     {{- end }}
 spec:
   selector:
@@ -37,8 +37,8 @@ spec:
       {{- end }}
       labels:
         {{- include "deployment.labels" . | nindent 8 }}
-        {{- with .Values.deployment.podLabels }}
-        {{- toYaml . | nindent 8 }}
+        {{- range $k, $v := .Values.deployment.podLabels }}
+        {{- printf "%s: %s" $k ($v | quote) | nindent 8 }}
         {{- end }}
         {{- if $logsEnabled }}
         {{- include "deployment.dataDogLabels" $ | nindent 8 }}
