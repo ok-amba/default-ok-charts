@@ -19,8 +19,8 @@ metadata:
   {{- end }}
   labels:
     {{- include "deployment.labels" $ | nindent 4 }}
-    {{- with .labels }}
-    {{- toYaml . | nindent 4 }}
+    {{- range $k, $v := .labels }}
+    {{- printf "%s: %s" $k ($v | quote) | nindent 4 }}
     {{- end }}
     {{- if .createDNSRecord }}
     external-dns-create: "true"
