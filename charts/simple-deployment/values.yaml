@@ -176,9 +176,3 @@ ingress:
   #       port:
   #         number: 3000
 
-##################################################
-#             Vertical Pod Autoscaler            #
-##################################################
-
-verticalPodAutoscaler:
-  enable: true
