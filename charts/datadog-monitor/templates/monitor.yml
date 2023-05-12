@@ -1,0 +1,30 @@
+{{- range .Values.monitors }}
+---
+apiVersion: datadoghq.com/v1alpha1
+kind: DatadogMonitor
+metadata:
+  name: "{{ $.Values.global.service }}-{{ regexReplaceAll "\\W+" .name "-" }}"
+spec:
+  name: "[{{ $.Values.global.project }}]-{{ .name }}"
+  type: {{ .type |quote }}
+  query: {{ .query |replace "\"" "\"" |quote }}
+  message: {{ .message | quote }}
+  tags:
+  {{- range .tags }}
+    - {{ . | quote }}
+  {{- end }}
+    - "generated:kubernetes"
+  priority: {{ .priority | default "2" }}
+  options:
+    thresholds:
+      critical: {{ .thresholds.critical | default | quote }}
+      warning: {{ .thresholds.warning | default | quote }}
+    notifyAudit: {{ .notifyAudit | default "false" }}
+    requireFullWindow: {{ .requireFullWindow | default "false" }}
+    notifyNoData: {{ .notifyNoData | default "false" }}
+    noDataTimeframe:
+    renotifyInterval: {{ .renotifyInterval | default "0" }}
+    includeTags: {{ .includeTags | default "false" }}
+    evaluationDelay: {{ .evaluationDelay | default "300" }}
+    enableLogsSample: {{ .enableLogsSample | default "true"}}
+{{- end }}

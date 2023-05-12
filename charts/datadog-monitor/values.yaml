@@ -1,0 +1,9 @@
+global:
+  # Add labels from a parent chart to all manifests.
+  labels: {}
+##################################################
+#                 Datadog Monitors               #
+##################################################
+# https://github.com/DataDog/datadog-operator/tree/main/examples/datadogmonitor
+
+monitors:

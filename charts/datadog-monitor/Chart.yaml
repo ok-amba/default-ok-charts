@@ -1,0 +1,4 @@
+apiVersion: v2
+name: datadog-monitor
+description: A Helm chart for deploying datadog monitors.
+version: 1.0.0
