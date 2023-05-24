@@ -1,30 +1,41 @@
-{{- range .Values.monitors }}
+
+{{- range $monitor := .Values.monitors }}
+{{ $metadataName := printf "%s-%s" $.Release.Name $monitor.name }}
+{{- if gt (len $metadataName) 63 }}
+{{- fail (printf "monitor name [%s, len: %d] too long. must have max length of 63." $metadataName (len $metadataName)) }}
+{{- end }}
 ---
 apiVersion: datadoghq.com/v1alpha1
 kind: DatadogMonitor
 metadata:
-  name: "{{ $.Values.global.service }}-{{ regexReplaceAll "\\W+" .name "-" }}"
+  name: {{ $metadataName }}
+  labels:
+    {{- include "datadogmonitor.labels" $ | nindent 4 }}
+    {{- with $monitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
-  name: "[{{ $.Values.global.project }}]-{{ .name }}"
-  type: {{ .type |quote }}
-  query: {{ .query |replace "\"" "\"" |quote }}
-  message: {{ .message | quote }}
+  name: "[{{ $.Values.projectName }}]-{{ $metadataName }}"
+  type: {{ $monitor.type | quote }}
+  query: {{ $monitor.query | quote }}
+  message: {{ $monitor.message | quote }}
   tags:
-  {{- range .tags }}
+  {{- range $monitor.tags }}
     - {{ . | quote }}
   {{- end }}
     - "generated:kubernetes"
-  priority: {{ .priority | default "2" }}
+  priority: {{ $monitor.priority | default "2" }}
   options:
     thresholds:
-      critical: {{ .thresholds.critical | default | quote }}
-      warning: {{ .thresholds.warning | default | quote }}
-    notifyAudit: {{ .notifyAudit | default "false" }}
-    requireFullWindow: {{ .requireFullWindow | default "false" }}
-    notifyNoData: {{ .notifyNoData | default "false" }}
+  {{- with $monitor.thresholds }}
+  {{- toYaml . | nindent 6 }}
+  {{- end }}
+    notifyAudit: {{ $monitor.notifyAudit | default "false" }}
+    requireFullWindow: {{ $monitor.requireFullWindow | default "false" }}
+    notifyNoData: {{ $monitor.notifyNoData | default "false" }}
     noDataTimeframe:
-    renotifyInterval: {{ .renotifyInterval | default "0" }}
-    includeTags: {{ .includeTags | default "false" }}
-    evaluationDelay: {{ .evaluationDelay | default "300" }}
-    enableLogsSample: {{ .enableLogsSample | default "true"}}
+    renotifyInterval: {{ $monitor.renotifyInterval | default "0" }}
+    includeTags: {{ $monitor.includeTags | default "false" }}
+    evaluationDelay: {{ $monitor.evaluationDelay | default "300" }}
+    enableLogsSample: {{ $monitor.enableLogsSample | default "true"}}
 {{- end }}

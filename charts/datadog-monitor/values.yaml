@@ -1,9 +1,66 @@
 global:
   # Add labels from a parent chart to all manifests.
   labels: {}
+
+fullnameOverride: ""
 ##################################################
 #                 Datadog Monitors               #
 ##################################################
 # https://github.com/DataDog/datadog-operator/tree/main/examples/datadogmonitor
 
+# The name of the your project. This will be prefixed on all DataDog monitors along with service name.
+# Eg. - name: norge-vask will look like [norge-vask]-capture-service-some-monitor-name
+projectName: some-project-name
+
+# Here you will define each monitor. keep short and specific
 monitors:
+
+    # Specify name to be appended to [norge-vask]-capture-service-???? - needs to be unique
+  - name: some-monitor-name
+
+    # Choose between "metric alert", "query alert", "service check", "event alert", "log alert", "process alert", "rum alert", "trace-analytics alert", "slo alert",  "event-v2 alert", "audit alert", "composite" 
+    type: some-type
+
+    # Copy the query as presented and properly formatted in datadog (example: https://okamba.datadoghq.eu/monitors/11003375)
+    query: some-query
+
+    # Craft a message using variables and tag @opsgenie if alert routing is needed. eg.  "Service with ID {{service.id}} has not reported back the last 12 hours.\n\nThis could be bad @opsgenie"
+    message: some-message
+
+    # should at minimum include env:(test, prodtest, prod) team:(norges-vask)
+    tags: []
+
+    # Additional labels - mostly not needed. 
+    labels: {}
+
+    # Should match query specifications  
+    thresholds: {}
+      # warning:
+      # critical:
+
+    # default false
+    notifyAudit:
+
+    # default false
+    requireFullWindow:
+
+    # default true
+    notifyNoData:
+
+    # default 600
+    noDataTimeframe:
+
+    # default 0
+    renotifyInterval:
+
+    # default true
+    includeTags:
+
+    # default 300
+    evaluationDelay:
+
+    # not currently supported in current helm chart version. default true
+    enableLogsSample:
+    
+    # another-monitor-name
+  - name: some-other-monitor
