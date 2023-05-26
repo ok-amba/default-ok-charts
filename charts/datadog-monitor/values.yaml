@@ -8,6 +8,12 @@ fullnameOverride: ""
 ##################################################
 # https://github.com/DataDog/datadog-operator/tree/main/examples/datadogmonitor
 
+# Required.
+# This should be configured per env values file.
+# If set to true, this enabled monitors
+# rememeber to explicitly set this to false in environments other than production. 
+enableAllMonitors: false
+
 # The name of the your project. This will be appended as a prefix on all DataDog monitors along with serviceName
 # which is taken from the chart.
 # If you specify projectName as "myproject" it will appear in datadog as [myproject]...

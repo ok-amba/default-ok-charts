@@ -1,3 +1,4 @@
+{{- if .Values.enableAllMonitors -}}
 {{- range $monitor := .Values.monitors }}
 {{ $metadataName := printf "%s-%s" $.Release.Name $monitor.name }}
 {{- if gt (len $metadataName) 63 }}
@@ -37,4 +38,5 @@ spec:
     includeTags: {{ $monitor.includeTags | default "false" }}
     evaluationDelay: {{ $monitor.evaluationDelay | default "300" }}
     enableLogsSample: {{ $monitor.enableLogsSample | default "true"}}
+{{- end }}
 {{- end }}
