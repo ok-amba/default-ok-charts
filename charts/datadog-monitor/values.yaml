@@ -42,7 +42,7 @@ monitors:
     message: ""
 
     # Required
-    # should at least include env and team
+    # should at least include env and team.
     # env = prod, prodtest, test
     # team = should be same as ProjectName
     tags: []
@@ -53,6 +53,6 @@ monitors:
     # Should match query specifications  
     # An integer or decimal number used to set the threshold.
     thresholds:
-      warning: "1.0"
-      critical: "2.0"
+      # warning: "1.0"
+      # critical: "2.0"
 
