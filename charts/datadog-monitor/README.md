@@ -14,7 +14,7 @@ for more examples, visit # https://github.com/DataDog/datadog-operator/tree/main
       - "team:observability"
       - "env:prod"
     thresholds:
-       critical:
+       critical: "5"
        warning:
     priority:
 ```

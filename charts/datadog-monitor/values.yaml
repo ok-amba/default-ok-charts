@@ -8,59 +8,51 @@ fullnameOverride: ""
 ##################################################
 # https://github.com/DataDog/datadog-operator/tree/main/examples/datadogmonitor
 
-# The name of the your project. This will be prefixed on all DataDog monitors along with service name.
-# Eg. - name: norge-vask will look like [norge-vask]-capture-service-some-monitor-name
-projectName: some-project-name
+# The name of the your project. This will be appended as a prefix on all DataDog monitors along with serviceName
+# which is taken from the chart.
+# If you specify projectName as "myproject" it will appear in datadog as [myproject]...
+projectName:
+
+# Labels for the Kubernetes DatadogMonitor object.
+monitorLabels: {}
 
 # Here you will define each monitor. keep short and specific
 monitors:
+    # Required
+    # Specify name to be appended to [myproject]-myservice-
+    # needs to be unique
+    # Example. you specified projectName as "myproject", name as "pubsub-deadletter-queue". "myservice" service name is automatically taken from the chart
+    # the full name in datadog would end up being
+    # [myproject]-myservice-pubsub-deadletter-queue
+  - name: ""
 
-    # Specify name to be appended to [norge-vask]-capture-service-???? - needs to be unique
-  - name: some-monitor-name
+    # Required
+    # Choose between "metric alert", "query alert", "service check", "event alert", "log alert",
+    # "process alert", "rum alert", "trace-analytics alert", "slo alert",  "event-v2 alert", "audit alert", "composite" 
+    type: ""
 
-    # Choose between "metric alert", "query alert", "service check", "event alert", "log alert", "process alert", "rum alert", "trace-analytics alert", "slo alert",  "event-v2 alert", "audit alert", "composite" 
-    type: some-type
+    # Required
+    # Copy the query as presented and properly formatted in datadog
+    # Example: logs("source:argocd status:(error OR critical OR emergency) -"Watch failed" -"helm template"").index("*").rollup("count").last("5m") > 20)
+    query: ""
 
-    # Copy the query as presented and properly formatted in datadog (example: https://okamba.datadoghq.eu/monitors/11003375)
-    query: some-query
+    # Required
+    # Craft a message using variables and tag @opsgenie if alert routing is needed.
+    # eg. "Service with ID {{service.id}} has not reported back the last 12 hours.\n\nThis could be bad @opsgenie"
+    message: ""
 
-    # Craft a message using variables and tag @opsgenie if alert routing is needed. eg.  "Service with ID {{service.id}} has not reported back the last 12 hours.\n\nThis could be bad @opsgenie"
-    message: some-message
-
-    # should at minimum include env:(test, prodtest, prod) team:(norges-vask)
+    # Required
+    # should at least include env and team
+    # env = prod, prodtest, test
+    # team = should be same as ProjectName
     tags: []
+      # - team:myteam
+      # - env:prod
 
-    # Additional labels - mostly not needed. 
-    labels: {}
-
+    # Required (critical field is required)
     # Should match query specifications  
-    thresholds: {}
-      # warning:
-      # critical:
+    # An integer or decimal number used to set the threshold.
+    thresholds:
+      warning: "1.0"
+      critical: "2.0"
 
-    # default false
-    notifyAudit:
-
-    # default false
-    requireFullWindow:
-
-    # default true
-    notifyNoData:
-
-    # default 600
-    noDataTimeframe:
-
-    # default 0
-    renotifyInterval:
-
-    # default true
-    includeTags:
-
-    # default 300
-    evaluationDelay:
-
-    # not currently supported in current helm chart version. default true
-    enableLogsSample:
-    
-    # another-monitor-name
-  - name: some-other-monitor

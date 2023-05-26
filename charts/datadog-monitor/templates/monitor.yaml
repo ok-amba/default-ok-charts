@@ -1,4 +1,3 @@
-
 {{- range $monitor := .Values.monitors }}
 {{ $metadataName := printf "%s-%s" $.Release.Name $monitor.name }}
 {{- if gt (len $metadataName) 63 }}
