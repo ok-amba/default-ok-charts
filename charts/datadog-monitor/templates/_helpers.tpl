@@ -1,5 +1,5 @@
 {{- define "datadogmonitor.name" -}}
-{{ .Values.fullnameOverride | default .Release.Name | trunc 63 | trimSuffix "-"}}
+{{  default .Release.Name | trunc 63 | trimSuffix "-"}}
 {{- end -}}
 
 {{- define "datadogmonitor.labels" -}}

@@ -1,8 +1,6 @@
 global:
   # Add labels from a parent chart to all manifests.
   labels: {}
-
-fullnameOverride: ""
 ##################################################
 #                 Datadog Monitors               #
 ##################################################
@@ -14,7 +12,7 @@ fullnameOverride: ""
 # rememeber to explicitly set this to false in environments other than production. 
 enableAllMonitors: false
 
-# The name of the your project. This will be appended as a prefix on all DataDog monitors along with serviceName
+# The name of the your project. This will be appended as a prefix on all DataDog monitors along with release name
 # which is taken from the chart.
 # If you specify projectName as "myproject" it will appear in datadog as [myproject]...
 projectName:
@@ -25,11 +23,11 @@ monitorLabels: {}
 # Here you will define each monitor. keep short and specific
 monitors:
     # Required
-    # Specify name to be appended to [myproject]-myservice-
+    # Specify name to be appended to [myproject]-releasename-
     # needs to be unique
-    # Example. you specified projectName as "myproject", name as "pubsub-deadletter-queue". "myservice" service name is automatically taken from the chart
+    # Example. you specified projectName as "myproject", name as "pubsub-deadletter-queue". "releasename" service name is automatically taken from the chart
     # the full name in datadog would end up being
-    # [myproject]-myservice-pubsub-deadletter-queue
+    # [myproject]-releasename-pubsub-deadletter-queue
   - name: ""
 
     # Required
