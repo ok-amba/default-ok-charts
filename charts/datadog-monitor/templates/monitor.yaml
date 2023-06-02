@@ -1,9 +1,19 @@
-{{- if .Values.enableAllMonitors -}}
-{{- range $monitor := .Values.monitors }}
-{{ $metadataName := printf "%s-%s" $.Release.Name $monitor.name }}
+{{- if .Values.enableAllMonitors -}} {{- range $monitor := .Values.monitors }}
+
+{{ $metadataName := printf "%s-%s" $.Release.Name ($monitor.name | required "A monitor name is required on all monitors") }}
 {{- if gt (len $metadataName) 63 }}
 {{- fail (printf "monitor name [%s, len: %d] too long. must have max length of 63." $metadataName (len $metadataName)) }}
 {{- end }}
+
+{{ $types := list "metric alert" "query alert" "service check" "event alert" "log alert" "process alert" "rum alert" "trace-analytics alert" "slo alert"  "event-v2 alert" "audit alert" "composite" }}
+{{- if not (has $monitor.type $types) }}
+{{- fail (printf "monitor [%s] does not have a valid type. Valid type: %s" $monitor.name (join ", " $types)) }}
+{{- end }}
+
+{{- if not $monitor.tags }}
+{{- fail (printf "monitor [%s] does not have any tags. Should at least include env and team." $monitor.name) }}
+{{- end }}
+
 ---
 apiVersion: datadoghq.com/v1alpha1
 kind: DatadogMonitor
@@ -15,10 +25,10 @@ metadata:
     {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
-  name: "[{{ $.Values.projectName }}]-{{ $metadataName }}"
+  name: "[{{ $.Values.projectName | required "A project name is required" }}]-{{ $metadataName }}"
   type: {{ $monitor.type | quote }}
-  query: {{ $monitor.query | quote }}
-  message: {{ $monitor.message | quote }}
+  query: {{ $monitor.query | required "A query is required on all monitors"| quote }}
+  message: {{ $monitor.message | required "A message is required on all monitors"| quote }}
   tags:
   {{- range $monitor.tags }}
     - {{ . | quote }}
@@ -27,9 +37,10 @@ spec:
   priority: {{ $monitor.priority | default "2" }}
   options:
     thresholds:
-  {{- with $monitor.thresholds }}
-  {{- toYaml . | nindent 6 }}
-  {{- end }}
+      critical: {{ $monitor.thresholds.critical | required "thresholds.critical is required on all monitors" | quote }}
+      {{- with $monitor.thresholds.warning }}
+      warning: {{ $monitor.thresholds.warning | quote }}
+      {{- end }}
     notifyAudit: {{ $monitor.notifyAudit | default "false" }}
     requireFullWindow: {{ $monitor.requireFullWindow | default "false" }}
     notifyNoData: {{ $monitor.notifyNoData | default "false" }}
