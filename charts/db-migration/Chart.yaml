@@ -1,4 +1,4 @@
 apiVersion: v2
 name: db-migration
 description: A Helm chart for a running a DB migration.
-version: 0.2.0
+version: 0.2.1
