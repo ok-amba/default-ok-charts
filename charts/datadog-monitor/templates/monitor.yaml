@@ -48,6 +48,6 @@ spec:
     renotifyInterval: {{ $monitor.renotifyInterval | default "0" }}
     includeTags: {{ $monitor.includeTags | default "false" }}
     evaluationDelay: {{ $monitor.evaluationDelay | default "300" }}
-    enableLogsSample: {{ $monitor.enableLogsSample | default "true"}}
+{{- /*    enableLogsSample: {{ $monitor.enableLogsSample | default "false"}} */}}
 {{- end }}
 {{- end }}
