@@ -15,9 +15,6 @@ metadata:
   {{- end }}
   labels:
     {{- include "db-migration.labels" $ | nindent 4 }}
-    {{- with .Values.job.labels }}
-      {{- toYaml . | nindent 4 }}
-    {{- end }}
 spec:
   ttlSecondsAfterFinished: {{ .Values.job.ttlSecondsAfterFinished }}
   backoffLimit: {{ .Values.job.backoffLimit }}
@@ -36,12 +33,12 @@ spec:
       {{- if or .Values.job.podLabels .Values.dataDogLogs.enable }}
       labels:
         {{- if.Values.dataDogLogs.enable }}
-        tags.datadoghq.com/service: {{ include "db-migration.name" $ }}
-        tags.datadoghq.com/version: {{ .Values.job.container.tag }}
+        tags.datadoghq.com/service: "{{ include "db-migration.name" $ }}"
+        tags.datadoghq.com/version: "{{ .Values.job.container.tag }}"
         {{- end }}
-        {{- with .Values.job.podLabels }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
+        {{- range $k, $v := .Values.job.podLabels }}
+        {{ printf "%s: %s" $k ($v | quote) }}
+        {{- end -}}
       {{- end }}
     spec:
       {{- if .Values.job.imagePullSecrets }}
