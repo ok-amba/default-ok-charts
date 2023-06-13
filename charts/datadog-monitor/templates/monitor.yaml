@@ -17,14 +17,14 @@
 apiVersion: datadoghq.com/v1alpha1
 kind: DatadogMonitor
 metadata:
-  name: {{ $mointor.name }}
+  name: {{ $monitor.name }}
   labels:
     {{- include "datadogmonitor.labels" $ | nindent 4 }}
     {{- with $monitor.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
-  name: "[{{ $.Values.projectName | required "A project name is required" }}]-{{ $mointor.name }}"
+  name: "[{{ $.Values.projectName | required "A project name is required" }}]-{{ $monitor.name }}"
   type: {{ $monitor.type | quote }}
   query: {{ $monitor.query | required "A query is required on all monitors"| quote }}
   message: {{ $monitor.message | required "A message is required on all monitors"| quote }}
