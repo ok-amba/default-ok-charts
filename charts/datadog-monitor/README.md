@@ -39,5 +39,5 @@ for more examples, visit # https://github.com/DataDog/datadog-operator/tree/main
     renotifyInterval:  # default 0
     includeTags:       # default false
     evaluationDelay:   # default 300
-    enableLogsSample:  # default true
+    enableLogsSample:  # default false
 ```

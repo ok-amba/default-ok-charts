@@ -23,11 +23,13 @@ monitorLabels: {}
 # Here you will define each monitor. keep short and specific
 monitors:
     # Required
-    # Specify name to be appended to [myproject]-releasename-
-    # needs to be unique
-    # Example. you specified projectName as "myproject", name as "pubsub-deadletter-queue". "releasename" service name is automatically taken from the chart
+    # Specify name to be appended to [myproject]-
+    # Example. you specified projectName as "myproject", name as "myservice-pubsub-deadletter-queue".
     # the full name in datadog would end up being
-    # [myproject]-releasename-pubsub-deadletter-queue
+    # [myproject]-myservice-pubsub-deadletter-queue
+    # needs to be unique, keep short and specific with a limit of  63 characters
+    # A lowercase RFC 1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character 
+
   - name: ""
 
     # Required
@@ -51,6 +53,7 @@ monitors:
     # team = should be same as ProjectName
     tags: []
       # - team:myteam
+      # - project:myproject
       # - env:prod
 
     # Required (critical field is required)
