@@ -2,6 +2,10 @@ global:
   # Add labels from a parent chart to all manifests.
   labels: {}
 
+  # The Google Project ID.
+  # [Required for Cloud SQL Proxy]
+  projectID: null
+
 # Will rename all resources.
 fullnameOverride: ""
 
@@ -115,7 +119,6 @@ deployment:
   # Find the latest version here, https://gcr.io/cloudsql-docker/gce-proxy
   cloudSQLProxy:
     enable: false
-    projectId: google-project-id
     region: europe-west3
     instanceName: sqlinstance-name
     secretKeyName: google-service-account-key

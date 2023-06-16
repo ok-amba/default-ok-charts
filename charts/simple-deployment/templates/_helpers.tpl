@@ -68,6 +68,7 @@ failureThreshold: {{ .readinessProbe.failureThreshold }}
 {{- end -}}
 
 {{- define "deployment.cloudSQLProxy" -}}
+{{- with .Values.deployment -}}
 
 {{- /* Below if statments makes sure that you cannot specify to use version 1 of Cloud SQL Proxy */ -}}
 {{- if .cloudSQLProxy.imageTag -}}
@@ -76,11 +77,16 @@ failureThreshold: {{ .readinessProbe.failureThreshold }}
   {{- end -}}
 {{- end -}}
 
+{{- $projectID := (.cloudSQLProxy.projectId | default $.Values.global.projectID) -}}
+{{- if not $projectID }}
+{{- fail "The global.projectID is not set. It is required for Cloud SQL Proxy." -}}
+{{- end -}}
+
 - name: cloud-sql-proxy
   image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:{{ .cloudSQLProxy.imageTag | default "2.3.0" }}"
   command:
     - "/cloud-sql-proxy"
-    - "{{ .cloudSQLProxy.projectId }}:{{ .cloudSQLProxy.region }}:{{ .cloudSQLProxy.instanceName }}"
+    - "{{ $projectID }}:{{ .cloudSQLProxy.region }}:{{ .cloudSQLProxy.instanceName }}"
     - "--credentials-file=/secrets/{{ .cloudSQLProxy.secretKeyName }}/key.json"
     - "--auto-iam-authn"
   securityContext:
@@ -89,4 +95,5 @@ failureThreshold: {{ .readinessProbe.failureThreshold }}
     - name: {{ .cloudSQLProxy.secretKeyName }}
       mountPath: "/secrets/{{ .cloudSQLProxy.secretKeyName }}"
       readOnly: true
+{{- end -}}
 {{- end -}}

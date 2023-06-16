@@ -119,7 +119,7 @@ spec:
         {{- end }}
       {{- end }}
       {{- if .Values.deployment.cloudSQLProxy.enable }}
-      {{- include "deployment.cloudSQLProxy" .Values.deployment | nindent 6 }}
+      {{- include "deployment.cloudSQLProxy" $ | nindent 6 }}
       {{- end }}
       {{- with .Values.deployment }}
       {{- if or .cloudSQLProxy.enable .container.secrets .container.configMaps .additionalVolumes .dataDog.enableTracing }}
