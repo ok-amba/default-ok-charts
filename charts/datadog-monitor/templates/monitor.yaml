@@ -24,7 +24,7 @@ metadata:
     {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
-  name: "[{{ $.Values.projectName | required "A project name is required" }}]-{{ $monitor.name }}"
+  name: "{{ $monitor.name }}"
   type: {{ $monitor.type | quote }}
   query: {{ $monitor.query | required "A query is required on all monitors"| quote }}
   message: {{ $monitor.message | required "A message is required on all monitors"| quote }}
