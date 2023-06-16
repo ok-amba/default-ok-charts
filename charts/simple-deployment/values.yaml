@@ -115,7 +115,6 @@ deployment:
   # Find the latest version here, https://gcr.io/cloudsql-docker/gce-proxy
   cloudSQLProxy:
     enable: false
-    imageTag: 1.31.0
     projectId: google-project-id
     region: europe-west3
     instanceName: sqlinstance-name

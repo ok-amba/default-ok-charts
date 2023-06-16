@@ -68,13 +68,21 @@ failureThreshold: {{ .readinessProbe.failureThreshold }}
 {{- end -}}
 
 {{- define "deployment.cloudSQLProxy" -}}
+
+{{- /* Below if statments makes sure that you cannot specify to use version 1 of Cloud SQL Proxy */ -}}
+{{- if .cloudSQLProxy.imageTag -}}
+  {{- if lt ((semver .cloudSQLProxy.imageTag).Major) 2 -}}
+  {{- fail "The version of Cloud SQL Proxy is too low. Delete the cloudSQLProxy.imageTag field to use the default version." -}}
+  {{- end -}}
+{{- end -}}
+
 - name: cloud-sql-proxy
-  image: "gcr.io/cloudsql-docker/gce-proxy:{{ .cloudSQLProxy.imageTag }}"
+  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:{{ .cloudSQLProxy.imageTag | default "2.3.0" }}"
   command:
-    - "/cloud_sql_proxy"
-    - "-instances={{ .cloudSQLProxy.projectId }}:{{ .cloudSQLProxy.region }}:{{ .cloudSQLProxy.instanceName }}=tcp:5432"
-    - "-credential_file=/secrets/{{ .cloudSQLProxy.secretKeyName }}/key.json"
-    - "-enable_iam_login"
+    - "/cloud-sql-proxy"
+    - "{{ .cloudSQLProxy.projectId }}:{{ .cloudSQLProxy.region }}:{{ .cloudSQLProxy.instanceName }}"
+    - "--credentials-file=/secrets/{{ .cloudSQLProxy.secretKeyName }}/key.json"
+    - "--auto-iam-authn"
   securityContext:
     runAsNonRoot: true
   volumeMounts:
