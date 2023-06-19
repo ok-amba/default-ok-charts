@@ -17,7 +17,7 @@
 apiVersion: datadoghq.com/v1alpha1
 kind: DatadogMonitor
 metadata:
-  name: {{ regexReplaceAll "\\W+" $monitor.name "_" }}
+  name: {{ regexReplaceAll "\\W+|_" $monitor.name "-" | trimSuffix "-"}}
   labels:
     {{- include "datadogmonitor.labels" $ | nindent 4 }}
     {{- with $monitor.labels }}
