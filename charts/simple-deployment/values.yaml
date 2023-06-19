@@ -119,9 +119,11 @@ deployment:
   # Find the latest version here, https://gcr.io/cloudsql-docker/gce-proxy
   cloudSQLProxy:
     enable: false
-    region: europe-west3
     instanceName: sqlinstance-name
     secretKeyName: google-service-account-key
+
+    # Immutable, if not specified, region will default to europe-west3
+    # region: europe-west3
 
 ##################################################
 #                    Service                     #

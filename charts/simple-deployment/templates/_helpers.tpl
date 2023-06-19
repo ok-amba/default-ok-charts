@@ -86,7 +86,7 @@ failureThreshold: {{ .readinessProbe.failureThreshold }}
   image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:{{ .cloudSQLProxy.imageTag | default "2.3.0" }}"
   command:
     - "/cloud-sql-proxy"
-    - "{{ $projectID }}:{{ .cloudSQLProxy.region }}:{{ .cloudSQLProxy.instanceName }}"
+    - "{{ $projectID }}:{{ .cloudSQLProxy.region | default "europe-west3" }}:{{ .cloudSQLProxy.instanceName }}"
     - "--credentials-file=/secrets/{{ .cloudSQLProxy.secretKeyName }}/key.json"
     - "--auto-iam-authn"
   securityContext:
