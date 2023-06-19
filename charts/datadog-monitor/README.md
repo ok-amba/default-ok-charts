@@ -12,6 +12,7 @@ for more examples, visit # https://github.com/DataDog/datadog-operator/tree/main
     message: "pod {{pod_name.name}} is complaining on {{kube_namespace.name}}"
     tags:
       - "team:observability"
+      - "observability"
       - "env:prod"
     thresholds:
        critical: "5"
@@ -27,6 +28,7 @@ for more examples, visit # https://github.com/DataDog/datadog-operator/tree/main
     message: "pod {{pod_name.name}} is complaining on {{kube_namespace.name}}"
     tags:
       - "team:observability"
+      - "project:observability"
       - "env:prod"
     priority:          # default 4
     thresholds:
