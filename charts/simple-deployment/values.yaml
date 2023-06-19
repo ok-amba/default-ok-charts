@@ -112,15 +112,21 @@ deployment:
   # - name: cache-volume
   #   emptyDir: {}
 
-  # Assign a Kubernetes service account.
-  # serviceAccountName: default
+  # Assign a service account for your application.
+  # This service account represents your application and is used for authentication
+  # with Workload Identity. The service account must be Workload Identity enabled.
+  serviceAccountName: default
 
   # Enable the Google Cloud SQL Proxy sidecar
-  # Find the latest version here, https://gcr.io/cloudsql-docker/gce-proxy
+  # Find the latest version here, https://gcr.io/cloud-sql-connectors/cloud-sql-proxy
   cloudSQLProxy:
     enable: false
     instanceName: sqlinstance-name
-    secretKeyName: google-service-account-key
+
+    # [Deprecated]
+    # If specified, Cloud SQL Proxy will use the provided credentials file for authn
+    # insted of application default login aka Workload Identity.
+    # secretKeyName: google-service-account-key
 
     # Immutable, if not specified, region will default to europe-west3
     # region: europe-west3

@@ -122,9 +122,9 @@ spec:
       {{- include "deployment.cloudSQLProxy" $ | nindent 6 }}
       {{- end }}
       {{- with .Values.deployment }}
-      {{- if or .cloudSQLProxy.enable .container.secrets .container.configMaps .additionalVolumes .dataDog.enableTracing }}
+      {{- if or (and .cloudSQLProxy.enable .cloudSQLProxy.secretKeyName) .container.secrets .container.configMaps .additionalVolumes .dataDog.enableTracing }}
       volumes:
-        {{- if .cloudSQLProxy.enable }}
+        {{- if and .cloudSQLProxy.enable .cloudSQLProxy.secretKeyName }}
         - name: {{ .cloudSQLProxy.secretKeyName }}
           secret:
             secretName: {{ .cloudSQLProxy.secretKeyName }}

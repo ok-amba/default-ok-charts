@@ -87,13 +87,17 @@ failureThreshold: {{ .readinessProbe.failureThreshold }}
   command:
     - "/cloud-sql-proxy"
     - "{{ $projectID }}:{{ .cloudSQLProxy.region | default "europe-west3" }}:{{ .cloudSQLProxy.instanceName }}"
-    - "--credentials-file=/secrets/{{ .cloudSQLProxy.secretKeyName }}/key.json"
     - "--auto-iam-authn"
+    {{- if .cloudSQLProxy.secretKeyName }}
+    - "--credentials-file=/secrets/{{ .cloudSQLProxy.secretKeyName }}/key.json"
+    {{- end }}
   securityContext:
     runAsNonRoot: true
+  {{- if .cloudSQLProxy.secretKeyName }}
   volumeMounts:
     - name: {{ .cloudSQLProxy.secretKeyName }}
       mountPath: "/secrets/{{ .cloudSQLProxy.secretKeyName }}"
       readOnly: true
+  {{- end -}}
 {{- end -}}
 {{- end -}}
