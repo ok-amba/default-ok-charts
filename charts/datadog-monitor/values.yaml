@@ -22,9 +22,8 @@ monitorLabels: {}
 # Here you will define each monitor. keep short and specific
 monitors:
     # Required
-    # This will be the name of the monitor as it appears in Datadog.
-    # needs to be unique, keep short and specific with a limit of  63 characters
-    # A lowercase RFC 1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character 
+    # This will be the name of the monitor as it appears in Datadog. 255 character limit.
+  - name: ""
 
   - name: ""
 
