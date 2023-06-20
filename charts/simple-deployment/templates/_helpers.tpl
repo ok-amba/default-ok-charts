@@ -49,22 +49,22 @@ tags.datadoghq.com/version: {{ .Values.deployment.container.tag | quote }}
 httpGet:
   path: {{ .livenessProbe.httpGet.path }}
   port: {{ .containerPort }}
-initialDelaySeconds: {{ .livenessProbe.initialDelaySeconds }}
-periodSeconds: {{ .livenessProbe.periodSeconds }}
-timeoutSeconds: {{ .livenessProbe.timeoutSeconds }}
-successThreshold: 1
-failureThreshold: {{ .livenessProbe.failureThreshold }}
+initialDelaySeconds: {{ .livenessProbe.initialDelaySeconds | default 5 }}
+periodSeconds: {{ .livenessProbe.periodSeconds | default 10}}
+timeoutSeconds: {{ .livenessProbe.timeoutSeconds | default 1 }}
+successThreshold: {{ .livenessProbe.failureThreshold | default 1 }}
+failureThreshold: {{ .livenessProbe.failureThreshold | default 3 }}
 {{- end -}}
 
 {{- define "deployment.readinessProbe" -}}
 httpGet:
   path: {{ .readinessProbe.httpGet.path }}
   port: {{ .containerPort }}
-initialDelaySeconds: {{ .readinessProbe.initialDelaySeconds }}
-periodSeconds: {{ .readinessProbe.periodSeconds }}
-timeoutSeconds: {{ .readinessProbe.timeoutSeconds }}
-successThreshold: {{ .readinessProbe.successThreshold }}
-failureThreshold: {{ .readinessProbe.failureThreshold }}
+initialDelaySeconds: {{ .readinessProbe.initialDelaySeconds | default 5 }}
+periodSeconds: {{ .readinessProbe.periodSeconds | default 10}}
+timeoutSeconds: {{ .readinessProbe.timeoutSeconds | default 1 }}
+successThreshold: {{ .readinessProbe.failureThreshold | default 1 }}
+failureThreshold: {{ .readinessProbe.failureThreshold | default 3 }}
 {{- end -}}
 
 {{- define "deployment.cloudSQLProxy" -}}
