@@ -2,6 +2,14 @@ apiVersion: v1
 entries:
   datadog-monitor:
   - apiVersion: v2
+    created: "2023-06-20T09:04:11.44981658Z"
+    description: A Helm chart for deploying datadog monitors.
+    digest: 5f1e7340ce84a2c778ad5569f33280c531d5bf66f932a012beede6f6172ad552
+    name: datadog-monitor
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/datadog-monitor-0.1.0-rc6/datadog-monitor-0.1.0-rc6.tgz
+    version: 0.1.0-rc6
+  - apiVersion: v2
     created: "2023-06-19T10:27:41.55042482Z"
     description: A Helm chart for deploying datadog monitors.
     digest: 5c13967c7fe5c31e797068fdc9ee594c76e698b57e8549e26025370685c23833
@@ -406,4 +414,4 @@ entries:
     urls:
     - https://ok-amba.github.io/default-ok-charts/.cr-release-packages/simple-deployment-0.1.0.tgz
     version: 0.1.0
-generated: "2023-06-19T10:27:41.55056062Z"
+generated: "2023-06-20T09:04:11.449943879Z"
