@@ -34,8 +34,6 @@ deployment:
   # Pod Replicas
   replicas: 1
 
-  # Replicaset revision history limit.
-  revisionHistoryLimit: 5
 
   # Pod Annotations
   podAnnotations: {}

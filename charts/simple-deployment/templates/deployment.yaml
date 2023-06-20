@@ -23,7 +23,7 @@ spec:
     matchLabels:
       app: {{ include "deployment.name" $ }}
   replicas: {{ .Values.deployment.replicas }}
-  revisionHistoryLimit: {{ .Values.deployment.revisionHistoryLimit }}
+  revisionHistoryLimit: {{ .Values.deployment.revisionHistoryLimit | default 5 }}
   template:
     metadata:
     {{- if or .Values.deployment.podAnnotations $logsEnabled }}
