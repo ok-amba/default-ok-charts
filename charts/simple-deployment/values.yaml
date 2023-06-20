@@ -34,14 +34,13 @@ deployment:
   # Pod Replicas
   replicas: 1
 
-
   # Pod Annotations
   podAnnotations: {}
 
   # Pod Labels
   podLabels: {}
 
-  # Array of imagePullSecret's
+  # Used for Image Registry credentials other than your default registry.
   imagePullSecrets: []
     #- secret-name-here
 
@@ -142,22 +141,22 @@ ingress:
   # Enable the ingress definition.
   enable: false
 
+  # Labels on the Ingress definition.
+  labels: {}
+
+  # Annotations on the Ingress definition.
+  annotations: {}
+
+  # URL of the application
+  host: example.org
+
   # Creating DNS records is only supported in our test environment.
   # If needed, only enable this setting on the specific enrionment value file.
   createDNSRecord: false
 
-  # Annotations on the Ingress definition.
-  annotations:
-    cert-manager.io/cluster-issuer: nginx-http01
-
-  # Labels on the Ingress definition.
-  labels: {}
-
-  # Ingress Class
-  ingressClassName: nginx
-
-  # URL of the application
-  host: example.org
+  # Redirect HTTP to HTTPS.
+  # SSL Redirect is disabled for security reasons. Enable only for frontend applications.
+  sslRedirect: false
 
   # Redirect www.example.org to example.org.
   # Use this for custmer facing sites to support old Boomer habits.
