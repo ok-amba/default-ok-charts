@@ -1,0 +1,110 @@
+global:
+  # Add labels from a parent chart to all manifests.
+  labels: {}
+  #
+  # The Google Project ID.
+  # [Required for Cloud SQL Proxy]
+  projectID: null
+
+##################################################
+#                   CronJob                      #
+##################################################
+
+name: cronjob-name
+
+# Labels on the CronJob definition.
+labels: {}
+
+# Annotations on the CronJob definition.
+annotations: {}
+
+# https://crontab.guru/ 
+schedule: "0 1 * * *"
+
+# Specify how many completed jobs should be kept. Kubernetes default value is 3.
+successfulJobsHistoryLimit: 3
+
+# Specify how many failed jobs should be kept. Kubernetes default value is 1.
+failedJobsHistoryLimit: 1
+
+# Optional, This field defines a deadline (in whole seconds) for starting the Job, if that Job misses its scheduled time for any reason.
+startingDeadlineSeconds: null
+
+# Possible values Allow, Forbid, and Replace. Kubernetes default value is Allow.
+# Specifies how to treat concurrent executions of a job that is created by this CronJob.
+# https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#concurrency-policy
+concurrencyPolicy: Allow
+
+# Main container configuration
+job:
+  dataDog:
+    # Enable DataDog logging. Please make sure that your logs comply with the okamba standard ruleset.
+    # If in doubt, ask a collauge or the infrastructure team.
+    enableLogs: false
+
+  # Specify the number of retries before considering a Job as failed. Kubernetes default value is 6.
+  # https://kubernetes.io/docs/concepts/workloads/controllers/job/#pod-backoff-failure-policy
+  backoffLimit: 6
+
+  # Possible values Always, OnFailure, and Never. Kubernetes default value is Always.
+  # https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy
+  restartPolicy: Always
+
+  # Optional, Clean up finished Jobs (either Complete or Failed) automatically is to use a TTL mechanism
+  # provided by a TTL controller for finished resources.
+  ttlSecondsAfterFinished: null
+  
+  # Assign a service account for your application.
+  # This service account represents your application and is used for authentication
+  # with Workload Identity. The service account must be Workload Identity enabled.
+  serviceAccountName: default
+
+  # Used for Image Registry credentials other than your default registry.
+  imagePullSecrets: []
+    # - secret-name-here
+
+  container:
+    image: example-image
+    tag: latest
+
+    # Enable custom command
+    #command: ["my-command"]
+    #args: ["with", "--params=yes"]
+
+    resources:
+      requests:
+        memory: 1000Mi
+        cpu: 400m
+      limits:
+        memory: 2000Mi
+        cpu: 1000m
+
+    environment: {}
+      # SOME_ENV: some-value
+
+    fieldRefEnvironment: {}
+      # SOME_ENV: some-field-reference
+
+    # Below list of kubernetes secret names will be mounted into the container
+    # under the path /secrets/<secret-name>/<secret-key>
+    secrets: []
+    # - very-secret
+
+    # Below list of configmaps will be mounted into he container.
+    configMaps: []
+    # - name: some-configmap
+    #   mountPath: /some/path
+
+  # Enable the Google Cloud SQL Proxy sidecar
+  # Find the latest version here, https://gcr.io/cloudsql-docker/gce-proxy
+  cloudSQLProxy:
+    enable: false
+    instanceName: sqlinstance-name
+
+    # [Deprecated]
+    # If specified, Cloud SQL Proxy will use the provided credentials file for authn
+    # insted of application default login aka Workload Identity.
+    # secretKeyName: google-service-account-key
+
+    # Immutable, if not specified, region will default to europe-west3
+    # region: europe-west3
