@@ -26,11 +26,6 @@ deployment:
     # If in doubt, ask a collauge or the infrastructure team.
     enableLogs: false
 
-    # Enable DataDog tracing with correlated logs. You will need this Nuget package for .NET Core, https://www.nuget.org/packages/Datadog.Monitoring.Distribution
-    # Enabling tracing will override and enable the above DataDog logs.
-    # Make sure your logs comply with the okamba standard ruleset.
-    enableTracing: false
-
   # Pod Replicas
   replicas: 1
 

@@ -1,9 +1,4 @@
-{{- $logsEnabled := false }}
-{{- if .Values.deployment.dataDog.enableTracing }}
-{{- $logsEnabled = true }}
-{{- else }}
-{{- $logsEnabled = .Values.deployment.dataDog.enableLogs }}
-{{- end }}
+{{- $logsEnabled := .Values.deployment.dataDog.enableLogs }}
 
 apiVersion: apps/v1
 kind: Deployment
@@ -26,22 +21,18 @@ spec:
   revisionHistoryLimit: {{ .Values.deployment.revisionHistoryLimit | default 5 }}
   template:
     metadata:
-    {{- if or .Values.deployment.podAnnotations $logsEnabled }}
+      {{- if or .Values.deployment.podAnnotations .Values.deployment.dataDog.enableLogs }}
       annotations:
+        {{- include "deployment.dataDogAnnotations" $ | nindent 8 }}
         {{- with .Values.deployment.podAnnotations }}
         {{- toYaml . | nindent 8 }}
-        {{- end }}
-        {{- if $logsEnabled }}
-        {{- include "deployment.dataDogAnnotations" $ | nindent 8 }}
         {{- end }}
       {{- end }}
       labels:
         {{- include "deployment.labels" . | nindent 8 }}
+        {{- include "deployment.dataDogLabels" $ | nindent 8 }}
         {{- range $k, $v := .Values.deployment.podLabels }}
         {{- printf "%s: %s" $k ($v | quote) | nindent 8 }}
-        {{- end }}
-        {{- if $logsEnabled }}
-        {{- include "deployment.dataDogLabels" $ | nindent 8 }}
         {{- end }}
     spec:
       {{- if .Values.deployment.serviceAccountName }}
@@ -93,11 +84,8 @@ spec:
               fieldRef:
                 fieldPath: {{ $value }}
           {{- end }}
-          {{- if $.Values.deployment.dataDog.enableTracing }}
-          {{- include "deployment.dataDogEnvs" $ | nindent 10 }}
-          {{- end }}
         {{- end }}
-        {{- if or .secrets .configMaps .additionalVolumeMounts $.Values.deployment.dataDog.enableTracing }}
+        {{- if or .secrets .configMaps .additionalVolumeMounts }}
         volumeMounts:
           {{- range $secret := .secrets }}
           - name: {{ $secret }}
@@ -112,17 +100,13 @@ spec:
           - name: {{ $volumeMount.name }}
             mountPath: {{ $volumeMount.mountPath }}
           {{- end }}
-          {{- if $.Values.deployment.dataDog.enableTracing }}
-          - name: apmsocketpath
-            mountPath: /var/run/datadog
-          {{- end }}
         {{- end }}
       {{- end }}
       {{- if .Values.deployment.cloudSQLProxy.enable }}
       {{- include "deployment.cloudSQLProxy" $ | nindent 6 }}
       {{- end }}
       {{- with .Values.deployment }}
-      {{- if or (and .cloudSQLProxy.enable .cloudSQLProxy.secretKeyName) .container.secrets .container.configMaps .additionalVolumes .dataDog.enableTracing }}
+      {{- if or (and .cloudSQLProxy.enable .cloudSQLProxy.secretKeyName) .container.secrets .container.configMaps .additionalVolumes }}
       volumes:
         {{- if and .cloudSQLProxy.enable .cloudSQLProxy.secretKeyName }}
         - name: {{ .cloudSQLProxy.secretKeyName }}
@@ -146,11 +130,6 @@ spec:
         {{- end }}
         {{- with .additionalVolumes }}
         {{- toYaml . | nindent 8 }}
-        {{- end }}
-        {{- if .dataDog.enableTracing }}
-        - hostPath:
-            path: /var/run/datadog
-          name: apmsocketpath
         {{- end }}
       {{- end }}
       {{- end }}
