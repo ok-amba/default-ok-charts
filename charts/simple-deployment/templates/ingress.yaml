@@ -15,7 +15,7 @@ metadata:
     {{- if .wwwRedirect }}
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
     {{- end }}
-    nginx.ingress.kubernetes.io/ssl-redirect: {{ .sslRedirect | quote }}
+    nginx.ingress.kubernetes.io/ssl-redirect: {{ .sslRedirect | default "false" | quote }}
     cert-manager.io/cluster-issuer: nginx-http01
   labels:
     {{- include "deployment.labels" $ | nindent 4 }}

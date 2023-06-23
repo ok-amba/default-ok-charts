@@ -1,5 +1,3 @@
-{{- $logsEnabled := .Values.deployment.dataDog.enableLogs }}
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -35,9 +33,7 @@ spec:
         {{- printf "%s: %s" $k ($v | quote) | nindent 8 }}
         {{- end }}
     spec:
-      {{- if .Values.deployment.serviceAccountName }}
-      serviceAccountName: {{ .Values.deployment.serviceAccountName }}
-      {{- end }}
+      serviceAccountName: {{ .Values.deployment.serviceAccountName | default "default" }}
       {{- with .Values.deployment.imagePullSecrets }}
       imagePullSecrets:
       {{- range $secret := . }}
@@ -102,9 +98,7 @@ spec:
           {{- end }}
         {{- end }}
       {{- end }}
-      {{- if .Values.deployment.cloudSQLProxy.enable }}
       {{- include "deployment.cloudSQLProxy" $ | nindent 6 }}
-      {{- end }}
       {{- with .Values.deployment }}
       {{- if or (and .cloudSQLProxy.enable .cloudSQLProxy.secretKeyName) .container.secrets .container.configMaps .additionalVolumes }}
       volumes:

@@ -48,6 +48,7 @@ failureThreshold: {{ .readinessProbe.failureThreshold | default 3 }}
 
 {{- define "deployment.cloudSQLProxy" -}}
 {{- with .Values.deployment -}}
+{{- if .cloudSQLProxy.enable }}
 
 {{- /* Below if statments makes sure that you cannot specify to use version 1 of Cloud SQL Proxy */ -}}
 {{- if .cloudSQLProxy.imageTag -}}
@@ -78,5 +79,6 @@ failureThreshold: {{ .readinessProbe.failureThreshold | default 3 }}
       mountPath: "/secrets/{{ .cloudSQLProxy.secretKeyName }}"
       readOnly: true
   {{- end -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
