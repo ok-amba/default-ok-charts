@@ -51,7 +51,9 @@ spec:
         args: {{ .args | toJson }}
         {{- end }}
         {{- end }}
-
+        securityContext:
+          allowPrivilegeEscalation: {{ .allowPrivilegeEscalation | default "false" }}
+          privileged: {{ .privileged | default "false" }}
         {{- with .resources }}
         resources:
         {{- toYaml . | nindent 10 }}
