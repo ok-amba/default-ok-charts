@@ -8,15 +8,15 @@ kind: Ingress
 metadata:
   name: {{ include "deployment.name" $ }}
   {{- with .Values.ingress }}
-  {{- if or .annotations .wwwRedirect }}
   annotations:
-    {{- with.annotations }}
+    {{- with .annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-    {{- if and .wwwRedirect (eq .ingressClassName "nginx") }}
+    {{- if .wwwRedirect }}
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
     {{- end }}
-  {{- end }}
+    nginx.ingress.kubernetes.io/ssl-redirect: {{ .sslRedirect | default "false" | quote }}
+    cert-manager.io/cluster-issuer: nginx-http01
   labels:
     {{- include "deployment.labels" $ | nindent 4 }}
     {{- range $k, $v := .labels }}
@@ -27,7 +27,7 @@ metadata:
     {{- end }}
   {{- end }}
 spec:
-  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  ingressClassName: {{ .Values.ingress.ingressClassName | default "nginx" }}
   rules:
   - host: {{ .Values.ingress.host }}
     http:

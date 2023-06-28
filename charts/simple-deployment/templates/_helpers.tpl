@@ -11,74 +11,74 @@ chart-version: {{ .Chart.Version | quote }}
 {{- end -}}
 {{- end -}}
 
-{{- define "deployment.dataDogEnvs" -}}
-- name: CORECLR_ENABLE_PROFILING
-  value: "1"
-- name: CORECLR_PROFILER
-  value: "{846F5F1C-F9AE-4B07-969E-05C26BC060D8}"
-- name: CORECLR_PROFILER_PATH
-  value: /app/datadog/linux-x64/Datadog.Trace.ClrProfiler.Native.so
-- name: DD_PROFILING_ENABLED
-  value: "1"
-- name: DD_DOTNET_TRACER_HOME
-  value: /app/datadog
-- name: DD_TRACE_AGENT_URL
-  value: unix:///var/run/datadog/apm.socket
-- name: DD_LOGS_INJECTION
-  value: 'true'
-- name: DD_SERVICE
-  value: {{ include "deployment.name" $ }}
-- name: DD_VERSION
-  value: {{ .Values.deployment.container.tag }}
-- name: DD_AGENT_HOST
-  valueFrom:
-    fieldRef:
-      fieldPath: status.hostIP
-{{- end -}}
-
 {{- define "deployment.dataDogAnnotations" -}}
+{{- if .Values.deployment.dataDog.enableLogs }}
 ad.datadoghq.com/{{ include "deployment.name" $ }}.logs: '[{"source": "{{ include "deployment.name" $ }}", "service": "{{ include "deployment.name" $ }}"}]'
+{{- end -}}
 {{- end -}}
 
 {{- define "deployment.dataDogLabels" -}}
+{{- if .Values.deployment.dataDog.enableLogs }}
 tags.datadoghq.com/service: {{ include "deployment.name" $ | quote }}
 tags.datadoghq.com/version: {{ .Values.deployment.container.tag | quote }}
+{{- end -}}
 {{- end -}}
 
 {{- define "deployment.livenessProbe" -}}
 httpGet:
   path: {{ .livenessProbe.httpGet.path }}
   port: {{ .containerPort }}
-initialDelaySeconds: {{ .livenessProbe.initialDelaySeconds }}
-periodSeconds: {{ .livenessProbe.periodSeconds }}
-timeoutSeconds: {{ .livenessProbe.timeoutSeconds }}
-successThreshold: 1
-failureThreshold: {{ .livenessProbe.failureThreshold }}
+initialDelaySeconds: {{ .livenessProbe.initialDelaySeconds | default 5 }}
+periodSeconds: {{ .livenessProbe.periodSeconds | default 10}}
+timeoutSeconds: {{ .livenessProbe.timeoutSeconds | default 1 }}
+successThreshold: {{ .livenessProbe.failureThreshold | default 1 }}
+failureThreshold: {{ .livenessProbe.failureThreshold | default 3 }}
 {{- end -}}
 
 {{- define "deployment.readinessProbe" -}}
 httpGet:
   path: {{ .readinessProbe.httpGet.path }}
   port: {{ .containerPort }}
-initialDelaySeconds: {{ .readinessProbe.initialDelaySeconds }}
-periodSeconds: {{ .readinessProbe.periodSeconds }}
-timeoutSeconds: {{ .readinessProbe.timeoutSeconds }}
-successThreshold: {{ .readinessProbe.successThreshold }}
-failureThreshold: {{ .readinessProbe.failureThreshold }}
+initialDelaySeconds: {{ .readinessProbe.initialDelaySeconds | default 5 }}
+periodSeconds: {{ .readinessProbe.periodSeconds | default 10}}
+timeoutSeconds: {{ .readinessProbe.timeoutSeconds | default 1 }}
+successThreshold: {{ .readinessProbe.failureThreshold | default 1 }}
+failureThreshold: {{ .readinessProbe.failureThreshold | default 3 }}
 {{- end -}}
 
 {{- define "deployment.cloudSQLProxy" -}}
+{{- with .Values.deployment -}}
+{{- if .cloudSQLProxy.enable }}
+
+{{- /* Below if statments makes sure that you cannot specify to use version 1 of Cloud SQL Proxy */ -}}
+{{- if .cloudSQLProxy.imageTag -}}
+  {{- if lt ((semver .cloudSQLProxy.imageTag).Major) 2 -}}
+  {{- fail "The version of Cloud SQL Proxy is too low. Delete the cloudSQLProxy.imageTag field to use the default version." -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $projectID := (.cloudSQLProxy.projectId | default $.Values.global.projectID) -}}
+{{- if not $projectID }}
+{{- fail "The global.projectID is not set. It is required for Cloud SQL Proxy." -}}
+{{- end -}}
+
 - name: cloud-sql-proxy
-  image: "gcr.io/cloudsql-docker/gce-proxy:{{ .cloudSQLProxy.imageTag }}"
+  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:{{ .cloudSQLProxy.imageTag | default "2.3.0" }}"
   command:
-    - "/cloud_sql_proxy"
-    - "-instances={{ .cloudSQLProxy.projectId }}:{{ .cloudSQLProxy.region }}:{{ .cloudSQLProxy.instanceName }}=tcp:5432"
-    - "-credential_file=/secrets/{{ .cloudSQLProxy.secretKeyName }}/key.json"
-    - "-enable_iam_login"
+    - "/cloud-sql-proxy"
+    - "{{ $projectID }}:{{ .cloudSQLProxy.region | default "europe-west3" }}:{{ .cloudSQLProxy.instanceName }}"
+    - "--auto-iam-authn"
+    {{- if .cloudSQLProxy.secretKeyName }}
+    - "--credentials-file=/secrets/{{ .cloudSQLProxy.secretKeyName }}/key.json"
+    {{- end }}
   securityContext:
     runAsNonRoot: true
+  {{- if .cloudSQLProxy.secretKeyName }}
   volumeMounts:
     - name: {{ .cloudSQLProxy.secretKeyName }}
       mountPath: "/secrets/{{ .cloudSQLProxy.secretKeyName }}"
       readOnly: true
+  {{- end -}}
+{{- end -}}
+{{- end -}}
 {{- end -}}

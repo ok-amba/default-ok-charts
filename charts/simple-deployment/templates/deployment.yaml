@@ -1,10 +1,3 @@
-{{- $logsEnabled := false }}
-{{- if .Values.deployment.dataDog.enableTracing }}
-{{- $logsEnabled = true }}
-{{- else }}
-{{- $logsEnabled = .Values.deployment.dataDog.enableLogs }}
-{{- end }}
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -23,30 +16,24 @@ spec:
     matchLabels:
       app: {{ include "deployment.name" $ }}
   replicas: {{ .Values.deployment.replicas }}
-  revisionHistoryLimit: {{ .Values.deployment.revisionHistoryLimit }}
+  revisionHistoryLimit: {{ .Values.deployment.revisionHistoryLimit | default 5 }}
   template:
     metadata:
-    {{- if or .Values.deployment.podAnnotations $logsEnabled }}
+      {{- if or .Values.deployment.podAnnotations .Values.deployment.dataDog.enableLogs }}
       annotations:
+        {{- include "deployment.dataDogAnnotations" $ | nindent 8 }}
         {{- with .Values.deployment.podAnnotations }}
         {{- toYaml . | nindent 8 }}
-        {{- end }}
-        {{- if $logsEnabled }}
-        {{- include "deployment.dataDogAnnotations" $ | nindent 8 }}
         {{- end }}
       {{- end }}
       labels:
         {{- include "deployment.labels" . | nindent 8 }}
+        {{- include "deployment.dataDogLabels" $ | nindent 8 }}
         {{- range $k, $v := .Values.deployment.podLabels }}
         {{- printf "%s: %s" $k ($v | quote) | nindent 8 }}
         {{- end }}
-        {{- if $logsEnabled }}
-        {{- include "deployment.dataDogLabels" $ | nindent 8 }}
-        {{- end }}
     spec:
-      {{- if .Values.deployment.serviceAccountName }}
-      serviceAccountName: {{ .Values.deployment.serviceAccountName }}
-      {{- end }}
+      serviceAccountName: {{ .Values.deployment.serviceAccountName | default "default" }}
       {{- with .Values.deployment.imagePullSecrets }}
       imagePullSecrets:
       {{- range $secret := . }}
@@ -64,7 +51,9 @@ spec:
         args: {{ .args | toJson }}
         {{- end }}
         {{- end }}
-
+        securityContext:
+          allowPrivilegeEscalation: {{ .allowPrivilegeEscalation | default "false" }}
+          privileged: {{ .privileged | default "false" }}
         {{- with .resources }}
         resources:
         {{- toYaml . | nindent 10 }}
@@ -93,11 +82,8 @@ spec:
               fieldRef:
                 fieldPath: {{ $value }}
           {{- end }}
-          {{- if $.Values.deployment.dataDog.enableTracing }}
-          {{- include "deployment.dataDogEnvs" $ | nindent 10 }}
-          {{- end }}
         {{- end }}
-        {{- if or .secrets .configMaps .additionalVolumeMounts $.Values.deployment.dataDog.enableTracing }}
+        {{- if or .secrets .configMaps .additionalVolumeMounts }}
         volumeMounts:
           {{- range $secret := .secrets }}
           - name: {{ $secret }}
@@ -112,19 +98,13 @@ spec:
           - name: {{ $volumeMount.name }}
             mountPath: {{ $volumeMount.mountPath }}
           {{- end }}
-          {{- if $.Values.deployment.dataDog.enableTracing }}
-          - name: apmsocketpath
-            mountPath: /var/run/datadog
-          {{- end }}
         {{- end }}
       {{- end }}
-      {{- if .Values.deployment.cloudSQLProxy.enable }}
-      {{- include "deployment.cloudSQLProxy" .Values.deployment | nindent 6 }}
-      {{- end }}
+      {{- include "deployment.cloudSQLProxy" $ | nindent 6 }}
       {{- with .Values.deployment }}
-      {{- if or .cloudSQLProxy.enable .container.secrets .container.configMaps .additionalVolumes .dataDog.enableTracing }}
+      {{- if or (and .cloudSQLProxy.enable .cloudSQLProxy.secretKeyName) .container.secrets .container.configMaps .additionalVolumes }}
       volumes:
-        {{- if .cloudSQLProxy.enable }}
+        {{- if and .cloudSQLProxy.enable .cloudSQLProxy.secretKeyName }}
         - name: {{ .cloudSQLProxy.secretKeyName }}
           secret:
             secretName: {{ .cloudSQLProxy.secretKeyName }}
@@ -146,11 +126,6 @@ spec:
         {{- end }}
         {{- with .additionalVolumes }}
         {{- toYaml . | nindent 8 }}
-        {{- end }}
-        {{- if .dataDog.enableTracing }}
-        - hostPath:
-            path: /var/run/datadog
-          name: apmsocketpath
         {{- end }}
       {{- end }}
       {{- end }}

@@ -2,6 +2,10 @@ global:
   # Add labels from a parent chart to all manifests.
   labels: {}
 
+  # The Google Project ID.
+  # [Required for Cloud SQL Proxy]
+  projectID: null
+
 # Will rename all resources.
 fullnameOverride: ""
 
@@ -22,16 +26,8 @@ deployment:
     # If in doubt, ask a collauge or the infrastructure team.
     enableLogs: false
 
-    # Enable DataDog tracing with correlated logs. You will need this Nuget package for .NET Core, https://www.nuget.org/packages/Datadog.Monitoring.Distribution
-    # Enabling tracing will override and enable the above DataDog logs.
-    # Make sure your logs comply with the okamba standard ruleset.
-    enableTracing: false
-
   # Pod Replicas
   replicas: 1
-
-  # Replicaset revision history limit.
-  revisionHistoryLimit: 5
 
   # Pod Annotations
   podAnnotations: {}
@@ -39,7 +35,7 @@ deployment:
   # Pod Labels
   podLabels: {}
 
-  # Array of imagePullSecret's
+  # Used for Image Registry credentials other than your default registry.
   imagePullSecrets: []
     #- secret-name-here
 
@@ -67,20 +63,11 @@ deployment:
       enable: true
       httpGet:
         path: /healthz
-      initialDelaySeconds: 5
-      periodSeconds: 10
-      timeoutSeconds: 1
-      failureThreshold: 3
 
     readinessProbe:
       enable: true
       httpGet:
         path: /readyz
-      initialDelaySeconds: 5
-      periodSeconds: 10
-      timeoutSeconds: 1
-      successThreshold: 1
-      failureThreshold: 3
 
     environment: {}
       # SOME_ENV: some-value
@@ -108,18 +95,24 @@ deployment:
   # - name: cache-volume
   #   emptyDir: {}
 
-  # Assign a Kubernetes service account.
-  # serviceAccountName: default
+  # Assign a service account for your application.
+  # This service account represents your application and is used for authentication
+  # with Workload Identity. The service account must be Workload Identity enabled.
+  serviceAccountName: default
 
   # Enable the Google Cloud SQL Proxy sidecar
-  # Find the latest version here, https://gcr.io/cloudsql-docker/gce-proxy
+  # Find the latest version here, https://gcr.io/cloud-sql-connectors/cloud-sql-proxy
   cloudSQLProxy:
     enable: false
-    imageTag: 1.31.0
-    projectId: google-project-id
-    region: europe-west3
     instanceName: sqlinstance-name
-    secretKeyName: google-service-account-key
+
+    # [Deprecated]
+    # If specified, Cloud SQL Proxy will use the provided credentials file for authn
+    # insted of application default login aka Workload Identity.
+    # secretKeyName: google-service-account-key
+
+    # Immutable, if not specified, region will default to europe-west3
+    # region: europe-west3
 
 ##################################################
 #                    Service                     #
@@ -143,22 +136,22 @@ ingress:
   # Enable the ingress definition.
   enable: false
 
+  # Labels on the Ingress definition.
+  labels: {}
+
+  # Annotations on the Ingress definition.
+  annotations: {}
+
+  # URL of the application
+  host: example.org
+
   # Creating DNS records is only supported in our test environment.
   # If needed, only enable this setting on the specific enrionment value file.
   createDNSRecord: false
 
-  # Annotations on the Ingress definition.
-  annotations:
-    cert-manager.io/cluster-issuer: nginx-http01
-
-  # Labels on the Ingress definition.
-  labels: {}
-
-  # Ingress Class
-  ingressClassName: nginx
-
-  # URL of the application
-  host: example.org
+  # Redirect HTTP to HTTPS.
+  # SSL Redirect is disabled for security reasons. Enable only for frontend applications.
+  sslRedirect: false
 
   # Redirect www.example.org to example.org.
   # Use this for custmer facing sites to support old Boomer habits.
