@@ -22,7 +22,7 @@ metadata:
     {{- printf "%s: %s" $k ($v | quote) | nindent 4 }}
     {{- end }}
 spec:
-  schedule: {{ .Values.schedule }}
+  schedule: {{ .Values.schedule | quote }}
   successfulJobsHistoryLimit: {{ .Values.successfulJobsHistoryLimit }}
   failedJobsHistoryLimit: {{ .Values.failedJobsHistoryLimit }}
   concurrencyPolicy: {{ .Values.concurrencyPolicy }}
