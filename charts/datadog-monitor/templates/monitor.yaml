@@ -43,10 +43,12 @@ spec:
     notifyAudit: {{ $monitor.notifyAudit | default "false" }}
     requireFullWindow: {{ $monitor.requireFullWindow | default "false" }}
     notifyNoData: {{ $monitor.notifyNoData | default "false" }}
-    noDataTimeframe:
     renotifyInterval: {{ $monitor.renotifyInterval | default "0" }}
     includeTags: {{ $monitor.includeTags | default "false" }}
     evaluationDelay: {{ $monitor.evaluationDelay | default "0" }}
+    {{- if $monitor.noDataTimeframe }}
+    noDataTimeframe: {{ $monitor.noDataTimeframe }}
+    {{- end }}
     {{/* Below setting is not supported yet, will be available in a future release. */}}
     {{/* enableLogsSample: {{ $monitor.enableLogsSample | default "false"}} */}}
 {{- end }}
