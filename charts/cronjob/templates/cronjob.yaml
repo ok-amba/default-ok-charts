@@ -72,6 +72,7 @@ spec:
             resources:
             {{- toYaml . | nindent 14 }}
             {{- end }}
+
             {{- if or .environment .fieldRefEnvironment }}
             env:
               {{- range $name, $value := .environment }}
@@ -85,6 +86,7 @@ spec:
                     fieldPath: {{ $value }}
               {{- end }}
             {{- end }}
+
             {{- if or .secrets .configMaps }}
             volumeMounts:
               {{- range $secret := .secrets }}
@@ -97,32 +99,32 @@ spec:
                 mountPath: {{ $configMap.mountPath }}
               {{- end }}
             {{- end }}
-        {{- end }}
-
-        {{- if .cloudSQLProxy.enable }}
-        {{- include "cronjob.cloudSQLProxy" $ | nindent 10 }}
-        {{- end }}
-        {{- if or (and .cloudSQLProxy.enable .cloudSQLProxy.secretKeyName) .container.secrets .container.configMaps }}
-        volumes:
-          {{- if and .cloudSQLProxy.enable .cloudSQLProxy.secretKeyName }}
-          - name: {{ .cloudSQLProxy.secretKeyName }}
-            secret:
-              secretName: {{ .cloudSQLProxy.secretKeyName }}
           {{- end }}
 
-          {{- with .container }}
-          {{- range $secret := .secrets }}
-          {{- if not (and $.Values.job.cloudSQLProxy.enable (eq $.Values.job.cloudSQLProxy.secretKeyName $secret))}}
-          - name: {{ $secret }}
-            secret:
-              secretName: {{ $secret }}
+          {{- if .cloudSQLProxy.enable }}
+          {{- include "cronjob.cloudSQLProxy" $ | nindent 10 }}
           {{- end }}
+          {{- if or (and .cloudSQLProxy.enable .cloudSQLProxy.secretKeyName) .container.secrets .container.configMaps }}
+          volumes:
+            {{- if and .cloudSQLProxy.enable .cloudSQLProxy.secretKeyName }}
+            - name: {{ .cloudSQLProxy.secretKeyName }}
+              secret:
+                secretName: {{ .cloudSQLProxy.secretKeyName }}
+            {{- end }}
+
+            {{- with .container }}
+            {{- range $secret := .secrets }}
+            {{- if not (and $.Values.job.cloudSQLProxy.enable (eq $.Values.job.cloudSQLProxy.secretKeyName $secret))}}
+            - name: {{ $secret }}
+              secret:
+                secretName: {{ $secret }}
+            {{- end }}
+            {{- end }}
+            {{- range $configMap := .configMaps }}
+            - name: {{ $configMap.name }}
+              configMap:
+                name: {{ $configMap.name }}
+            {{- end }}
+            {{- end }}
           {{- end }}
-          {{- range $configMap := .configMaps }}
-          - name: {{ $configMap.name }}
-            configMap:
-              name: {{ $configMap.name }}
-          {{- end }}
-          {{- end }}
-        {{- end }}
     {{- end }}
