@@ -7,7 +7,7 @@ chart-version: {{ .Chart.Version | quote }}
 {{- end -}}
 {{- end -}}
 
-{{- define "deployment.dataDogAnnotations" -}}
+{{- define "cronjob.dataDogAnnotations" -}}
 ad.datadoghq.com/{{ .Values.name }}.logs: '[{"source": "{{ .Values.name }}", "service": "{{ .Values.name }}"}]'
 {{- end -}}
 
