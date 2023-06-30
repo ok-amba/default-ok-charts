@@ -63,9 +63,10 @@ spec:
 
             {{- if .command }}
             command: {{ .command | toJson }}
+            {{- end }}
+
             {{- if .args }}
             args: {{ .args | toJson }}
-            {{- end }}
             {{- end }}
 
             {{- with .resources }}
