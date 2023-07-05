@@ -2,6 +2,14 @@ apiVersion: v1
 entries:
   cronjob:
   - apiVersion: v2
+    created: "2023-07-05T09:49:43.555931474Z"
+    description: Kubernetes CronJob Resource
+    digest: 5267a0a71ec47bb342a68abf6c49198443b38293f01c32b5cef8868b0b2e4646
+    name: cronjob
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/cronjob-0.1.0/cronjob-0.1.0.tgz
+    version: 0.1.0
+  - apiVersion: v2
     created: "2023-06-30T10:42:41.430422856Z"
     description: Kubernetes CronJob Resource
     digest: 36ae7f97af3676504bebd4e8c068e77ad1ffe0fa2e4b63a8b963c9f5f8220d7f
@@ -503,4 +511,4 @@ entries:
     urls:
     - https://ok-amba.github.io/default-ok-charts/.cr-release-packages/simple-deployment-0.1.0.tgz
     version: 0.1.0
-generated: "2023-06-30T10:42:41.430886658Z"
+generated: "2023-07-05T09:49:43.556119488Z"
