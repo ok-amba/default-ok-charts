@@ -18,11 +18,13 @@ ad.datadoghq.com/{{ .Values.name }}.logs: '[{"source": "{{ .Values.name }}", "se
 
 {{- with .Values.job -}}
 - name: cloud-sql-proxy
-  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:{{ .cloudSQLProxy.imageTag | default "2.3.0" }}"
+  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:{{ .cloudSQLProxy.imageTag | default "2.4.0" }}"
   command:
     - "/cloud-sql-proxy"
     - "{{ $.Values.global.projectID }}:{{ .cloudSQLProxy.region | default "europe-west3" }}:{{ .cloudSQLProxy.instanceName }}"
     - "--auto-iam-authn"
+    - "--structured-logs"
+    - "--quitquitquit"
     {{- if .cloudSQLProxy.secretKeyName }}
     - "--credentials-file=/secrets/{{ .cloudSQLProxy.secretKeyName }}/key.json"
     {{- end }}
