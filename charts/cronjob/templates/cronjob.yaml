@@ -1,0 +1,131 @@
+{{ $types := list "Allow" "Forbid" "Replace" }}
+{{- if not (has .Values.concurrencyPolicy $types) }}
+{{- fail (printf "concurrencyPolicy [%s] does not have a valid type. Valid type: %s" .Values.concurrencyPolicy (join ", " $types)) }}
+{{- end }}
+
+{{ $types := list "Always" "OnFailure" "Never" }}
+{{- if not (has .Values.job.restartPolicy $types) }}
+{{- fail (printf "job.restartPolicy [%s] does not have a valid type. Valid type: %s" .Values.job.restartPolicy (join ", " $types)) }}
+{{- end }}
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Values.name }}
+  {{- with .Values.annotations }}
+  annotations:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "cronjob.labels" . | nindent 4 }}
+    {{- range $k, $v := .Values.labels }}
+    {{- printf "%s: %s" $k ($v | quote) | nindent 4 }}
+    {{- end }}
+spec:
+  schedule: {{ .Values.schedule | quote }}
+  successfulJobsHistoryLimit: {{ .Values.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.failedJobsHistoryLimit }}
+  concurrencyPolicy: {{ .Values.concurrencyPolicy }}
+  {{- if .Values.startingDeadlineSeconds }}
+  startingDeadlineSeconds: {{ .Values.startingDeadlineSeconds }}
+  {{- end }}
+  jobTemplate:
+    {{- with .Values.job }}
+    spec:
+      backoffLimit: {{ .backoffLimit | default 6 }}
+      {{- if .ttlSecondsAfterFinished }}
+      ttlSecondsAfterFinished: {{ .ttlSecondsAfterFinished }}
+      {{- end }}
+      template:
+        metadata:
+          {{- if .dataDog.enableLogs }}
+          annotations:
+            ad.datadoghq.com/{{ $.Values.name }}.logs: '[{"source": "{{ $.Values.name }}", "service": "{{ $.Values.name }}"}]'
+          labels:
+            tags.datadoghq.com/service: {{ $.Values.name | quote }}
+            tags.datadoghq.com/version: {{ .container.tag | quote }}
+          {{- end }}
+        spec:
+          {{- if .serviceAccountName }}
+          serviceAccountName: {{ .serviceAccountName }}
+          {{- end }}
+          {{- with .imagePullSecrets }}
+          imagePullSecrets:
+            {{- range $secret := . }}
+            - name: {{ $secret }}
+            {{- end }}
+          {{- end }}
+          restartPolicy: {{ .restartPolicy }}
+          containers:
+          {{- with .container }}
+          - name: {{ $.Values.name }}
+            image: "{{ .image }}:{{ .tag }}"
+
+            {{- if .command }}
+            command: {{ .command | toJson }}
+            {{- end }}
+
+            {{- if .args }}
+            args: {{ .args | toJson }}
+            {{- end }}
+
+            {{- with .resources }}
+            resources:
+            {{- toYaml . | nindent 14 }}
+            {{- end }}
+
+            {{- if or .environment .fieldRefEnvironment }}
+            env:
+              {{- range $name, $value := .environment }}
+              - name: {{ $name }}
+                value: {{ $value | quote }}
+              {{- end }}
+              {{- range $name, $value := .fieldRefEnvironment }}
+              - name: {{ $name }}
+                valueFrom:
+                  fieldRef:
+                    fieldPath: {{ $value }}
+              {{- end }}
+            {{- end }}
+
+            {{- if or .secrets .configMaps }}
+            volumeMounts:
+              {{- range $secret := .secrets }}
+              - name: {{ $secret }}
+                mountPath: /secrets/{{ $secret }}
+                readOnly: true
+              {{- end }}
+              {{- range $configMap := .configMaps }}
+              - name: {{ $configMap.name }}
+                mountPath: {{ $configMap.mountPath }}
+              {{- end }}
+            {{- end }}
+          {{- end }}
+
+          {{- if .cloudSQLProxy.enable }}
+          {{- include "cronjob.cloudSQLProxy" $ | nindent 10 }}
+          {{- end }}
+          {{- if or (and .cloudSQLProxy.enable .cloudSQLProxy.secretKeyName) .container.secrets .container.configMaps }}
+          volumes:
+            {{- if and .cloudSQLProxy.enable .cloudSQLProxy.secretKeyName }}
+            - name: {{ .cloudSQLProxy.secretKeyName }}
+              secret:
+                secretName: {{ .cloudSQLProxy.secretKeyName }}
+            {{- end }}
+
+            {{- with .container }}
+            {{- range $secret := .secrets }}
+            {{- if not (and $.Values.job.cloudSQLProxy.enable (eq $.Values.job.cloudSQLProxy.secretKeyName $secret))}}
+            - name: {{ $secret }}
+              secret:
+                secretName: {{ $secret }}
+            {{- end }}
+            {{- end }}
+            {{- range $configMap := .configMaps }}
+            - name: {{ $configMap.name }}
+              configMap:
+                name: {{ $configMap.name }}
+            {{- end }}
+            {{- end }}
+          {{- end }}
+    {{- end }}
