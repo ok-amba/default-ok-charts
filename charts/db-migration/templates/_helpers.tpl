@@ -5,7 +5,7 @@
 
 {{- define "db-migration.labels" -}}
 app: {{ include "db-migration.name" $ | quote }}
-chart-name: {{ .Chart.Name | quote }}
+chart-name: "db-migration"
 chart-version: {{ .Chart.Version | quote }}
 {{- range $k, $v := .Values.global.labels }}
 {{ printf "%s: %s" $k ($v | quote) }}
