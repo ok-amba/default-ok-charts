@@ -1,6 +1,6 @@
 {{- define "cronjob.labels" -}}
 app: {{ .Release.Name | quote }}
-chart-name: {{ .Chart.Name | quote }}
+chart-name: cronjob
 chart-version: {{ .Chart.Version | quote }}
 {{- range $k, $v := .Values.global.labels }}
 {{ printf "%s: %s" $k ($v | quote) }}
