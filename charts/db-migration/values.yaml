@@ -22,8 +22,8 @@ job:
   dataDogLogs:
     enable: false
 
-  # Possible values Always, OnFailure, and Never. Kubernetes default value is Always.
-  # https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy
+  # Possible values are OnFailure or Never.
+  # https://kubernetes.io/docs/concepts/workloads/controllers/job/#pod-template
   restartPolicy: Never
 
   # Clean up finished Jobs (either Complete or Failed) automatically is to use a TTL mechanism
