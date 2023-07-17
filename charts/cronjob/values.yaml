@@ -46,9 +46,9 @@ job:
   # https://kubernetes.io/docs/concepts/workloads/controllers/job/#pod-backoff-failure-policy
   backoffLimit: 6
 
-  # Possible values Always, OnFailure, and Never. Kubernetes default value is Always.
-  # https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy
-  restartPolicy: Always
+  # Possible values are OnFailure or Never.
+  # https://kubernetes.io/docs/concepts/workloads/controllers/job/#pod-template
+  restartPolicy: Never
 
   # Optional, Clean up finished Jobs (either Complete or Failed) automatically is to use a TTL mechanism
   # provided by a TTL controller for finished resources.
