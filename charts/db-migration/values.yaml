@@ -4,7 +4,7 @@ global:
 
   # The Google Project ID.
   # [Required for Cloud SQL Proxy]
-  projectID: some-id
+  projectID: null
 
 # Override name of the Job definition.
 fullnameOverride: ""

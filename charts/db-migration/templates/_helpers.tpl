@@ -21,6 +21,13 @@ chart-version: {{ .Chart.Version | quote }}
 {{- end -}}
 
 {{- with .Values.job -}}
+{{- /* Below if statments makes sure that you cannot specify to use version 1 of Cloud SQL Proxy */ -}}
+{{- if .cloudSQLProxy.imageTag -}}
+  {{- if lt ((semver .cloudSQLProxy.imageTag).Major) 2 -}}
+  {{- fail "The version of Cloud SQL Proxy is too low. Delete the cloudSQLProxy.imageTag field to use the default version." -}}
+  {{- end -}}
+{{- end -}}
+
 - name: cloud-sql-proxy
   image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:{{ .cloudSQLProxy.imageTag | default "2.4.0" }}"
   command:
