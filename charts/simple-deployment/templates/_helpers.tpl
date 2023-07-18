@@ -4,7 +4,7 @@
 
 {{- define "deployment.labels" -}}
 app: {{ include "deployment.name" $ | quote }}
-chart-name: {{ .Chart.Name | quote }}
+chart-name: simple-deployment
 chart-version: {{ .Chart.Version | quote }}
 {{- range $k, $v := .Values.global.labels }}
 {{ printf "%s: %s" $k ($v | quote) }}
