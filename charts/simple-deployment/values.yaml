@@ -52,8 +52,8 @@ deployment:
     containerPort: null
     resources:
       requests:
-        memory: 1000Mi
-        cpu: 400m
+        memory: 500Mi
+        cpu: 100m
       limits:
         memory: 2000Mi
         cpu: 1000m
