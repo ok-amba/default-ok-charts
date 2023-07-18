@@ -70,7 +70,7 @@ spec:
         readinessProbe:
         {{- include "deployment.readinessProbe" . | nindent 10 }}
         {{- end }}
-        {{- if or .environment .fieldRefEnvironment $.Values.deployment.dataDog.enableTracing }}
+        {{- if or .environment .fieldRefEnvironment }}
         env:
           {{- range $name, $value := .environment }}
           - name: {{ $name }}
@@ -83,6 +83,15 @@ spec:
                 fieldPath: {{ $value }}
           {{- end }}
         {{- end }}
+
+        {{- if .envFromConfigmap }}
+        envFrom:
+          {{- range $cmName := .envFromConfigmap }}
+          - configMapRef:
+            name: {{ $cmName }}
+          {{- end }}
+        {{- end }}
+
         {{- if or .secrets .configMaps .additionalVolumeMounts }}
         volumeMounts:
           {{- range $secret := .secrets }}

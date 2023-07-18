@@ -72,6 +72,9 @@ deployment:
     environment: {}
       # SOME_ENV: some-value
 
+    envFromConfigmap: []
+      # - configmap-name
+
     fieldRefEnvironment: {}
       # SOME_ENV: some-field-reference
 
