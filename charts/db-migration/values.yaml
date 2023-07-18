@@ -2,64 +2,79 @@ global:
   # Add labels from a parent chart to all manifests.
   labels: {}
 
-# Override name of job/pod. If not set 'generate-name: db-migrate-' will be used.
+  # The Google Project ID.
+  # [Required for Cloud SQL Proxy]
+  projectID: some-id
+
+# Override name of the Job definition.
 fullnameOverride: ""
 
 ##################################################
 #                      Job                       #
 ##################################################
 
-# Below properties sets a ArgoCD Sync/Hook annotation.
-# https://argo-cd.readthedocs.io/en/stable/user-guide/sync-waves/
-argoAnnotations:
-  enable: true
-  syncPhase: Sync
-  syncWave: -2
-  hookDeletePolicy: HookSucceeded
-
-# Enable DataDog logging.
-dataDogLogs:
-  enable: true
-
 job:
   # Labels and Annotations on the Job definition.
   labels: {}
   annotations: {}
 
-  # Labels and Annotations on the Pod template.
-  podLabels: {}
-  podAnnotations: {}
+  # Enable DataDog logging.
+  dataDogLogs:
+    enable: false
+
+  # Possible values are OnFailure or Never.
+  # https://kubernetes.io/docs/concepts/workloads/controllers/job/#pod-template
+  restartPolicy: Never
+
+  # Clean up finished Jobs (either Complete or Failed) automatically is to use a TTL mechanism
+  # provided by a TTL controller for finished resources.
+  ttlSecondsAfterFinished: 120
+  
+  # Assign a service account for your application.
+  # This service account represents your application and is used for authentication
+  # with Workload Identity. The service account must be Workload Identity enabled.
+  serviceAccountName: default
 
   imagePullSecrets: []
-    #- secret-name-here
+    # - secret-name-here
 
   container:
     image: example-image
     tag: latest
 
-  environment: {}
-    # SOME_ENV: some-value
+    # Enable custom command
+    # command: ["my-command"]
+    # args: ["with", "--params=yes"]
 
-  secrets: []
-  # - very-secret
+    environment: {}
+      # SOME_ENV: some-value
 
-  # Time to live in seconds after the job has finished.
-  ttlSecondsAfterFinished: 120
+    envFromConfigmap: []
+      # - configmap-name
 
-  # backoffLimit specifies the number of re-tries before job controller gives up.
-  backoffLimit: 2
+    fieldRefEnvironment: {}
+      # SOME_ENV: some-field-reference
 
-  # Restart policy of pod fails.
-  restartPolicy: Never
+    # Below list of kubernetes secret names will be mounted into the container
+    # under the path /secrets/<secret-name>/<secret-key>
+    secrets: []
+    # - very-secret
 
-  # Share the same process namespace for all containers in the pod.
-  shareProcessNamespace: true
+    # Below list of configmaps will be mounted into he container.
+    configMaps: []
+    # - name: some-configmap
+    #   mountPath: /some/path
 
-  # Enable the Google Cloud SQL Proxy container.
+  # Enable the Google Cloud SQL Proxy sidecar
+  # Find the latest version here, https://gcr.io/cloudsql-docker/gce-proxy
   cloudSQLProxy:
-    enable: true
-    imageTag: 1.31.0
-    projectId: google-project-id
-    region: europe-west3
+    enable: false
     instanceName: sqlinstance-name
-    secretKeyName: google-service-account-key
+
+    # [Deprecated]
+    # If specified, Cloud SQL Proxy will use the provided credentials file for authn
+    # insted of application default login aka Workload Identity.
+    # secretKeyName: google-service-account-key
+
+    # Immutable, if not specified, region will default to europe-west3
+    # region: europe-west3

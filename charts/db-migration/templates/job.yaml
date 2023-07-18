@@ -1,100 +1,121 @@
+{{ $types := list "OnFailure" "Never" }}
+{{- if not (has .Values.job.restartPolicy $types) }}
+{{- fail (printf "job.restartPolicy [%s] does not have a valid type. Valid type: %s" .Values.job.restartPolicy (join ", " $types)) }}
+{{- end }}
+
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ include "db-migration.name" $ }}
-  {{- if or (.Values.job.annotations) (.Values.argoAnnotations.enable) }}
   annotations:
     {{- with .Values.job.annotations }}
       {{- toYaml . | nindent 4 }}
     {{- end }}
-    {{- if .Values.argoAnnotations.enable }}
-    argocd.argoproj.io/sync-wave: {{ .Values.argoAnnotations.syncWave | quote }}
-    argocd.argoproj.io/hook: {{ .Values.argoAnnotations.syncPhase | quote }}
-    argocd.argoproj.io/hook-delete-policy: {{ .Values.argoAnnotations.hookDeletePolicy | quote }}
-    {{- end }}
-  {{- end }}
+    argocd.argoproj.io/sync-wave: {{ (.Values.argoAnnotations).syncWave | default "-2" | quote }}
+    argocd.argoproj.io/hook: {{ (.Values.argoAnnotations).syncPhase | default "Sync" }}
+    argocd.argoproj.io/hook-delete-policy: {{ (.Values.argoAnnotations).hookDeletePolicy | default "HookSucceeded" }}
   labels:
     {{- include "db-migration.labels" $ | nindent 4 }}
 spec:
-  ttlSecondsAfterFinished: {{ .Values.job.ttlSecondsAfterFinished }}
-  backoffLimit: {{ .Values.job.backoffLimit }}
+  {{- with .Values.job }}
+  ttlSecondsAfterFinished: {{ .ttlSecondsAfterFinished }}
+  backoffLimit: {{ .backoffLimit | default "2" }}
   template:
+    {{- if .dataDogLogs.enable }}
     metadata:
-      {{- if or .Values.job.podAnnotations .Values.dataDogLogs.enable }}
       annotations:
-        {{- if.Values.dataDogLogs.enable }}
+        {{- if.dataDogLogs.enable }}
         ad.datadoghq.com/{{ include "db-migration.name" $ }}.logs: '[{"source": "{{ include "db-migration.name" $ }}", "service": "{{ include "db-migration.name" $ }}"}]'
         {{- end }}
-        {{- with .Values.job.podAnnotations }}
+        {{- with .podAnnotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-      {{- end }}
-
-      {{- if or .Values.job.podLabels .Values.dataDogLogs.enable }}
       labels:
-        {{- if.Values.dataDogLogs.enable }}
         tags.datadoghq.com/service: "{{ include "db-migration.name" $ }}"
-        tags.datadoghq.com/version: "{{ .Values.job.container.tag }}"
-        {{- end }}
-        {{- range $k, $v := .Values.job.podLabels }}
-        {{ printf "%s: %s" $k ($v | quote) }}
-        {{- end -}}
-      {{- end }}
+        tags.datadoghq.com/version: "{{ .container.tag }}"
+    {{- end }}
     spec:
-      {{- if .Values.job.imagePullSecrets }}
+      {{- if .imagePullSecrets }}
       imagePullSecrets:
-        {{- .Values.job.imagePullSecrets | toYaml | nindent 8 }}
+        {{- .imagePullSecrets | toYaml | nindent 8 }}
       {{- end }}
-      restartPolicy: {{ .Values.job.restartPolicy }}
-      shareProcessNamespace: {{ .Values.job.shareProcessNamespace }}
+      restartPolicy: {{ .restartPolicy }}
+      shareProcessNamespace: {{ .shareProcessNamespace | default "false" }}
+      serviceAccountName: {{ .serviceAccountName }}
       containers:
+        {{- with .container }}
         - name: dbup
-          image: "{{ .Values.job.container.image }}:{{ .Values.job.container.tag }}"
-          {{- with .Values.job.environment }}
+          image: "{{ .image }}:{{ .tag }}"
+
+          {{- if .command }}
+          command: {{ .command | toJson }}
+          {{- end }}
+
+          {{- if .args }}
+          args: {{ .args | toJson }}
+          {{- end }}
+
+          {{- if or .environment .fieldRefEnvironment }}
           env:
-          {{- range $name, $value := . }}
-          - name: {{ $name }}
-            value: {{ $value | quote }}
+            {{- range $name, $value := .environment }}
+            - name: {{ $name }}
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- range $name, $value := .fieldRefEnvironment }}
+            - name: {{ $name }}
+              valueFrom:
+                fieldRef:
+                  fieldPath: {{ $value }}
+            {{- end }}
           {{- end }}
-          {{- end }}
-          {{- with .Values.job.secrets }}
-          volumeMounts:
-          {{- range $secret := . }}
-          - name: {{ $secret }}
-            mountPath: /secrets/{{ $secret }}
-            readOnly: true
-          {{- end }}
+          
+          {{- if .envFromConfigmap }}
+          envFrom:
+            {{- range $cmName := .envFromConfigmap }}            
+            - configMapRef:
+              name: {{ $cmName }}
+            {{- end }}
           {{- end }}
 
-        {{- if .Values.job.cloudSQLProxy.enable }}
-        - name: cloud-sql-proxy
-          image: gcr.io/cloudsql-docker/gce-proxy:{{ .Values.job.cloudSQLProxy.imageTag }}
-          command:
-            - "/cloud_sql_proxy"
-            - "-instances={{ .Values.job.cloudSQLProxy.projectId }}:{{ .Values.job.cloudSQLProxy.region }}:{{ .Values.job.cloudSQLProxy.instanceName }}=tcp:5432"
-            - "-credential_file=/secrets/{{ .Values.job.cloudSQLProxy.secretKeyName }}/key.json"
-            - "-enable_iam_login"
-          securityContext:
-            runAsNonRoot: true
+          {{- if or .secrets .configMaps }}
           volumeMounts:
-            - name: {{ .Values.job.cloudSQLProxy.secretKeyName }}
-              mountPath: /secrets/{{ .Values.job.cloudSQLProxy.secretKeyName }}
+            {{- range $secret := .secrets }}
+            - name: {{ $secret }}
+              mountPath: /secrets/{{ $secret }}
               readOnly: true
-        {{ end }}
-
-      {{- if or (.Values.job.cloudSQLProxy.enable) (.Values.job.secrets) }}
-      volumes:
-        {{- if .Values.job.cloudSQLProxy.enable }}
-        - name: {{ .Values.job.cloudSQLProxy.secretKeyName }}
-          secret:
-            secretName: {{ .Values.job.cloudSQLProxy.secretKeyName }}
+            {{- end }}
+            {{- range $configMap := .configMaps }}
+            - name: {{ $configMap.name }}
+              mountPath: {{ $configMap.mountPath }}
+            {{- end }}
+          {{- end }}
         {{- end }}
 
-        {{- range $secret := .Values.job.secrets }}
+        {{- if .cloudSQLProxy.enable }}
+        {{- include "db-migration.cloudSQLProxy" $ | nindent 8 }}
+        {{- end }}
+
+      {{- if or (and .cloudSQLProxy.enable .cloudSQLProxy.secretKeyName) .container.secrets .container.configMaps }}
+      volumes:
+        {{- if and .cloudSQLProxy.enable .cloudSQLProxy.secretKeyName }}
+        - name: {{ .cloudSQLProxy.secretKeyName }}
+          secret:
+            secretName: {{ .cloudSQLProxy.secretKeyName }}
+        {{- end }}
+
+        {{- with .container }}
+        {{- range $secret := .secrets }}
         {{- if not (and $.Values.job.cloudSQLProxy.enable (eq $.Values.job.cloudSQLProxy.secretKeyName $secret))}}
         - name: {{ $secret }}
           secret:
             secretName: {{ $secret }}
         {{- end }}
         {{- end }}
+        {{- range $configMap := .configMaps }}
+        - name: {{ $configMap.name }}
+          configMap:
+            name: {{ $configMap.name }}
+        {{- end }}
+        {{- end }}
       {{- end }}
+  {{- end }}
