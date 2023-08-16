@@ -25,7 +25,7 @@ spec:
     metadata:
       annotations:
         {{- if.dataDogLogs.enable }}
-        ad.datadoghq.com/{{ include "db-migration.name" $ }}.logs: '[{"source": "{{ include "db-migration.name" $ }}", "service": "{{ include "db-migration.name" $ }}"}]'
+        ad.datadoghq.com/dbup.logs: '[{"source": "{{ include "db-migration.name" $ }}", "service": "{{ include "db-migration.name" $ }}"}]'
         {{- end }}
         {{- with .podAnnotations }}
         {{- toYaml . | nindent 8 }}
