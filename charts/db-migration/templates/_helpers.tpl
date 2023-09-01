@@ -36,6 +36,7 @@ chart-version: {{ .Chart.Version | quote }}
     - "--auto-iam-authn"
     - "--structured-logs"
     - "--quitquitquit"
+    - "--health-check"
     {{- if .cloudSQLProxy.secretKeyName }}
     - "--credentials-file=/secrets/{{ .cloudSQLProxy.secretKeyName }}/key.json"
     {{- end }}
