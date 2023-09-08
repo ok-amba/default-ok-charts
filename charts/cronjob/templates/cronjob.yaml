@@ -88,6 +88,14 @@ spec:
               {{- end }}
             {{- end }}
 
+            {{- if .envFromConfigmap }}
+            envFrom:
+              {{- range $cmName := .envFromConfigmap }}
+              - configMapRef:
+                name: {{ $cmName }}
+              {{- end }}
+            {{- end }}
+
             {{- if or .secrets .configMaps }}
             volumeMounts:
               {{- range $secret := .secrets }}
