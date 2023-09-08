@@ -106,6 +106,9 @@ spec:
               {{- range $configMap := .configMaps }}
               - name: {{ $configMap.name }}
                 mountPath: {{ $configMap.mountPath }}
+                {{- if $configMap.subPath }}
+                subPath: {{ $configMap.subPath }}
+                {{- end }}
               {{- end }}
             {{- end }}
           {{- end }}
