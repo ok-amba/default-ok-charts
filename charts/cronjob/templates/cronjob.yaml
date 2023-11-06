@@ -36,6 +36,9 @@ spec:
       {{- if .ttlSecondsAfterFinished }}
       ttlSecondsAfterFinished: {{ .ttlSecondsAfterFinished }}
       {{- end }}
+      {{- if .activeDeadlineSeconds }}
+      activeDeadlineSeconds: {{ .activeDeadlineSeconds }}
+      {{- end }}
       template:
         metadata:
           {{- if .dataDog.enableLogs }}
