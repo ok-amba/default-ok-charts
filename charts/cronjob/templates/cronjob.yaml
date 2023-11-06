@@ -32,7 +32,7 @@ spec:
   jobTemplate:
     {{- with .Values.job }}
     spec:
-      backoffLimit: {{ .backoffLimit | default 6 }}
+      backoffLimit: {{ .backoffLimit }}
       {{- if .ttlSecondsAfterFinished }}
       ttlSecondsAfterFinished: {{ .ttlSecondsAfterFinished }}
       {{- end }}
