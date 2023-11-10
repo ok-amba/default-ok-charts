@@ -158,7 +158,6 @@ ingress:
 
   # Redirect www.example.org to example.org.
   # Use this for custmer facing sites to support old Boomer habits.
-  # Only supported if using NGINX and ingressClassName is "nginx".
   wwwRedirect: false
 
   # By default, this chart will create a pathType: Prefix on "/" for the service above.

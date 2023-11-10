@@ -45,7 +45,7 @@ spec:
   tls:
   - hosts:
     - {{ .Values.ingress.host }}
-    {{- if and .Values.ingress.wwwRedirect (eq .Values.ingress.ingressClassName "nginx") }}
+    {{- if .Values.ingress.wwwRedirect }}
     - "www.{{ .Values.ingress.host }}"
     {{- end }}
     secretName: "le-cert-{{ .Values.ingress.host | replace "." "-" | trunc 54 | trimSuffix "-" }}"
