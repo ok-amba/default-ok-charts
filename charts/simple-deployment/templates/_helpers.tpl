@@ -63,11 +63,13 @@ failureThreshold: {{ .readinessProbe.failureThreshold | default 3 }}
 {{- end -}}
 
 - name: cloud-sql-proxy
-  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:{{ .cloudSQLProxy.imageTag | default "2.5.0" }}"
+  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:{{ .cloudSQLProxy.imageTag | default "2.7" }}"
   command:
     - "/cloud-sql-proxy"
     - "{{ $projectID }}:{{ .cloudSQLProxy.region | default "europe-west3" }}:{{ .cloudSQLProxy.instanceName }}"
     - "--auto-iam-authn"
+    - "--structured-logs"
+    - "--health-check"
     {{- if .cloudSQLProxy.secretKeyName }}
     - "--credentials-file=/secrets/{{ .cloudSQLProxy.secretKeyName }}/key.json"
     {{- end }}
