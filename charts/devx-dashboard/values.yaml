@@ -179,13 +179,13 @@ iamServiceAccount:
 
 # Configuration of sqlinstance - Not required if dead letter is disabled
 sqlinstance:
-  name: <example-service-devx>
+  name: devx-dashboard
   spec:
-    databaseVersion: POSTGRES_14
+    databaseVersion: POSTGRES_15
     settings:
       tier: db-f1-micro
   serviceAccounts:
-    - name: <example-service-devx>
+    - name: devx-dashboard
       projectId: <project-id>
 
 # Configuration of migration - Not required if dead letter is disabled
