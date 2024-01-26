@@ -155,6 +155,7 @@ deadLetter:
     labels: {}
     annotations: {}
 
+  # TODO: Refactor below appsettings config to user Workload Identity and .global.ProjcetID
   deadLetterSubscriptions: []
     # - PubSubSubscriptionName: deadletter-subscription-name
     #   CredentialsPath: /secret/another-secret
@@ -190,7 +191,6 @@ sqlinstance:
     - name: devx-dashboard
       projectId: <project-id>
 
-# Configuration of migration - Not required if dead letter is disabled
 dbMigration:
   image: europe-west3-docker.pkg.dev/tinkerbell-329710/ok-shared-registry/devx/ok.devx.dashboard.dbup
   # Uncomment tag if you want to set a specific version

@@ -38,11 +38,11 @@ data:
       {{- end }}
       {{- if .Values.deadLetter.enabled }}
       "Database": {
-        "ConnectionString": "Host=localhost;Port=5432;Database={{ .Values.sqlinstance.name }};Username={{ .Values.iamServiceAccount.name }}@{{ .Values.googleProject.projectId }}.iam;Max Auto Prepare=100;"
+        "ConnectionString": "Host=localhost;Port=5432;Database={{ .Values.sqlinstance.name }};Username={{ .Values.iamServiceAccount.name }}@{{ .Values.global.projectID }}.iam;Max Auto Prepare=100;"
       },
       "PubSubDeadLetter": {
         "Emulator": false,
-        "DefaultProjectId": "{{ .Values.googleProject.projectId }}",
+        "DefaultProjectId": "{{ .Values.global.projectID }}",
         "DefaultCredentialsPath": "/secrets/{{ .Values.iamServiceAccount.name }}-key/key.json",
         "Subscriptions": {{ .Values.deadLetter.deadLetterSubscriptions | toPrettyJson | nindent 10 }}
       }
