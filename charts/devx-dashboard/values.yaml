@@ -3,8 +3,9 @@
 ############################################################
 
 global:
-  # Add labels from a parent chart to all manifests.
-  labels: {}
+  # The Google Project ID.
+  # [Required for Workload Identity]
+  projectID: null
 
 # Override release name.
 fullnameOverride: ""
@@ -160,12 +161,21 @@ deadLetter:
 
 # Configuration of service account - Not required if dead letter is disabled
 iamServiceAccount:
-  name: <example-service-devx>
+  name: devx-dashboard
   spec:
-    description: "Service account for DevX Dashboard"
-    displayName: DevX Service Account
-  keyFile:
-    create: true
+    description: "Dev-X Dashboard"
+
+  # Workload Identity allows workloads in your GKE clusters to impersonate Identity and
+  # Access Management (IAM) service accounts to access Google Cloud services.
+  workloadIdentity:
+    enabled: true
+
+    # The Kubernetes Namespace your service account is in.
+    kubernetesNamespace: default
+
+    # The ID of the Google Cloud Project that contains the Kubernetes cluster.
+    gkeProjectID: some-project-id
+
 
 # Configuration of sqlinstance - Not required if dead letter is disabled
 sqlinstance:
