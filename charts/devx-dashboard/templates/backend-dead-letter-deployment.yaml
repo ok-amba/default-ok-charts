@@ -46,15 +46,15 @@ spec:
             cpu: 200m
             memory: 256Mi
         ports:
-          - containerPort: 80
+          - containerPort: 8080
         livenessProbe:
           httpGet:
             path: /healthz
-            port: 80
+            port: 8080
         readinessProbe:
           httpGet:
             path: /readyz
-            port: 80
+            port: 8080
         env:
           {{- range $name, $value := .container.environment }}
           - name: {{ $name }}
