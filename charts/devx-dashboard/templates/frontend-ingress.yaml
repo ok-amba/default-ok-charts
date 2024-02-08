@@ -4,7 +4,7 @@ metadata:
   {{- with .Values.frontend.ingress }}
   name: {{ include "devx.name" $ }}-portal
   annotations:
-    cert-manager.io/cluster-issuer: {{ .certManagerClusterIssuer | required "cluster issuer is required" }}
+    cert-manager.io/cluster-issuer: nginx-http01
   {{- with .annotations }}
   {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -13,10 +13,11 @@ metadata:
     {{- with .labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
+  {{- end }}
 spec:
-  ingressClassName: {{ .ingressClassName }}
+  ingressClassName: nginx
   rules:
-  - host: {{ .hostname }}
+  - host: {{ .Values.portalUrl }}
     http:
       paths:
       - path: /
@@ -26,7 +27,7 @@ spec:
             name: {{ include "devx.name" $ }}-portal
             port:
               number: 80
-      {{- if $.Values.deadLetter.enabled }} 
+      {{- if $.Values.deadLetter.enabled }}
       - backend:
           service:
             name: {{ include "devx.name" $ }}-dead-letter-backend
@@ -35,7 +36,7 @@ spec:
         path: /api/v1/dead-letters/
         pathType: Prefix
       {{- end }}
-      {{- if $.Values.releaseBoard.enabled }} 
+      {{- if $.Values.releaseBoard.enabled }}
       - backend:
           service:
             name: {{ include "devx.name" $ }}-release-board-backend
@@ -46,6 +47,5 @@ spec:
       {{- end }}
   tls:
   - hosts:
-    - {{ .hostname }}
-    secretName: "le-cert-{{ .hostname | replace "." "-" | trunc 54 | trimSuffix "-" }}"
-  {{- end }}
+    - {{ .Values.portalUrl }}
+    secretName: "le-cert-{{ .Values.portalUrl | replace "." "-" | trunc 54 | trimSuffix "-" }}"
