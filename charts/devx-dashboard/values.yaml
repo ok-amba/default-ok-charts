@@ -10,18 +10,17 @@ global:
 # Override release name.
 fullnameOverride: ""
 
+# The url used for the frontend portal.
+portalUrl: https://some-url
+#
 # Enable DataDog logs
 dataDog:
   enableLogs: true
 
-# Below is the Google project where resources should be deployed
-googleProject:
-  projectId: <project-id>
-
 # Azure configuration
 azure:
-  tenantId: <tenant-id-uuid>
-  domain: <org-name.onmicrosoft.com>
+  tenantId: <tenant-id>
+  domain: <org-name>.onmicrosoft.com
 
 # Below groups gives viewer access to the portal
 viewerGroups:
@@ -65,34 +64,23 @@ frontend:
       environment: {}
 
   service:
-    # Labels and annotations on the deployment.
     labels: {}
     annotations: {}
 
   ingress:
-    # Labels and annotations on the deployment.
     labels: {}
-    annotations: {}
-
-    # The URL of the portal
-    hostname: <url>
-
-    certManagerClusterIssuer: nginx-http01
-    ingressClassName: nginx
+    annotations:
 
 ############################################################
 #                   Release board module                   #
 ############################################################
 
-# Configuration for release board module
 releaseBoard:
   enabled: true
   deployment:
-    # Labels and annotations on the deployment
     labels: {}
     annotations: {}
 
-    # Labels and annotations on the pod.
     podLabels: {}
     podAnnotations: {}
 
@@ -106,15 +94,16 @@ releaseBoard:
       environment: {}
 
   service:
-    # Labels and annotations on the service
     labels: {}
     annotations: {}
 
   azureDevOps:
     # Azure DevOps base url, eg. https://dev.azure.com/org-name/
-    baseUrl: <url>
+    baseUrl: https://dev.azure.com/<org-name>
+
     # The name of the Azure DevOps group
     project: <project-name>
+
     # The UUID of the Azure Boards Query to get data from.
     boardsQueryId: <uuid>
 
@@ -182,14 +171,10 @@ iamServiceAccount:
 # Configuration of sqlinstance - Not required if dead letter is disabled
 sqlinstance:
   name: devx-dashboard
-  spec:
-    databaseVersion: POSTGRES_15
-    settings:
-      tier: db-f1-micro
+  databaseVersion: POSTGRES_15
+  tier: db-f1-micro
   serviceAccounts:
-      # Must match the iamServiceAccount.
     - name: devx-dashboard
-      projectId: <project-id>
 
 dbMigration:
   image: europe-west3-docker.pkg.dev/tinkerbell-329710/ok-shared-registry/devx/ok.devx.dashboard.dbup
