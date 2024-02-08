@@ -11,6 +11,6 @@ dependencies:
   alias: iamServiceAccount
   condition: deadLetter.enabled
 - name: sqlinstance
-  version: 2.1.5
+  version: 3.0
   repository: https://ok-amba.github.io/config-connector-helm
   condition: deadLetter.enabled
