@@ -29,6 +29,14 @@ spec:
               value: "5000"
             - name: DbUp_NumberOfMigrationTries
               value: "3"
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
         - name: cloud-sql-proxy
           image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8"
           command:
@@ -40,4 +48,15 @@ spec:
             - "--health-check"
           securityContext:
             runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+      automountServiceAccountToken: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+
 {{- end }}

@@ -60,6 +60,16 @@ spec:
           - name: {{ $name }}
             value: {{ $value | quote }}
           {{- end }}
+
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+
         volumeMounts:
           - name: app-reg-client-secret
             mountPath: "/secrets/{{ $.Values.backend.auth.k8sSecretName }}"
@@ -80,6 +90,16 @@ spec:
           - "--health-check"
         securityContext:
           runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+      automountServiceAccountToken: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       volumes:
         - name: app-reg-client-secret
           secret:

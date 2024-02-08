@@ -60,11 +60,23 @@ spec:
             value: {{ $value | quote }}
           {{- end }}
         volumeMounts:
-          - name: app-reg-client-secret 
+          - name: app-reg-client-secret
             mountPath: "/secrets/{{ $.Values.backend.auth.k8sSecretName }}"
             readOnly: true
           - name: {{ include "devx.name" $ }}-appsettings
             mountPath: "/app/Config/"
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+      automountServiceAccountToken: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       volumes:
         - name: app-reg-client-secret
           secret:
