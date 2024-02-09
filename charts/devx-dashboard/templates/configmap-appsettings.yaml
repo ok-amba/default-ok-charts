@@ -32,7 +32,7 @@ data:
         "QueryId": "{{ .Values.releaseBoard.azureDevOps.boardsQueryId }}",
         "Project": "{{ .Values.releaseBoard.azureDevOps.project }}",
         "BaseUrl": "{{ .Values.releaseBoard.azureDevOps.baseUrl }}",
-        "Scopes": "499b84ac-1321-427f-aa17-267ca6975798/.default",
+        "Scopes": ["499b84ac-1321-427f-aa17-267ca6975798/.default"],
         "ProdTestPipelines": {{ .Values.releaseBoard.pipelines.prodTest | toPrettyJson | nindent 10 }}
       },
       {{- end }}
