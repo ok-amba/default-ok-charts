@@ -12,7 +12,7 @@ fullnameOverride: ""
 
 # The url used for the frontend portal.
 portalUrl: https://some-url
-#
+
 # Enable DataDog logs
 dataDog:
   enableLogs: true
@@ -170,10 +170,9 @@ iamServiceAccount:
 # Configuration of sqlinstance - Not required if dead letter is disabled
 sqlinstance:
   name: devx-dashboard
+  serviceAccountName: devx-dashboard
   databaseVersion: POSTGRES_15
   tier: db-f1-micro
-  serviceAccounts:
-    - name: devx-dashboard
 
 dbMigration:
   image: europe-west3-docker.pkg.dev/tinkerbell-329710/ok-shared-registry/devx/ok.devx.dashboard.dbup
