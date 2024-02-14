@@ -42,8 +42,9 @@ data:
       },
       "PubSubDeadLetter": {
         "Emulator": false,
+        "UseWorkLoadIdentity": true,
         "DefaultProjectId": "{{ .Values.global.projectID }}",
-        "DefaultCredentialsPath": "/secrets/{{ .Values.iamServiceAccount.name }}-key/key.json",
+        "DefaultCredentialsPath": "",
         "Subscriptions": {{ .Values.deadLetter.deadLetterSubscriptions | toPrettyJson | nindent 10 }}
       }
       {{- end }}

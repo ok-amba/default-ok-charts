@@ -144,11 +144,10 @@ deadLetter:
     labels: {}
     annotations: {}
 
-  # TODO: Refactor below appsettings config to user Workload Identity and .global.ProjcetID
   deadLetterSubscriptions: []
     # - PubSubSubscriptionName: deadletter-subscription-name
-    #   CredentialsPath: /secret/another-secret
-    #   ProjectId: another-gcp
+    #   # Below field is optional and only used if the deadLetter subscription is in another project.
+    #   # ProjectId: another-gcp
 
 # Configuration of service account - Not required if dead letter is disabled
 iamServiceAccount:
