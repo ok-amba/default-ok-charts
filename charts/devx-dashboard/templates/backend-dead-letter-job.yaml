@@ -1,0 +1,62 @@
+{{- if .Values.deadLetter.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "devx.name" $ }}-db-migration
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+  labels:
+    {{- include "devx.labels" $ | nindent 4 }}
+    {{- with .labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  ttlSecondsAfterFinished: 120
+  backoffLimit: 2
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccountName: {{ .Values.iamServiceAccount.name }}
+      containers:
+        - name: dbup
+          image: "{{ .Values.dbMigration.image }}:{{ .Values.dbMigration.tag | default $.Chart.AppVersion }}"
+          env:
+            - name: DbUp_ConnectionString
+              value: "Host=localhost;Port=5432;Database={{ .Values.sqlinstance.name }};Username={{ .Values.iamServiceAccount.name }}@{{ .Values.global.projectID }}.iam;Max Auto Prepare=100;"
+            - name: DbUp_MillisecondsBetweenRetrying
+              value: "5000"
+            - name: DbUp_NumberOfMigrationTries
+              value: "3"
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+        - name: cloud-sql-proxy
+          image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8"
+          command:
+            - "/cloud-sql-proxy"
+            - "{{ .Values.global.projectID }}:europe-west3:{{ .Values.sqlinstance.name }}"
+            - "--auto-iam-authn"
+            - "--structured-logs"
+            - "--quitquitquit"
+            - "--health-check"
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+      automountServiceAccountToken: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+
+{{- end }}

@@ -3,24 +3,24 @@
 ############################################################
 
 global:
-  # Add labels from a parent chart to all manifests.
-  labels: {}
+  # The Google Project ID.
+  # [Required for Workload Identity]
+  projectID: null
 
 # Override release name.
 fullnameOverride: ""
 
+# The url used for the frontend portal.
+portalUrl: https://some-url
+#
 # Enable DataDog logs
 dataDog:
   enableLogs: true
 
-# Below is the Google project where resources should be deployed
-googleProject:
-  projectId: <project-id>
-
 # Azure configuration
 azure:
-  tenantId: <tenant-id-uuid>
-  domain: <org-name.onmicrosoft.com>
+  tenantId: <tenant-id>
+  domain: <org-name>.onmicrosoft.com
 
 # Below groups gives viewer access to the portal
 viewerGroups:
@@ -64,34 +64,23 @@ frontend:
       environment: {}
 
   service:
-    # Labels and annotations on the deployment.
     labels: {}
     annotations: {}
 
   ingress:
-    # Labels and annotations on the deployment.
     labels: {}
-    annotations: {}
-
-    # The URL of the portal
-    hostname: <url>
-
-    certManagerClusterIssuer: nginx-http01
-    ingressClassName: nginx
+    annotations:
 
 ############################################################
 #                   Release board module                   #
 ############################################################
 
-# Configuration for release board module
 releaseBoard:
   enabled: true
   deployment:
-    # Labels and annotations on the deployment
     labels: {}
     annotations: {}
 
-    # Labels and annotations on the pod.
     podLabels: {}
     podAnnotations: {}
 
@@ -105,15 +94,16 @@ releaseBoard:
       environment: {}
 
   service:
-    # Labels and annotations on the service
     labels: {}
     annotations: {}
 
   azureDevOps:
     # Azure DevOps base url, eg. https://dev.azure.com/org-name/
-    baseUrl: <url>
+    baseUrl: https://dev.azure.com/<org-name>
+
     # The name of the Azure DevOps group
     project: <project-name>
+
     # The UUID of the Azure Boards Query to get data from.
     boardsQueryId: <uuid>
 
@@ -127,8 +117,9 @@ releaseBoard:
 ############################################################
 #                    Dead letter module                    #
 ############################################################
+# If deadLetter is not enabled you do not need to configure
+# anything is this section.
 
-# Configuration for dead letter module
 deadLetter:
   enabled: false
   deployment:
@@ -155,46 +146,37 @@ deadLetter:
 
   deadLetterSubscriptions: []
     # - PubSubSubscriptionName: deadletter-subscription-name
-    #   CredentialsPath: /secret/another-secret
-    #   ProjectId: another-gcp
+    #   # Below field is optional and only used if the deadLetter subscription is in another project.
+    #   # ProjectId: another-gcp
 
 # Configuration of service account - Not required if dead letter is disabled
 iamServiceAccount:
-  name: <example-service-devx>
+  name: devx-dashboard
   spec:
-    description: "Service account for DevX Dashboard"
-    displayName: DevX Service Account
-  keyFile:
-    create: true
+    description: "DevX Dashboard"
+
+  # Workload Identity allows workloads in your GKE clusters to impersonate Identity and
+  # Access Management (IAM) service accounts to access Google Cloud services.
+  workloadIdentity:
+    enabled: true
+
+    # The Kubernetes Namespace your service account is in.
+    kubernetesNamespace: default
+
+    # The ID of the Google Cloud Project that contains the Kubernetes cluster.
+    gkeProjectID: some-project-id
+
 
 # Configuration of sqlinstance - Not required if dead letter is disabled
 sqlinstance:
-  name: <example-service-devx>
-  spec:
-    databaseVersion: POSTGRES_14
-    settings:
-      tier: db-f1-micro
+  name: devx-dashboard
+  databaseVersion: POSTGRES_15
+  tier: db-f1-micro
   serviceAccounts:
-    - name: <example-service-devx>
-      projectId: <project-id>
+    - name: devx-dashboard
 
-# Configuration of migration - Not required if dead letter is disabled
 dbMigration:
-  job:
-    container:
-      image: <devx-dbup-image>
-      tag: <devx-version>
-    environment:
-      DbUp_MillisecondsBetweenRetrying: 5000
-      DbUp_NumberOfMigrationTries: 3
-      DbUp_ConnectionString: Host=localhost;Port=5432;Database=<example-service-devx>;Username=<example-service-devx>@<project-id>.iam;Max Auto Prepare=100;
-
-    secrets:
-      - <example-service-devx>-key
-
-    cloudSQLProxy:
-      projectId: <project-id>
-      instanceName: <example-service-devx>
-      secretKeyName: <example-service-devx>-key
-
+  image: europe-west3-docker.pkg.dev/tinkerbell-329710/ok-shared-registry/devx/ok.devx.dashboard.dbup
+  # Uncomment tag if you want to set a specific version
+  # tag: 1.0.4
 

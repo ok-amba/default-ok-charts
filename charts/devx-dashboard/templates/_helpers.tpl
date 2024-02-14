@@ -1,5 +1,5 @@
 {{- define "devx.name" -}}
-{{ $.Values.fullnameOverride | default .Release.Name | trunc 63 | trimSuffix "-"}}
+{{ $.Values.fullnameOverride | default .Release.Name }}
 {{- end -}}
 
 {{- define "devx.labels" -}}

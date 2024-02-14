@@ -32,18 +32,19 @@ data:
         "QueryId": "{{ .Values.releaseBoard.azureDevOps.boardsQueryId }}",
         "Project": "{{ .Values.releaseBoard.azureDevOps.project }}",
         "BaseUrl": "{{ .Values.releaseBoard.azureDevOps.baseUrl }}",
-        "Scopes": "499b84ac-1321-427f-aa17-267ca6975798/.default",
+        "Scopes": ["499b84ac-1321-427f-aa17-267ca6975798/.default"],
         "ProdTestPipelines": {{ .Values.releaseBoard.pipelines.prodTest | toPrettyJson | nindent 10 }}
       },
       {{- end }}
       {{- if .Values.deadLetter.enabled }}
       "Database": {
-        "ConnectionString": "Host=localhost;Port=5432;Database={{ .Values.sqlinstance.name }};Username={{ .Values.iamServiceAccount.name }}@{{ .Values.googleProject.projectId }}.iam;Max Auto Prepare=100;"
+        "ConnectionString": "Host=localhost;Port=5432;Database={{ .Values.sqlinstance.name }};Username={{ .Values.iamServiceAccount.name }}@{{ .Values.global.projectID }}.iam;Max Auto Prepare=100;"
       },
       "PubSubDeadLetter": {
         "Emulator": false,
-        "DefaultProjectId": "{{ .Values.googleProject.projectId }}",
-        "DefaultCredentialsPath": "/secrets/{{ .Values.iamServiceAccount.name }}-key/key.json",
+        "UseWorkLoadIdentity": true,
+        "DefaultProjectId": "{{ .Values.global.projectID }}",
+        "DefaultCredentialsPath": "",
         "Subscriptions": {{ .Values.deadLetter.deadLetterSubscriptions | toPrettyJson | nindent 10 }}
       }
       {{- end }}
