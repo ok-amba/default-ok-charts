@@ -222,6 +222,25 @@ entries:
   devx-dashboard:
   - apiVersion: v2
     appVersion: 2.0.8
+    created: "2024-02-16T09:54:37.632520454Z"
+    dependencies:
+    - alias: iamServiceAccount
+      condition: deadLetter.enabled
+      name: iam-service-account
+      repository: https://ok-amba.github.io/config-connector-helm
+      version: 2.0.0
+    - condition: deadLetter.enabled
+      name: sqlinstance
+      repository: https://ok-amba.github.io/config-connector-helm
+      version: "3"
+    description: A developer dashboard for releasing software
+    digest: afa6bc8f35da409ff591ced6e07424d22b1720d6bad0304cdd4a1dc8a8a73a94
+    name: devx-dashboard
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/devx-dashboard-2.0.0-rc3/devx-dashboard-2.0.0-rc3.tgz
+    version: 2.0.0-rc3
+  - apiVersion: v2
+    appVersion: 2.0.8
     created: "2024-02-14T12:06:53.555483491Z"
     dependencies:
     - alias: iamServiceAccount
@@ -661,4 +680,4 @@ entries:
     urls:
     - https://ok-amba.github.io/default-ok-charts/.cr-release-packages/simple-deployment-0.1.0.tgz
     version: 0.1.0
-generated: "2024-02-14T12:06:53.555793331Z"
+generated: "2024-02-16T09:54:37.63284001Z"
