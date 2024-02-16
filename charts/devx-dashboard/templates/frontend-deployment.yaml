@@ -56,6 +56,8 @@ spec:
         env:
         - name: AZURE_CLIENTID
           value: {{ $.Values.frontend.auth.clientId }}
+        - name: AZURE_AUTH_ENDPOINT
+          value: "https://login.microsoftonline.com/{{ $.Values.azure.tenantId }}"
         - name: AZURE_SCOPE
           value: {{ $.Values.frontend.auth.oauthScope }}
         - name: VIEWER_GROUPS
