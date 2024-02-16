@@ -10,8 +10,8 @@ global:
 # Override release name.
 fullnameOverride: ""
 
-# The url used for the frontend portal.
-portalUrl: https://some-url
+# The url used for the frontend portal, without "https://"
+portalUrl: devx-board.example.com
 
 # Enable DataDog logs
 dataDog:
