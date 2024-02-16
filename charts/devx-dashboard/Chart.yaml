@@ -2,7 +2,7 @@ apiVersion: v2
 name: devx-dashboard
 
 description: A developer dashboard for releasing software
-version: 2.0.0-rc4
+version: 2.0.0
 appVersion: 2.0.10
 dependencies:
 - name: iam-service-account
