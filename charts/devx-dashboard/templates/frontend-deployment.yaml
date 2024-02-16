@@ -72,11 +72,7 @@ spec:
         {{- end }}
         securityContext:
           allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-              - ALL
           privileged: false
-          readOnlyRootFilesystem: true
       automountServiceAccountToken: false
       securityContext:
         seccompProfile:
