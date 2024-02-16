@@ -74,9 +74,6 @@ spec:
           - name: app-reg-client-secret
             mountPath: "/secrets/{{ $.Values.backend.auth.k8sSecretName }}"
             readOnly: true
-          - name: {{ $.Values.iamServiceAccount.name }}-key
-            mountPath: "/secrets/{{ $.Values.iamServiceAccount.name }}-key"
-            readOnly: true
           - name: {{ include "devx.name" $ }}-appsettings
             mountPath: "/app/Config/"
       - name: cloud-sql-proxy
