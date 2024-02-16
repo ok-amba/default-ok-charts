@@ -56,6 +56,8 @@ spec:
         env:
         - name: AZURE_CLIENTID
           value: {{ $.Values.frontend.auth.clientId }}
+        - name: AZURE_AUTH_ENDPOINT
+          value: "https://login.microsoftonline.com/{{ $.Values.azure.tenantId }}"
         - name: AZURE_SCOPE
           value: {{ $.Values.frontend.auth.oauthScope }}
         - name: VIEWER_GROUPS
@@ -72,6 +74,14 @@ spec:
         {{- end }}
         securityContext:
           allowPrivilegeEscalation: false
+          capabilities:
+            add:
+              - CHOWN
+              - NET_BIND_SERVICE
+              - SETGID
+              - SETUID
+            drop:
+              - ALL
           privileged: false
       automountServiceAccountToken: false
       securityContext:
