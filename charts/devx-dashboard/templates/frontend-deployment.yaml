@@ -71,7 +71,6 @@ spec:
           value: {{ $value | quote }}
         {{- end }}
         securityContext:
-          runAsNonRoot: true
           allowPrivilegeEscalation: false
           capabilities:
             drop:
