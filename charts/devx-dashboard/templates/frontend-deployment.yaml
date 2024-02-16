@@ -72,6 +72,14 @@ spec:
         {{- end }}
         securityContext:
           allowPrivilegeEscalation: false
+          capabilities:
+            add:
+              - CHOWN
+              - NET_BIND_SERVICE
+              - SETGID
+              - SETUID
+            drop:
+              - ALL
           privileged: false
       automountServiceAccountToken: false
       securityContext:
