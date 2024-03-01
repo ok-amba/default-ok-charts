@@ -22,7 +22,7 @@ annotations: {}
 schedule: "0 1 * * *"
 
 # Specify how many completed jobs should be kept. Kubernetes default value is 3.
-successfulJobsHistoryLimit: 3
+successfulJobsHistoryLimit: 2
 
 # Specify how many failed jobs should be kept. Kubernetes default value is 1.
 failedJobsHistoryLimit: 1
@@ -33,7 +33,7 @@ startingDeadlineSeconds: null
 # Possible values Allow, Forbid, and Replace. Kubernetes default value is Allow.
 # Specifies how to treat concurrent executions of a job that is created by this CronJob.
 # https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#concurrency-policy
-concurrencyPolicy: Allow
+concurrencyPolicy: Forbid
 
 # Main container configuration
 job:
@@ -57,7 +57,7 @@ job:
 
   # Optional, Clean up finished Jobs (either Complete or Failed) automatically is to use a TTL mechanism
   # provided by a TTL controller for finished resources.
-  ttlSecondsAfterFinished: null
+  ttlSecondsAfterFinished: 172800 # 2 days
 
   # Assign a service account for your application.
   # This service account represents your application and is used for authentication
@@ -78,11 +78,11 @@ job:
 
     resources:
       requests:
-        memory: 1000Mi
-        cpu: 400m
+        memory: 500Mi
+        cpu: 100m
       limits:
-        memory: 2000Mi
-        cpu: 1000m
+        memory: 1000Mi
+        cpu: 500m
 
     environment: {}
       # SOME_ENV: some-value
