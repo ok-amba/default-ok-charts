@@ -12,10 +12,6 @@ global:
 # rememeber to explicitly set this to false in environments other than production. 
 enableAllMonitors: false
 
-# Required
-# The name of the your project.
-projectName:
-
 # Labels for the Kubernetes DatadogMonitor object.
 monitorLabels: {}
 
