@@ -20,6 +20,7 @@ deployment:
   # Annotations on the Deployment definition.
   annotations: {}
 
+
   dataDog:
     # Enable DataDog logging. Please make sure that your logs comply with the okamba standard ruleset.
     # If in doubt, ask a collauge or the infrastructure team.
@@ -35,8 +36,7 @@ deployment:
   podLabels: {}
 
   # Used for Image Registry credentials other than your default registry.
-  imagePullSecrets:
-    []
+  imagePullSecrets: []
     #- secret-name-here
 
   # Main container configuration
@@ -69,16 +69,13 @@ deployment:
       httpGet:
         path: /readyz
 
-    environment:
-      {}
+    environment: {}
       # SOME_ENV: some-value
 
-    envFromConfigmap:
-      []
+    envFromConfigmap: []
       # - configmap-name
 
-    fieldRefEnvironment:
-      {}
+    fieldRefEnvironment: {}
       # SOME_ENV: some-field-reference
 
     # Below list of kubernetes secret names will be mounted into the container
@@ -133,6 +130,7 @@ service:
   # Annotations on the Service definition.
   annotations: {}
 
+
 ##################################################
 #                    Ingress                     #
 ##################################################
@@ -150,7 +148,7 @@ ingress:
   # URL of the application
   host: example.org
 
-  # Creating DNS records is only supported in our test and our prod-test environment.
+  # Creating DNS records is only supported in our test and prod-test environment.
   # If needed, only enable this setting on the specific enrionment value file.
   createDNSRecord: false
 
@@ -172,3 +170,4 @@ ingress:
   #       name: backend-for-frontend
   #       port:
   #         number: 3000
+
