@@ -185,7 +185,7 @@ podDisruptionBudget:
   # Enable a Pod Disruption Budget definition.
   # This allows you to protect your services from voluntary evictions.
   # Example use case could be ensuring at least 1 pod is available during upgrades 
-  enable: true
+  enable: false 
 
   # minAvailable and maxUnavailable are mutually exclusive, so you should only set one of them.
   #
