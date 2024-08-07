@@ -171,3 +171,30 @@ ingress:
   #       port:
   #         number: 3000
 
+##################################################
+#           Pod Disruption Budget               #
+##################################################
+
+podDisruptionBudget:
+  # Labels on the Pod Disruption Budget definition
+  labels: {}
+
+  # Annotations on the Pod Disruption Budget definition
+  annotations: {}
+
+  # Enable a Pod Disruption Budget definition.
+  # This allows you to protect your services from voluntary evictions.
+  # Example use case could be ensuring at least 1 pod is available during upgrades 
+  enable: true
+
+  # minAvailable and maxUnavailable are mutually exclusive, so you should only set one of them.
+  #
+  # If podDisruptionBudget.maxUnavailable and podDisruptionBudget.minAvailable is not set,
+  # then a default of maxUnavailable: 50% will be used.
+  # 
+  # When using a percentage, it will use the following rounding logic: https://kubernetes.io/docs/tasks/run-application/configure-pdb/#rounding-logic-when-specifying-percentages
+  #
+  # NOTE: a Pod can only be affected by a single Pod Disruption Budget. If you attempt to create multipe Pod Disruption Budgets for the same Pod,
+  #       it will throw an error when the eviction API is invoked on the Pod and prevent it from being envicted.
+  # maxUnavailable: 50%
+  # minAvailable: 50%
