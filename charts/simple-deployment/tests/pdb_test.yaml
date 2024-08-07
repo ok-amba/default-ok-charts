@@ -12,6 +12,15 @@ tests:
       path: "spec.maxUnavailable"
       value: "50%"
 
+- it: "Should fail when using both minAvaialble and maxUnavailable"
+  set: 
+    podDisruptionBudget.enable: true
+    podDisruptionBudget.minAvailable: 50%
+    podDisruptionBudget.maxUnavailable: 50%
+  asserts:
+    - failedTemplate:
+        errorMessage: "Cannot set both minAvailable and maxUnavailable. minAvailable and maxUnavailable are mutually exclusive."
+
 - it: "Should fail when spec.minAvailable > deployment.replicas."
   set: 
     podDisruptionBudget.enable: true
