@@ -1,0 +1,43 @@
+{{- if .Values.podDisruptionBudget.enable }}
+
+{{ $maxUnavailableHasValue := or (kindIs "string" .Values.podDisruptionBudget.maxUnavailable) (kindIs "float64" .Values.podDisruptionBudget.maxUnavailable) }}
+{{ $minAvailableHasValue := or (kindIs "string" .Values.podDisruptionBudget.minAvailable) (kindIs "float64" .Values.podDisruptionBudget.minAvailable) }}
+
+apiVersion: policy/v1
+kind: PodDistruptionBudget
+metadata:
+    name: {{ include "deployment.name" $ }}
+    {{- with .Values.podDisruptionBudget.annotations }}
+    annotations: 
+        {{- toYaml . | nindent 6 }}
+    {{- end }}
+    labels: 
+        {{- include "deployment.labels" . | nindent 6 }}
+        {{- range $k, $v := .Values.podDisruptionBudget.labels }}
+        {{- printf "%s: %s" $k ($v | quote) | nindent 6 }}
+        {{- end }}
+spec:
+    {{- with .Values.podDisruptionBudget}}
+    {{- if and $maxUnavailableHasValue $minAvailableHasValue }}
+    {{ fail "Cannot set both minAvailable and maxUnavailable. minAvailable and maxUnavailable are mutually exclusive." }}
+    {{- end }}
+
+    {{- if and (not $maxUnavailableHasValue) (not $minAvailableHasValue) }}
+    maxUnavailable: "50%"
+    {{- end }}
+
+    {{- if $minAvailableHasValue }}
+    {{- include "podDisruptionBudget.minAvailableValidations" $ }}
+    minAvailable: {{ ternary (.minAvailable | quote) .minAvailable (kindIs "string" .minAvailable)  }}
+    {{- end }} 
+
+    {{- if $maxUnavailableHasValue }}
+    {{- include "podDisruptionBudget.maxUnavailableValidations" $ }}
+    maxUnavailable: {{ ternary (.maxUnavailable | quote) .maxUnavailable (kindIs "string" .maxUnavilable) }}
+    {{- end }}
+    {{- end }}
+
+    selector:
+        matchLabels:
+            app: {{ include "deployment.name" $ }}
+{{- end }}
