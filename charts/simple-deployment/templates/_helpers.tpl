@@ -84,28 +84,3 @@ failureThreshold: {{ .readinessProbe.failureThreshold | default 3 }}
 {{- end -}}
 {{- end -}}
 {{- end -}}
-
-{{- define "podDisruptionBudget.minAvailableValidations" }}
-{{- with .Values.podDisruptionBudget }}
-{{- if and (kindIs "float64" .minAvailable) (ge .minAvailable $.Values.deployment.replicas) }}
-{{ fail "podDisruptionBudget.minAvailable cannot be greater than or equal to deployment.replicas as it could potentially block a node infinitely." }}
-{{- end}}
-{{- if and (kindIs "string" .minAvailable) (eq .minAvailable "100%")}}
-{{ fail "podDisruptionBudget.minAvailable cannot be 100% as it could potentially block a node infinitely." }}
-{{- end }}
-{{- if and (kindIs "string" .minAvailable) (eq (int $.Values.deployment.replicas) 1) }}
-{{ fail "podDisruptionBudget.minAvailable cannot be set as percentage when deployment.replicas is set to 1 as that could potentially block a node infinitely due to how rounding is handled."}}
-{{- end }}
-{{- end }}
-{{- end }}
-
-{{- define "podDisruptionBudget.maxUnavailableValidations" }}
-{{- with .Values.podDisruptionBudget }}
-{{- if and (kindIs "float64" .maxUnavailable) (eq (int .maxUnavailable) 0) }}
-{{ fail "podDisruptionBudget.maxUnavailable cannot be 0 as it could potentially block a node infinitely." }}
-{{- end}}
-{{- if and (kindIs "string" .maxUnavailable) (eq .maxUnavailable "0%")}}
-{{ fail "podDisruptionBudget.maxUnavailable cannot be 0% as it could potentially block a node infinitely." }}
-{{- end }}
-{{- end }}
-{{- end }}

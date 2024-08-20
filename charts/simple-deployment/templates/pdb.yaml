@@ -1,7 +1,13 @@
 {{- if .Values.podDisruptionBudget.enable }}
 
-{{ $maxUnavailableHasValue := or (kindIs "string" .Values.podDisruptionBudget.maxUnavailable) (kindIs "float64" .Values.podDisruptionBudget.maxUnavailable) }}
-{{ $minAvailableHasValue := or (kindIs "string" .Values.podDisruptionBudget.minAvailable) (kindIs "float64" .Values.podDisruptionBudget.minAvailable) }}
+{{- if kindIs "string" .Values.podDisruptionBudget.maxUnavailablePods }}
+    {{- fail "maxUnavailablePods cannot be set to string value. Only integer values are supported." }}
+{{- end }}
+
+{{- if eq (int .Values.podDisruptionBudget.maxUnavailablePods) 0 }}
+    {{- fail "maxUnavailablePods cannot be set to 0, since it will potentially block a node indefinitely." }}
+{{- end }}
+
 
 apiVersion: policy/v1
 kind: PodDistruptionBudget
@@ -17,26 +23,7 @@ metadata:
         {{- printf "%s: %s" $k ($v | quote) | nindent 6 }}
         {{- end }}
 spec:
-    {{- with .Values.podDisruptionBudget}}
-    {{- if and $maxUnavailableHasValue $minAvailableHasValue }}
-    {{ fail "Cannot set both minAvailable and maxUnavailable. minAvailable and maxUnavailable are mutually exclusive." }}
-    {{- end }}
-
-    {{- if and (not $maxUnavailableHasValue) (not $minAvailableHasValue) }}
-    maxUnavailable: "50%"
-    {{- end }}
-
-    {{- if $minAvailableHasValue }}
-    {{- include "podDisruptionBudget.minAvailableValidations" $ }}
-    minAvailable: {{ ternary (.minAvailable | quote) .minAvailable (kindIs "string" .minAvailable)  }}
-    {{- end }} 
-
-    {{- if $maxUnavailableHasValue }}
-    {{- include "podDisruptionBudget.maxUnavailableValidations" $ }}
-    maxUnavailable: {{ ternary (.maxUnavailable | quote) .maxUnavailable (kindIs "string" .maxUnavilable) }}
-    {{- end }}
-    {{- end }}
-
+    maxUnavailable: {{ .Values.podDisruptionBudget.maxUnavailablePods }}
     selector:
         matchLabels:
             app: {{ include "deployment.name" $ }}
