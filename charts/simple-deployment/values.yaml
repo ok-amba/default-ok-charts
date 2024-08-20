@@ -186,7 +186,7 @@ podDisruptionBudget:
   # Enable a Pod Disruption Budget definition.
   # This allows you to protect your services from voluntary evictions.
   # Example use case could be ensuring that at most 1 pod is down during node upgrades. 
-  enable: true
+  enable: false
 
   # How many pods are allowed to be unavailable during e.g. scaling of nodes or updates. 
   # Only integer values are supported. 0 is not an allowed value, since it will potentially block a node indefinitely.
