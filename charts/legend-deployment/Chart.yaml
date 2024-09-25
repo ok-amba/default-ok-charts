@@ -1,0 +1,4 @@
+apiVersion: v2
+name: legend-deployment
+description: A Helm chart for a legend deployment, incl. service and ingress, while also have support for gatekeeper and environment variable secrets
+version: 1.0.0

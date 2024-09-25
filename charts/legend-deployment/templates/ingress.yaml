@@ -1,0 +1,52 @@
+{{- if and .Values.ingress.enable (not .Values.service.enable)}}
+{{- fail "The service is not enabled, which is a dependency for the ingress."}}
+{{- end }}
+
+{{- if and (.Values.ingress.enable) (.Values.service.enable) }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "deployment.name" $ }}
+  {{- with .Values.ingress }}
+  annotations:
+    {{- with .annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- if .wwwRedirect }}
+    nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
+    {{- end }}
+    nginx.ingress.kubernetes.io/ssl-redirect: {{ .sslRedirect | default "false" | quote }}
+    cert-manager.io/cluster-issuer: nginx-http01
+  labels:
+    {{- include "deployment.labels" $ | nindent 4 }}
+    {{- range $k, $v := .labels }}
+    {{- printf "%s: %s" $k ($v | quote) | nindent 4 }}
+    {{- end }}
+    {{- if .createDNSRecord }}
+    external-dns-create: "true"
+    {{- end }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.ingressClassName | default "nginx" }}
+  rules:
+  - host: {{ .Values.ingress.host }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ include "deployment.name" $ }}
+            port:
+              number: {{ .Values.deployment.container.containerPort | required "A container port is required on the container." }}
+        {{- with .Values.ingress.additionalPaths }}
+        {{ toYaml . | nindent 6}}
+        {{- end }}
+  tls:
+  - hosts:
+    - {{ .Values.ingress.host }}
+    {{- if .Values.ingress.wwwRedirect }}
+    - "www.{{ .Values.ingress.host }}"
+    {{- end }}
+    secretName: "le-cert-{{ .Values.ingress.host | replace "." "-" | trunc 54 | trimSuffix "-" }}"
+{{- end }}

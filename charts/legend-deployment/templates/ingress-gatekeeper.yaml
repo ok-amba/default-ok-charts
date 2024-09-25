@@ -1,0 +1,45 @@
+{{- if .Values.deployment.gatekeeper.enable }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "deployment.name" $ }}-gatekeeper
+  {{- with .Values.deployment.gatekeeper.ingress }}
+  annotations:
+    {{- with .annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- if .wwwRedirect }}
+    nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
+    {{- end }}
+    nginx.ingress.kubernetes.io/ssl-redirect: {{ .sslRedirect | default "false" | quote }}
+    cert-manager.io/cluster-issuer: nginx-http01
+  labels:
+    {{- include "deployment.labels" $ | nindent 4 }}
+    {{- range $k, $v := .labels }}
+    {{- printf "%s: %s" $k ($v | quote) | nindent 4 }}
+    {{- end }}
+    {{- if .createDNSRecord }}
+    external-dns-create: "true"
+    {{- end }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.ingressClassName | default "nginx" }}
+  rules:
+  - host: {{ .Values.deployment.gatekeeper.ingress.host }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ include "deployment.name" $ }}-gatekeeper
+            port:
+              number: {{ .Values.deployment.container.containerPort | add1 }}
+  tls:
+  - hosts:
+    - {{ .Values.deployment.gatekeeper.ingress.host }}
+    {{- if .Values.ingress.wwwRedirect }}
+    - "www.{{ .Values.deployment.gatekeeper.ingress.host }}"
+    {{- end }}
+    secretName: "le-cert-{{ .Values.deployment.gatekeeper.ingress.host | replace "." "-" | trunc 44 | trimSuffix "-" }}-gatekeeper"
+{{- end }}
