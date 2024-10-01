@@ -1,0 +1,153 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "deployment.name" $ }}
+  {{- with .Values.deployment.annotations }}
+  annotations:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "deployment.labels" . | nindent 4 }}
+    {{- range $k, $v := .Values.deployment.labels }}
+    {{- printf "%s: %s" $k ($v | quote) | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "deployment.name" $ }}
+  replicas: {{ .Values.deployment.replicas }}
+  revisionHistoryLimit: {{ .Values.deployment.revisionHistoryLimit | default 5 }}
+  template:
+    metadata:
+      {{- if or .Values.deployment.podAnnotations .Values.deployment.dataDog.enableLogs }}
+      annotations:
+        {{- include "deployment.dataDogAnnotations" $ | nindent 8 }}
+        {{- /* # Possibly not needed with podmonitor */ -}}
+        {{- include "deployment.prometheusAnnotations" $ | nindent 8 }}
+        {{- with .Values.deployment.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- end }}
+      labels:
+        {{- include "deployment.labels" . | nindent 8 }}
+        {{- include "deployment.dataDogLabels" $ | nindent 8 }}
+        {{- range $k, $v := .Values.deployment.podLabels }}
+        {{- printf "%s: %s" $k ($v | quote) | nindent 8 }}
+        {{- end }}
+    spec:
+      serviceAccountName: {{ .Values.deployment.serviceAccountName | default "default" }}
+      {{- with .Values.deployment.imagePullSecrets }}
+      imagePullSecrets:
+      {{- range $secret := . }}
+        - name: {{ $secret }}
+      {{- end }}
+      {{- end }}
+      containers:
+      {{- with .Values.deployment.container }}
+      - name: {{ $.Values.fullnameOverride | default $.Release.Name }}
+        image: "{{ .image }}:{{ .tag }}"
+
+        {{- if .command }}
+        command: {{ .command | toJson }}
+        {{- if .args }}
+        args: {{ .args | toJson }}
+        {{- end }}
+        {{- end }}
+        securityContext:
+          allowPrivilegeEscalation: {{ .allowPrivilegeEscalation | default "false" }}
+          privileged: {{ .privileged | default "false" }}
+        {{- with .resources }}
+        resources:
+        {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- if .containerPort }}
+        ports:
+          - containerPort: {{ .containerPort }}
+        {{- end }}
+        {{- if .livenessProbe.enable }}
+        livenessProbe:
+        {{- include "deployment.livenessProbe" . | nindent 10 }}
+        {{- end }}
+        {{- if .readinessProbe.enable }}
+        readinessProbe:
+        {{- include "deployment.readinessProbe" . | nindent 10 }}
+        {{- end }}
+        {{- if or .environment .fieldRefEnvironment .secretRefEnvironment }}
+        env:
+          {{- range $name, $value := .fieldRefEnvironment }}
+          - name: {{ $name }}
+            valueFrom:
+              fieldRef:
+                fieldPath: {{ $value }}
+          {{- end }}
+          {{- range $name, $value := .environment }}
+          - name: {{ $name }}
+            value: {{ $value | quote }}
+          {{- end }}
+          {{- range $value := .secretRefEnvironment }}
+          - name: {{ $value.name }}
+            valueFrom:
+              secretKeyRef:
+                key: {{ $value.key }}
+                name: {{ $value.secret }}
+          {{- end }}
+        {{- end }}
+
+        {{- if .envFromConfigmap }}
+        envFrom:
+          {{- range $cmName := .envFromConfigmap }}
+          - configMapRef:
+            name: {{ $cmName }}
+          {{- end }}
+        {{- end }}
+
+        {{- if or .secrets .configMaps .additionalVolumeMounts }}
+        volumeMounts:
+          {{- range $secret := .secrets }}
+          - name: {{ $secret }}
+            mountPath: /secrets/{{ $secret }}
+            readOnly: true
+          {{- end }}
+          {{- range $configMap := .configMaps }}
+          - name: {{ $configMap.name }}
+            mountPath: {{ $configMap.mountPath }}
+            {{- if $configMap.subPath }}
+            subPath: {{ $configMap.subPath }}
+            {{- end }}
+          {{- end }}
+          {{- range $volumeMount := .additionalVolumeMounts }}
+          - name: {{ $volumeMount.name }}
+            mountPath: {{ $volumeMount.mountPath }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+      {{- include "deployment.cloudSQLProxy" $ | nindent 6 }}
+      {{- include "deployment.gatekeeper" $ | nindent 6 }}
+      {{- with .Values.deployment }}
+      {{- if or (and .cloudSQLProxy.enable .cloudSQLProxy.secretKeyName) .container.secrets .container.configMaps .additionalVolumes }}
+      volumes:
+        {{- if and .cloudSQLProxy.enable .cloudSQLProxy.secretKeyName }}
+        - name: {{ .cloudSQLProxy.secretKeyName }}
+          secret:
+            secretName: {{ .cloudSQLProxy.secretKeyName }}
+        {{- end }}
+        {{- with .container }}
+        {{- range $secret := .secrets }}
+        {{- if not (and $.Values.deployment.cloudSQLProxy.enable (eq $.Values.deployment.cloudSQLProxy.secretKeyName $secret))}}
+        - name: {{ $secret }}
+          secret:
+            secretName: {{ $secret }}
+        {{- end }}
+        {{- end }}
+        {{- range $configMap := .configMaps }}
+        - name: {{ $configMap.name }}
+          configMap:
+            name: {{ $configMap.name }}
+        {{- end }}
+        {{- end }}
+        {{- with .additionalVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- end }}
+      {{- end }}
+

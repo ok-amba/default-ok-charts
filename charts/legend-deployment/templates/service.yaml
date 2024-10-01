@@ -1,0 +1,22 @@
+{{- if .Values.service.enable }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "deployment.name" $ }}
+  {{- with .Values.service.annotations }}
+  annotations:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "deployment.labels" . | nindent 4 }}
+    {{- range $k, $v := .Values.service.labels }}
+    {{- printf "%s: %s" $k ($v | quote) | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    app: {{ include "deployment.name" $ | quote }}
+  ports:
+  - protocol: TCP
+    port: {{ .Values.deployment.container.containerPort | required "A container port is required on the container." }}
+    targetPort: {{ .Values.deployment.container.containerPort | required "A container port is required on the container." }}
+{{- end }}

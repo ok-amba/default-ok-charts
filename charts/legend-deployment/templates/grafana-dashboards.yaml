@@ -1,0 +1,13 @@
+{{- if .Values.deployment.grafana.dashboards }}
+{{- range $k, $v := .Values.deployment.grafana.dashboards }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-{{ $k | trimSuffix ".json" }}
+  labels:
+    grafana_dashboard: "1"
+data:
+  {{ $k }}: |-
+{{ $v | indent 4 }}
+{{- end }}
+{{- end }}

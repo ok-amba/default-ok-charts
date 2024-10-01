@@ -1,0 +1,21 @@
+{{ if .Values.deployment.prometheus.enable }}
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ include "deployment.name" . }}-podmonitor
+  labels:
+    {{- include "deployment.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      prometheus/scrape: "true"
+  podMetricsEndpoints:
+    {{- if and (.Values.deployment.prometheus.port) (ne .Values.deployment.prometheus.port .Values.deployment.container.containerPort) }}
+    - port: metrics-port
+    {{- else }}
+    - port: container-port
+    {{- end}}
+    {{- if .Values.deployment.prometheus.path }}
+      path: {{ .Values.deployment.prometheus.path }}
+    {{- end }}
+{{ end}}
