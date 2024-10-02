@@ -1,0 +1,43 @@
+suite: Pod Disruption Budget tests
+templates: 
+- pdb.yaml
+tests:
+# NOTE: It is difficult to reason about the percentage (string) values. It requires the developers to know how the rounding logic works for PDBs.
+#       Supporting both integer values and string values also requires more complex logic in the helm chart, which makes it more difficult to maintain.
+- it: "Should not allow percentage value as maxUnavailablePods"
+  set: 
+    podDisruptionBudget.enable: true
+    podDisruptionBudget.maxUnavailablePods: 50%
+  asserts:
+  - failedTemplate: {}
+      
+- it: "Should allow integer value as maxUnavailablePods"
+  set: 
+    podDisruptionBudget.enable: true
+    podDisruptionBudget.maxUnavailablePods: 1
+  asserts:
+  - notFailedTemplate: {}
+
+# NOTE: This case would block a node from being drained indefinitely
+- it: "Should not allow 0 as maxUnavailablePods"
+  set: 
+    podDisruptionBudget.enable: true
+    podDisruptionBudget.maxUnavailablePods: 0
+  asserts:
+  - failedTemplate: {}
+
+# NOTE: maxUnavailable has been chosen since it easier to reason about without having to account for pod replica count. 
+#       It is also recommended to use maxUnavailable in the official k8s documentation.
+#       We do not support minAvailable for now, but might add support in the future if a use-case presents itself.
+#       Supporting both minAvailable and maxUnavailable will introduce more complexity in the helm chart and might prove more difficult to maintain.
+- it: "Should render maxUnavailable on PDB manifest when setting maxUnavailablePods"
+  set: 
+    podDisruptionBudget.enable: true
+    podDisruptionBudget.maxUnavailablePods: 1
+  asserts:
+  - equal:
+      path: spec.maxUnavailable
+      value: 1
+  - notExists:
+      path: spec.minAvailable
+

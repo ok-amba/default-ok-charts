@@ -27,7 +27,7 @@ deployment:
     enableLogs: false
 
   # Pod Replicas
-  replicas: 1
+  replicas: 2
 
   # Pod Annotations
   podAnnotations: {}
@@ -171,3 +171,23 @@ ingress:
   #       port:
   #         number: 3000
 
+##################################################
+#           Pod Disruption Budget               #
+##################################################
+# NOTE: a Pod can only be affected by a single Pod Disruption Budget. If you attempt to create multipe Pod Disruption Budgets for the same Pod,
+#       it will throw an error when the eviction API is invoked on the Pod and prevent it from being envicted.
+podDisruptionBudget:
+  # Labels on the Pod Disruption Budget definition
+  labels: {}
+
+  # Annotations on the Pod Disruption Budget definition
+  annotations: {}
+
+  # Enable a Pod Disruption Budget definition.
+  # This allows you to protect your services from voluntary evictions.
+  # Example use case could be ensuring that at most 1 pod is down during node upgrades. 
+  enable: false
+
+  # How many pods are allowed to be unavailable during e.g. scaling of nodes or updates. 
+  # Only integer values are supported. 0 is not an allowed value, since it will potentially block a node indefinitely.
+  maxUnavailablePods: 1

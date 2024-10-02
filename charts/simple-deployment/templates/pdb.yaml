@@ -1,0 +1,30 @@
+{{- if .Values.podDisruptionBudget.enable }}
+
+{{- if (not (kindIs "float64" .Values.podDisruptionBudget.maxUnavailablePods)) }}
+    {{- fail "maxUnavailablePods can only be set to an integer value." }}
+{{- end }}
+
+{{- if eq (int .Values.podDisruptionBudget.maxUnavailablePods) 0 }}
+    {{- fail "maxUnavailablePods cannot be set to 0, since it will potentially block a node indefinitely." }}
+{{- end }}
+
+
+apiVersion: policy/v1
+kind: PodDistruptionBudget
+metadata:
+    name: {{ include "deployment.name" $ }}
+    {{- with .Values.podDisruptionBudget.annotations }}
+    annotations: 
+        {{- toYaml . | nindent 6 }}
+    {{- end }}
+    labels: 
+        {{- include "deployment.labels" . | nindent 6 }}
+        {{- range $k, $v := .Values.podDisruptionBudget.labels }}
+        {{- printf "%s: %s" $k ($v | quote) | nindent 6 }}
+        {{- end }}
+spec:
+    maxUnavailable: {{ .Values.podDisruptionBudget.maxUnavailablePods }}
+    selector:
+        matchLabels:
+            app: {{ include "deployment.name" $ }}
+{{- end }}
