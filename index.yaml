@@ -469,6 +469,16 @@ entries:
     urls:
     - https://github.com/ok-amba/default-ok-charts/releases/download/devx-dashboard-0.0.1/devx-dashboard-0.0.1.tgz
     version: 0.0.1
+  legend-deployment:
+  - apiVersion: v2
+    created: "2024-10-03T11:10:00.510274142Z"
+    description: A Helm chart for a legend deployment, incl. service and ingress,
+      while also have support for gatekeeper and environment variable secrets
+    digest: 4ff28499205f55400615202f287f231ade75ecfe8815145ec45ae9c2fa0ac9bf
+    name: legend-deployment
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/legend-deployment-0.0.1/legend-deployment-0.0.1.tgz
+    version: 0.0.1
   simple-deployment:
   - apiVersion: v2
     created: "2024-10-03T11:00:46.410258316Z"
@@ -750,4 +760,4 @@ entries:
     urls:
     - https://ok-amba.github.io/default-ok-charts/.cr-release-packages/simple-deployment-0.1.0.tgz
     version: 0.1.0
-generated: "2024-10-03T11:00:46.410723908Z"
+generated: "2024-10-03T11:10:00.510546048Z"
