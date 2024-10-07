@@ -2,11 +2,11 @@ apiVersion: v2
 name: devx-dashboard
 
 description: A developer dashboard for releasing software
-version: 2.0.0
+version: 2.1.0-rc1
 appVersion: 2.0.10
 dependencies:
 - name: iam-service-account
-  version: 2.0.0
+  version: 2.1.0
   repository: https://ok-amba.github.io/config-connector-helm
   alias: iamServiceAccount
   condition: deadLetter.enabled

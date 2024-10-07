@@ -157,6 +157,7 @@ iamServiceAccount:
 
   # Workload Identity allows workloads in your GKE clusters to impersonate Identity and
   # Access Management (IAM) service accounts to access Google Cloud services.
+  googleSecretManagerAccess: false
   workloadIdentity:
     enabled: true
 
