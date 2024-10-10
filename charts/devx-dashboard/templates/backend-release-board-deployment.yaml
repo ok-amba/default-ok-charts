@@ -34,6 +34,7 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
+      serviceAccountName: {{ $.Values.iamServiceAccount.name }}
       containers:
       - name: backend
         image: "{{ .container.image }}:{{ .container.tag | default $.Chart.AppVersion }}"
