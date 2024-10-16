@@ -192,8 +192,7 @@ ingress:
   host: example.org
 
   # Additional URLs e.g. old service URLs that needs to be routable during migration.
-  # The Cloudflare DNS Issuer will be used, when "createDNSRecord" is set to "true".
-  # All entries in "additionalHosts" must be in the ok.dk domain, when setting "createDNSRecord" to "true".
+  # Any additional hosts will be issued certificates using the Cloudflare DNS ClusterIssuer through DNS01 challenges.
   additionalHosts: []
 
   # Create cname records
