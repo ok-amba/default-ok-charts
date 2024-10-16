@@ -22,9 +22,6 @@ metadata:
     {{- range $k, $v := .labels }}
     {{- printf "%s: %s" $k ($v | quote) | nindent 4 }}
     {{- end }}
-    {{- if .createDNSRecord }}
-    external-dns-create: "true"
-    {{- end }}
   {{- end }}
 spec:
   ingressClassName: {{ $.Values.ingress.ingressClassName | default "nginx" }}
