@@ -6,7 +6,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "deployment.name" $ }}
+  name: {{ include "deployment.name" $ }}-additional
   {{- with $.Values.ingress }}
   annotations:
     {{- with .annotations }}
