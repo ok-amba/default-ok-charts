@@ -1,0 +1,25 @@
+{{- with .Values.httpRoute }}
+{{- if .enable }}
+kind: HTTPRoute
+apiVersion: gateway.networking.k8s.io/v1
+metadata:
+  name: argocd-server
+spec:
+  parentRefs:
+    - kind: Gateway
+      name: {{ .gatewayRef.name }}
+      namespace: {{ .gatewayRef.namespace }}
+
+{{- if ne .hostname nil }}
+  hostnames:
+    - {{ .hostname }}
+{{ else }}
+  {{- fail "You have enabled httpRoute but not configured any hostnames." }}
+{{- end }}
+
+  rules:
+    - backendRefs:
+      - name: {{ .serviceRef.name }}
+        port: {{ .serviceRef.port }}
+{{- end }}
+{{- end }}

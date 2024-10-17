@@ -69,7 +69,7 @@ ingress:
   host: example.org
 ```
 
-# Example 4
+## Example 4
 
 ```yaml
 global:
@@ -121,4 +121,25 @@ ingress:
         name: backend-for-frontend
         port:
           number: 3000
+```
+## Configuring Http Route
+
+``` yaml
+httpRoute:
+  # Enable the http route definition
+  enable: true
+  # Set hostname of the http route
+  hostname: hostname.example
+  # Configure the reference to a gateway
+  gatewayRef:
+    name: gateway-name
+    namespace: namespace-containing-gateway
+  # Link the route to your services
+  serviceRef:
+    name: service-name
+    port: 443
+  # Choose a backend policy
+  backendPolicy:
+    enableLogging: false
+    securityPolicyName: policy-name-reference
 ```

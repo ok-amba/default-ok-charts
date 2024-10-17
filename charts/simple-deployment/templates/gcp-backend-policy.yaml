@@ -1,0 +1,18 @@
+{{- with .Values.gatewayHttpRoute }}
+{{- if .enable }}
+apiVersion: networking.gke.io/v1
+kind: GCPBackendPolicy
+metadata:
+  name: argocd-server-backend-policy
+spec:
+  default:
+    logging:
+      enabled: {{ .backendPolicy.enableLogging }}
+    securityPolicy: {{ .backendPolicy.securityPolicyName }}
+  targetRef:
+    group: ""
+    kind: Service
+    name: {{ .serviceRef.name }}
+{{- end }}
+{{- end }}
+

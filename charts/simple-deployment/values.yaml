@@ -172,6 +172,15 @@ ingress:
   #         number: 3000
 
 ##################################################
+#                    HTTP Routing                #
+##################################################
+# See readme for configuration reference
+
+httpRoute:
+  # Enable the http route definition
+  enable: false
+
+##################################################
 #           Pod Disruption Budget               #
 ##################################################
 # NOTE: a Pod can only be affected by a single Pod Disruption Budget. If you attempt to create multipe Pod Disruption Budgets for the same Pod,
