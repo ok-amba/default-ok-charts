@@ -1,5 +1,24 @@
-{{- with .Values.gatewayHttpRoute }}
-{{- if .enable }}
+{{- if .Values.httpRoute.enable }}
+
+{{- if not ( .Values.httpRoute.backendPolicy ) }}
+  {{- fail "You have enabled httpRoute but not configured a backend policy." }}
+{{- end }}
+{{- if eq .Values.httpRoute.backendPolicy.enableLogging nil }}
+  {{- fail "You have enabled httpRoute but not configured backend logging." }}
+{{- end }}
+{{- if not ( .Values.httpRoute.backendPolicy.securityPolicyName ) }}
+  {{- fail "You have enabled httpRoute but not configured backend security policy name." }}
+{{- end }}
+{{- if not ( .Values.httpRoute.serviceRef ) }}
+  {{- fail "You have enabled httpRoute but not configured serviceRef." }}
+{{- end }}
+{{- if not ( .Values.httpRoute.serviceRef.name ) }}
+  {{- fail "You have enabled httpRoute but not configured serviceRef name." }}
+{{- end }}
+{{- if not (.Values.service.enable) }}
+  {{- fail "You have enabled httpRoute but the deployment does not have service enabled. This is necessary to bind the http route to your deployment." }}
+{{- end }}
+
 apiVersion: networking.gke.io/v1
 kind: GCPBackendPolicy
 metadata:
@@ -7,12 +26,11 @@ metadata:
 spec:
   default:
     logging:
-      enabled: {{ .backendPolicy.enableLogging }}
-    securityPolicy: {{ .backendPolicy.securityPolicyName }}
+      enabled: {{ .Values.httpRoute.backendPolicy.enableLogging }}
+    securityPolicy: {{ .Values.httpRoute.backendPolicy.securityPolicyName }}
   targetRef:
     group: ""
     kind: Service
-    name: {{ .serviceRef.name }}
-{{- end }}
+    name: {{ include "deployment.name" $ }}
 {{- end }}
 
