@@ -1,25 +1,49 @@
-{{- with .Values.httpRoute }}
-{{- if .enable }}
+{{- if .Values.httpRoute.enable }}
+
+{{- if not ( .Values.httpRoute.hostname ) }}
+  {{- fail "You have enabled httpRoute but not configured a hostname." }}
+{{- end }}
+{{- if not ( .Values.httpRoute.gatewayRef ) }}
+  {{- fail "You have enabled httpRoute but not configured a the gatewayRefs." }}
+{{- end }}
+{{- if not ( .Values.httpRoute.gatewayRef.name ) }}
+  {{- fail "You have enabled httpRoute but not configured a the gatewayRefs name." }}
+{{- end }}
+{{- if not ( .Values.httpRoute.gatewayRef.namespace ) }}
+  {{- fail "You have enabled httpRoute but not configured a the gatewayRefs namespace." }}
+{{- end }}
+{{- if not ( .Values.httpRoute.serviceRef ) }}
+  {{- fail "You have enabled httpRoute but not configured a the serviceRef." }}
+{{- end }}
+{{- if not ( .Values.httpRoute.serviceRef.name ) }}
+  {{- fail "You have enabled httpRoute but not configured a the serviceRef name." }}
+{{- end }}
+{{- if not ( .Values.httpRoute.serviceRef.port ) }}
+  {{- fail "You have enabled httpRoute but not configured a the serviceRef port." }}
+{{- end }}
+
 kind: HTTPRoute
 apiVersion: gateway.networking.k8s.io/v1
 metadata:
-  name: argocd-server
+  name: {{ include "deployment.name" $ }}
+  {{- with .Values.httpRoute.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "deployment.labels" . | nindent 4 }}
+    {{- range $k, $v := .Values.httpRoute.labels }}
+    {{- printf "%s: %s" $k ($v | quote) | nindent 4 }}
+    {{- end }}
 spec:
   parentRefs:
     - kind: Gateway
-      name: {{ .gatewayRef.name }}
-      namespace: {{ .gatewayRef.namespace }}
-
-{{- if ne .hostname nil }}
+      name: {{ .Values.httpRoute.gatewayRef.name }}
+      namespace: {{ .Values.httpRoute.gatewayRef.namespace }}
   hostnames:
-    - {{ .hostname }}
-{{ else }}
-  {{- fail "You have enabled httpRoute but not configured any hostnames." }}
-{{- end }}
-
+    - {{ .Values.httpRoute.hostname }}
   rules:
     - backendRefs:
-      - name: {{ .serviceRef.name }}
-        port: {{ .serviceRef.port }}
-{{- end }}
+      - name: {{ .Values.httpRoute.serviceRef.name }}
+        port: {{ .Values.httpRoute.serviceRef.port }}
 {{- end }}

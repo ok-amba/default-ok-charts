@@ -177,6 +177,10 @@ ingress:
 # See readme for configuration reference
 
 httpRoute:
+  # Labels on the http route definition.
+  labels: {}
+  # Annotations on the http route definition.
+  annotations: {}
   # Enable the http route definition
   enable: false
 
