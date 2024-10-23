@@ -277,7 +277,7 @@ nats:
   logging:
     debug: true
     trace:
-    logtime:
+    logtime: true 
     connectErrorReports:
     reconnectErrorReports:
 
