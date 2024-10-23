@@ -1,0 +1,4 @@
+apiVersion: v2
+name: stan
+description: Stan helm chart fork that supports configuring auth through secrets. Only used for migration purposes and no maintenance effort planned. 
+version: 0.1.0
