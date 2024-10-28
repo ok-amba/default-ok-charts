@@ -20,13 +20,6 @@ stan:
     debug: true
     trace:
 
-  # In case of NATS not being embedded then an URL for NATS is required.
-  nats:
-    url:
-    serviceRoleAuth:
-      enabled: false
-      natsClusterName:
-
   auth:
     enabled: false
 
@@ -43,14 +36,6 @@ serviceAccountName: ""
 # ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
 podAnnotations: {}
 
-# NodeSelector to add to the NATS pods
-# ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
-nodeSelector: {}
-
-# Tolerations to add to the NATS pods
-# ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
-tolerations: []
-
 # Toggle whether to use setup a Pod Security Context
 # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
 securityContext: null
@@ -58,10 +43,6 @@ securityContext: null
 #   fsGroup: 1000
 #   runAsUser: 1000
 #   runAsNonRoot: true
-
-# Affinity for pod assignment
-# ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-affinity: {}
 
 # Pod Topology Spread Constraints
 # ref https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
@@ -144,7 +125,7 @@ store:
   volume:
     enabled: true
     mount: /data/stan
-    storageSize: 10Gi
+    storageSize: 5Gi
     accessModes: ReadWriteMany
     storageClass: nfs-client
 
@@ -168,38 +149,6 @@ store:
   cluster:
     enabled: true
     logPath: /data/stan/log
-
-  backup:
-    enabled: false
-    securityContext: {}
-    sleepTime: 3600
-    s3Path: ""
-    # To use backup functionality, you are required to either create a secret with the name you define here, or provide an instance profile.
-    credentialsSecretName:
-    backupScript: |-
-      #!/bin/sh
-      echo backup
-    backupContainerScript: |-
-      #!/bin/sh
-      while true; do
-        for i in $(find ${STORE_FILE_PATH} -name '*.bak'); do
-          aws s3 cp \
-            ${i} \
-            ${STORE_BACKUP_S3PATH}/${STAN_NAME}/${POD_NAME}${i}
-
-          RESULT=$?
-          if [ $RESULT -eq 0 ]; then
-              rm -f ${i}
-          else
-            echo "Error backing up! Do not remove $i files."
-          fi
-        done
-
-        sleep "${SLEEP_TIME}"
-      done
-    # Resource requests and limits for backup container
-    # ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-    resources: {}
 
 
 #######################################

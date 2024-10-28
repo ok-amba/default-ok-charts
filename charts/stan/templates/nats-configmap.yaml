@@ -10,7 +10,6 @@ pid_file: "/var/run/stan/stan.pid"
 http: 8222
 server_name: $POD_NAME
 
-{{- if not .Values.stan.nats.url }}
 {{- if .Values.cluster.enabled }}
 {{- if or .Values.store.cluster.enabled .Values.store.ft.group }}
 
@@ -74,7 +73,6 @@ cluster {
 
   connect_retries: {{ .Values.nats.connectRetries }}
 }
-{{- end }}
 {{- end }}
 {{- end }}
 

@@ -33,9 +33,6 @@ spec:
         app: {{ template "stan.name" . }}
         chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     spec:
-      {{- if .Values.stan.nats.serviceRoleAuth.enabled }}
-      serviceAccountName: {{ template "stan.serviceAccountName" . }}
-      {{- end }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -84,9 +81,6 @@ spec:
         emptyDir: {}
 
       affinity:
-        {{- if .Values.affinity }}
-        {{- toYaml .Values.affinity | nindent 8 }}
-        {{- else }}
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
           - labelSelector:
@@ -96,15 +90,6 @@ spec:
                 values:
                 - {{ template "stan.name" . }}
             topologyKey: kubernetes.io/hostname
-        {{- end }}
-      {{- if .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml .Values.nodeSelector | nindent 8 }}
-      {{- end }}
-      {{- if .Values.tolerations }}
-      tolerations:
-        {{- toYaml .Values.tolerations | nindent 8 }}
-      {{- end }}
       {{- if .Values.topologySpreadConstraints }}
       topologySpreadConstraints:
         {{- range .Values.topologySpreadConstraints }}
@@ -134,12 +119,6 @@ spec:
           args:
           - -sc
           - /etc/stan-config/stan.conf
-          {{- if eq .Values.store.type "file" }}
-            {{- if .Values.store.backup.enabled }}
-          - --file_slice_archive_script
-          - /etc/stan-config/backup.sh
-            {{- end }}
-          {{- end }}
           env:
           - name: POD_NAME
             valueFrom:
@@ -169,21 +148,6 @@ spec:
             value: {{ template "stan.name" . }}
           - name: STAN_REPLICAS
             value: "{{ .Values.stan.replicas }}"
-          {{- if .Values.stan.nats.serviceRoleAuth.enabled }}
-          - name: NATS_OPERATOR_SERVICE_ACCOUNT
-            valueFrom:
-              fieldRef:
-                fieldPath: spec.serviceAccountName
-          - name: NATS_OPERATOR_BOUND_TOKEN
-            valueFrom:
-              secretKeyRef:
-                name: {{ template "stan.serviceAccountName" . }}-{{ .Values.stan.nats.serviceRoleAuth.natsClusterName }}-bound-token
-                key: token
-          - name: NATS_SERVICE
-            value: {{ .Values.stan.nats.url }}
-          - name: NATS_URL
-            value: nats://$(NATS_OPERATOR_SERVICE_ACCOUNT):$(NATS_OPERATOR_BOUND_TOKEN)@$(NATS_SERVICE)
-          {{- end }}
           ports:
           - containerPort: 8222
             name: monitor
@@ -243,62 +207,6 @@ spec:
           - name: pid
             mountPath: /var/run/stan
 
-        {{- if eq .Values.store.type "file" }}
-        {{- if .Values.store.backup.enabled }}
-        ######################
-        # # Backup Container #
-        ######################
-        - name: backup
-          image: amazon/aws-cli
-          {{- if .Values.store.backup.securityContext }}
-          securityContext:
-            {{- toYaml .Values.store.backup.securityContext | nindent 12 }}
-          {{- end }}
-          command: ["/bin/sh", "-c"]
-          args:
-          - {{ toYaml .Values.store.backup.backupContainerScript | indent 12 }}
-          env:
-          - name: SLEEP_TIME
-            value: "{{ .Values.store.backup.sleepTime }}"
-          - name: POD_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
-          {{- if .Values.store.backup.credentialsSecretName }}
-          - name: AWS_ACCESS_KEY_ID
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Values.store.backup.credentialsSecretName }}
-                key: awsAccessKeyId
-          - name: AWS_SECRET_ACCESS_KEY
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Values.store.backup.credentialsSecretName }}
-                key: awsSecretKeyId
-          - name: AWS_DEFAULT_REGION
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Values.store.backup.credentialsSecretName }}
-                key: awsDefaultRegion
-          {{- end }}
-          - name: STORE_FILE_PATH
-            value: "{{ .Values.store.file.path }}"
-          - name: STORE_BACKUP_S3PATH
-            value: "{{ required "A valid s3 path is required!" .Values.store.backup.s3Path }}"
-          - name: STAN_NAME
-            value: "{{ template "stan.name" . }}"
-          {{- with .Values.store.backup.resources }}
-          resources:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- if .Values.store.volume.enabled }}
-          volumeMounts:
-            - name: {{ template "stan.name" . }}-pvc
-              mountPath: {{ .Values.store.volume.mount }}
-          {{- end }}
-        {{- end }}
-        {{- end }}
-
         {{- if .Values.exporter.enabled }}
         #################################
         #                               #
@@ -332,7 +240,6 @@ spec:
           {{- end }}
         {{- end }}
 
-        {{- if not .Values.stan.nats.url }}
         {{- if .Values.reloader.enabled }}
         #################################
         #                               #
@@ -353,7 +260,6 @@ spec:
               mountPath: /etc/stan-config
             - name: pid
               mountPath: /var/run/stan
-        {{- end }}
         {{- end }}
 
   {{- if eq .Values.store.type "file" }}
