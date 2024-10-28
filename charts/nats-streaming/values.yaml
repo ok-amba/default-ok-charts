@@ -230,24 +230,6 @@ nats:
     connectErrorReports:
     reconnectErrorReports:
 
-  #######################
-  #                     #
-  #  TLS Configuration  #
-  #                     #
-  #######################
-  #
-  #  # You can find more on how to setup and trouble shoot TLS connnections at:
-  #
-  #  # https://docs.nats.io/nats-server/configuration/securing_nats/tls
-  #
-
-  # tls:
-  #   secret:
-  #     name: nats-client-tls
-  #   ca: "ca.crt"
-  #   cert: "tls.crt"
-  #   key: "tls.key"
-
 cluster:
   # NOTE: NATS Server service is enabled by default, but will get disabled
   # if a NATS url is defined.
