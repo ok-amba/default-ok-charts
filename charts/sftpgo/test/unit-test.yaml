@@ -1,0 +1,17 @@
+suite: test resource group
+templates:
+  - deployment.yaml
+tests:
+  - it: should work with minimum values
+    set:
+      global:
+        projectID: test-123
+      fullnameOverride: "Test-ftp"
+    asserts:
+      # test default name.
+      - equal:
+          path: metadata.name
+          value: "Test-ftp"
+      - equal:
+          path: spec.name
+          value: "example-name"

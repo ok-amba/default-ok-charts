@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-traffic-to-central-ftp
+  {{- with .Values.service.annotations }}
+  annotations:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "deployment.labels" . | nindent 4 }}
+    {{- range $k, $v := .Values.global.labels }}
+    {{- printf "%s: %s" $k ($v | quote) | nindent 4 }}
+    {{- end }}
+  namespace: {{ .Values.namespace }}
+spec:
+  ingress:
+    - from:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+      ports:
+        - port: 2021
+          protocol: TCP
+        - port: 50001
+          protocol: TCP
+        - port: 50002
+          protocol: TCP
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name:  {{ include "deployment.name" $ }}
+      app.kubernetes.io/instance: {{ .Values.namespace }}
+  policyTypes:
+    - Ingress

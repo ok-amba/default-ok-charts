@@ -4,19 +4,19 @@ global:
 
   # The Google Project ID.
   # [Required for Cloud SQL Proxy]
-  projectID: null
-fullnameOverride: ""
-namespace: ""
+  projectID: captain-hook-514382
+fullnameOverride: "central-ftp"
+namespace: "emob"
 
 config: {}
 
-serviceAccount: ""
-gkeNamespace: ""
+serviceAccount: "central-ftp"
+gkeNamespace: "knp-emobility-test"
 cloudSqlConnectorVersion: 2.13
 sftpgoVersion: 2.5.4
 logLevel: warning
 loadBalancerIP: 35.246.133.50
-  
+
 service:
   annotations: {}
   labels: {}

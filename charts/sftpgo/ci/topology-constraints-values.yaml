@@ -1,3 +1,0 @@
-topologySpreadConstraints:
-  enabled: true
-  topologyKey: kubernetes.io/hostname

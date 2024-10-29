@@ -1,5 +1,0 @@
-ftpd:
-  enabled: true
-
-webdavd:
-  enabled: true

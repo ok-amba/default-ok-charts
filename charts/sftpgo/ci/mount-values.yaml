@@ -1,7 +1,0 @@
-volumes:
-  - name: test
-    emptyDir: {}
-
-volumeMounts:
-  - name: test
-    mountPath: /test
