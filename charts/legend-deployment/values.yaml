@@ -191,9 +191,12 @@ ingress:
   # URL of the application
   host: example.org
 
-  # Additional URLs e.g. old service URLs that needs to be routable during migration.
-  # Any additional hosts will be issued certificates using the Cloudflare DNS ClusterIssuer through DNS01 challenges.
-  additionalHosts: []
+  additionalIngress: 
+    enable: false
+    clusterIssuer: null 
+    # Additional URLs e.g. old service URLs that needs to be routable during migration.
+    hosts: []
+    
 
   # Create cname records
   createDNSRecord: true

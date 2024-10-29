@@ -2,7 +2,7 @@
 {{- fail "The service is not enabled, which is a dependency for the ingress."}}
 {{- end }}
 
-{{- if and (and (.Values.ingress.enable) (.Values.service.enable)) .Values.ingress.additionalHosts }}
+{{- if and (and (.Values.ingress.enable) (.Values.service.enable)) (and .Values.ingress.additionalIngress.enable .Values.ingress.additionalIngress.hosts)}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -16,7 +16,7 @@ metadata:
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
     {{- end }}
     nginx.ingress.kubernetes.io/ssl-redirect: {{ .sslRedirect | default "false" | quote }}
-    cert-manager.io/cluster-issuer: cloudflare-dns01-issuer
+    cert-manager.io/cluster-issuer:  {{ $.Values.ingress.additionalHosts.clusterIssuer | default "cloudflare-dns01-issuer" }}
   labels:
     {{- include "deployment.labels" $ | nindent 4 }}
     {{- range $k, $v := .labels }}
@@ -26,7 +26,7 @@ metadata:
 spec:
   ingressClassName: {{ $.Values.ingress.ingressClassName | default "nginx" }}
   rules:
-  {{- range $host := $.Values.ingress.additionalHosts }}
+  {{- range $host := $.Values.ingress.additionalHosts.hosts }}
   - host: {{ $host | quote }}
     http:
       paths:
@@ -42,7 +42,7 @@ spec:
         {{- end }}
 {{- end }}
   tls:
-  {{- range $host := $.Values.ingress.additionalHosts }}
+  {{- range $host := $.Values.ingress.additionalHosts.hosts }}
   - hosts:
     - {{ $host | quote }}
     {{- if $.Values.ingress.wwwRedirect }}
