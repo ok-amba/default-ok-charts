@@ -6,7 +6,7 @@ metadata:
   {{- if .Values.exporter.serviceMonitor.namespace }}
   namespace: {{ .Values.exporter.serviceMonitor.namespace }}
   {{- else }}
-  namespace: {{ .Release.Namespace | quote }}
+  namespace: {{ $.Values.kubernetesNamespace | quote }}
   {{- end }}
   {{- if .Values.exporter.serviceMonitor.labels }}
   labels:

@@ -1,0 +1,3 @@
+ {{- if (not ($.Values.kubernetesNamespace)) }}
+    {{- fail "namespace must for cluster service DNS lookup to work correctly." }}
+ {{- end }}
