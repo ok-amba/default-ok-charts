@@ -92,6 +92,12 @@ deployment:
     additionalVolumeMounts: []
     # - name: cache-volume
     #   mountPath: /some/path
+    
+    # Below add external secrets
+    externalSecrets: []
+      #- name: "googlesecretmanager"
+      #  key: "googlesecretmanager"
+      #  secretKey: "key.json"
 
   # Add additional volumes.
   additionalVolumes: []
@@ -191,3 +197,4 @@ podDisruptionBudget:
   # How many pods are allowed to be unavailable during e.g. scaling of nodes or updates. 
   # Only integer values are supported. 0 is not an allowed value, since it will potentially block a node indefinitely.
   maxUnavailablePods: 1
+

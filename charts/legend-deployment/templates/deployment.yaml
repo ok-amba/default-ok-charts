@@ -101,7 +101,7 @@ spec:
           {{- end }}
         {{- end }}
 
-        {{- if or .secrets .configMaps .additionalVolumeMounts }}
+        {{- if or .secrets .configMaps .additionalVolumeMounts .externalSecret }}
         volumeMounts:
           {{- range $secret := .secrets }}
           - name: {{ $secret }}
@@ -118,6 +118,11 @@ spec:
           {{- range $volumeMount := .additionalVolumeMounts }}
           - name: {{ $volumeMount.name }}
             mountPath: {{ $volumeMount.mountPath }}
+          {{- end }}
+          {{- range $externalSecret := .externalSecret }}
+          - name: {{ $externalSecret.name }}
+            mountPath: /secrets/{{ $externalSecret.name }}
+            readOnly: true
           {{- end }}
         {{- end }}
       {{- end }}

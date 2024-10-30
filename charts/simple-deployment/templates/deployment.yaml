@@ -92,7 +92,7 @@ spec:
           {{- end }}
         {{- end }}
 
-        {{- if or .secrets .configMaps .additionalVolumeMounts }}
+        {{- if or .secrets .configMaps .additionalVolumeMounts .externalSecrets }}
         volumeMounts:
           {{- range $secret := .secrets }}
           - name: {{ $secret }}
@@ -110,11 +110,16 @@ spec:
           - name: {{ $volumeMount.name }}
             mountPath: {{ $volumeMount.mountPath }}
           {{- end }}
+          {{- range $externalSecret := .externalSecrets }}
+          - name: {{ $externalSecret.name }}
+            mountPath: /secrets/{{ $externalSecret.name }}
+            readOnly: true
+          {{- end }}
         {{- end }}
       {{- end }}
       {{- include "deployment.cloudSQLProxy" $ | nindent 6 }}
       {{- with .Values.deployment }}
-      {{- if or (and .cloudSQLProxy.enable .cloudSQLProxy.secretKeyName) .container.secrets .container.configMaps .additionalVolumes }}
+      {{- if or (and .cloudSQLProxy.enable .cloudSQLProxy.secretKeyName) .container.secrets .container.configMaps .additionalVolumes .container.externalSecrets }}
       volumes:
         {{- if and .cloudSQLProxy.enable .cloudSQLProxy.secretKeyName }}
         - name: {{ .cloudSQLProxy.secretKeyName }}
@@ -129,6 +134,11 @@ spec:
           secret:
             secretName: {{ $secret }}
         {{- end }}
+        {{- end }}
+        {{- range $externalSecret := .externalSecrets }}
+        - name: {{ $externalSecret.name }}
+          secret:
+            secretName: {{ $externalSecret.name }}
         {{- end }}
         {{- range $configMap := .configMaps }}
         - name: {{ $configMap.name }}

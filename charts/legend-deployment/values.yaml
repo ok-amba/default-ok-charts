@@ -118,7 +118,13 @@ deployment:
     additionalVolumeMounts: []
     # - name: cache-volume
     #   mountPath: /some/path
-
+    
+    # Below add external secrets
+    externalSecret: []
+      #- name: "googlesecretmanager"
+      #  key: "googlesecretmanager"
+      #  secretKey: "key.json"
+    
   # Add additional volumes.
   additionalVolumes: []
   # - name: cache-volume
