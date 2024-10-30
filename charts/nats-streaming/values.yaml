@@ -3,6 +3,7 @@
 #  NATS Streaming Configuration  #
 #                                #
 ##################################
+kubernetesNamespace: 
 stan:
   image: nats-streaming:0.25.6
   pullPolicy: IfNotPresent
