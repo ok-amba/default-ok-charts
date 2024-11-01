@@ -120,7 +120,7 @@ deployment:
     #   mountPath: /some/path
     
     # Below add external secrets
-    externalSecret: []
+    externalSecrets: []
       #- name: "googlesecretmanager"
       #  key: "googlesecretmanager"
       #  secretKey: "key.json"
