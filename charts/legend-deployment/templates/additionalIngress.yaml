@@ -16,7 +16,7 @@ metadata:
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
     {{- end }}
     nginx.ingress.kubernetes.io/ssl-redirect: {{ .sslRedirect | default "false" | quote }}
-    cert-manager.io/cluster-issuer:  {{ $.Values.ingress.additionalHosts.clusterIssuer | default "cloudflare-dns01-issuer" }}
+    cert-manager.io/cluster-issuer:  {{ $.Values.ingress.additionalIngress.clusterIssuer | default "cloudflare-dns01-issuer" }}
   labels:
     {{- include "deployment.labels" $ | nindent 4 }}
     {{- range $k, $v := .labels }}
@@ -26,7 +26,7 @@ metadata:
 spec:
   ingressClassName: {{ $.Values.ingress.ingressClassName | default "nginx" }}
   rules:
-  {{- range $host := $.Values.ingress.additionalHosts.hosts }}
+  {{- range $host := $.Values.ingress.additionalIngress.hosts }}
   - host: {{ $host | quote }}
     http:
       paths:
@@ -42,7 +42,7 @@ spec:
         {{- end }}
 {{- end }}
   tls:
-  {{- range $host := $.Values.ingress.additionalHosts.hosts }}
+  {{- range $host := $.Values.ingress.additionalIngress.hosts }}
   - hosts:
     - {{ $host | quote }}
     {{- if $.Values.ingress.wwwRedirect }}
