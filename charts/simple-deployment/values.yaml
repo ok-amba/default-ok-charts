@@ -95,9 +95,13 @@ deployment:
     
     # Below add external secrets
     externalSecrets: []
-      #- name: "googlesecretmanager"
-      #  key: "googlesecretmanager"
-      #  secretKey: "key.json"
+    #  - name: "Secrets"
+    #    data:
+    #    - key: "secret 1"
+    #      remoteSecret: "key.json"
+    #    - key: "secret 2"
+    #      remoteSecret: "key2.json"
+
 
   # Add additional volumes.
   additionalVolumes: []
