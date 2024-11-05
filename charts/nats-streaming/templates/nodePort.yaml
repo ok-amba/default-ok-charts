@@ -1,0 +1,19 @@
+---
+{{- if $.Values.nodePort.enable }}
+apiVersion: v1
+kind: Service
+type: NodePort
+metadata:
+  name: {{ template "stan.name" . }}
+  labels:
+    app: {{ template "stan.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+spec:
+  selector:
+    app: {{ template "stan.name" . }}
+  ports:
+    - nodePort: {{ $.Values.nodePort.nodePort}}
+      port: 4222
+      protocol: TCP
+      targetPort: 4222
+{{- end }}

@@ -1,3 +1,7 @@
  {{- if (not ($.Values.kubernetesNamespace)) }}
     {{- fail "namespace must for cluster service DNS lookup to work correctly." }}
  {{- end }}
+
+ {{- if or (lt $.Values.nodePort.port 30000) (gt $.Values.nodePort.port 32767) }}
+    {{- fail (printf "specified port %d is outside of the cluster's node port range (30000-32767)" $.Values.nodePort.port) }}
+ {{- end }}

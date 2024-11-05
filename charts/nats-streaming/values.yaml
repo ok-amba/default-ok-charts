@@ -1,9 +1,11 @@
+kubernetesNamespace: 
+nameOverride: ""
+imagePullSecrets: []
 ##################################
 #                                #
 #  NATS Streaming Configuration  #
 #                                #
 ##################################
-kubernetesNamespace: 
 stan:
   image: nats-streaming:0.25.6
   pullPolicy: IfNotPresent
@@ -29,8 +31,6 @@ stan:
       usernameKey: 
       passwordKey:
 
-nameOverride: ""
-imagePullSecrets: []
 serviceAccountName: ""
 
 # Annotations to add to the NATS pods
@@ -85,6 +85,19 @@ livenessProbe:
       path: /
       port: monitor
     timeoutSeconds: 2
+
+############################
+#                          #
+#  NodePort configuration  #
+#                          #
+############################
+nodePort: 
+ # Enable the NodePort service definition.
+  enable: false
+
+  # Port that will be exposed.
+  nodePort: 
+  
 
 ###########################
 #                         #
