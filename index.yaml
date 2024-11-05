@@ -538,6 +538,15 @@ entries:
     version: 0.0.1
   nats-streaming:
   - apiVersion: v2
+    created: "2024-11-05T08:43:06.951937037Z"
+    description: Stan helm chart fork that supports configuring auth through secrets.
+      Only used for migration purposes and no maintenance effort planned.
+    digest: 77c2ba3d4990336aecbaaac8b457ebdf81c6ded1457d3d3addefb74cadcaa3ee
+    name: nats-streaming
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/nats-streaming-0.1.0-rc3/nats-streaming-0.1.0-rc3.tgz
+    version: 0.1.0-rc3
+  - apiVersion: v2
     created: "2024-10-30T10:24:02.010609762Z"
     description: Stan helm chart fork that supports configuring auth through secrets.
       Only used for migration purposes and no maintenance effort planned.
@@ -836,4 +845,4 @@ entries:
     urls:
     - https://ok-amba.github.io/default-ok-charts/.cr-release-packages/simple-deployment-0.1.0.tgz
     version: 0.1.0
-generated: "2024-10-30T10:24:02.011009521Z"
+generated: "2024-11-05T08:43:06.952175303Z"
