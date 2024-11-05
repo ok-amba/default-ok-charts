@@ -2,13 +2,13 @@
 {{- if $.Values.nodePort.enable }}
 apiVersion: v1
 kind: Service
-type: NodePort
 metadata:
   name: {{ template "stan.name" . }}-nodeport
   labels:
     app: {{ template "stan.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
 spec:
+  type: NodePort
   selector:
     app: {{ template "stan.name" . }}
   ports:
