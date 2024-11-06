@@ -131,11 +131,11 @@ deployment:
     # Secret in google will be {{secretName}}__{{secretKey}}
     # Takes multiple google secrets and convert them into a single k8s secret. Injecting them as separate
     # deployment container environment variables 
-    externalSecretsRef:
-      - secretName: "easyparkhubinterfaceapi"
-        data:
-          - secretKey: "aalborgauthorizationtoken"
-            refName: "AalborgApiAuthorizationToken"
+    externalSecretsRef: []
+    #  - secretName: "easyparkhubinterfaceapi"
+    #    data:
+    #      - secretKey: "aalborgauthorizationtoken"
+    #        refName: "AalborgApiAuthorizationToken"
 
     
   # Add additional volumes.
