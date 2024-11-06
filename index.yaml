@@ -528,6 +528,15 @@ entries:
     version: 0.0.1
   legend-deployment:
   - apiVersion: v2
+    created: "2024-11-06T08:36:32.225489012Z"
+    description: A Helm chart for a legend deployment, incl. service and ingress,
+      while also have support for gatekeeper and environment variable secrets
+    digest: a0eb6160ae58b43cf330827c9f3940a42c7e42a37089a1d6991f271127bfba8f
+    name: legend-deployment
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/legend-deployment-0.1.0-rc1/legend-deployment-0.1.0-rc1.tgz
+    version: 0.1.0-rc1
+  - apiVersion: v2
     created: "2024-10-03T11:10:00.510274142Z"
     description: A Helm chart for a legend deployment, incl. service and ingress,
       while also have support for gatekeeper and environment variable secrets
@@ -565,6 +574,14 @@ entries:
     - https://github.com/ok-amba/default-ok-charts/releases/download/nats-streaming-0.1.0-rc-1/nats-streaming-0.1.0-rc-1.tgz
     version: 0.1.0-rc-1
   simple-deployment:
+  - apiVersion: v2
+    created: "2024-11-06T08:36:32.339789362Z"
+    description: A Helm chart for a simple deployment, incl. service and ingress.
+    digest: 515760c2fc62a66a98b9e631caec1f840502838ed8bda168da96031bc9610a19
+    name: simple-deployment
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/simple-deployment-1.3.0-rc1/simple-deployment-1.3.0-rc1.tgz
+    version: 1.3.0-rc1
   - apiVersion: v2
     created: "2024-10-03T11:00:46.410258316Z"
     description: A Helm chart for a simple deployment, incl. service and ingress.
@@ -845,4 +862,4 @@ entries:
     urls:
     - https://ok-amba.github.io/default-ok-charts/.cr-release-packages/simple-deployment-0.1.0.tgz
     version: 0.1.0
-generated: "2024-11-05T08:43:06.952175303Z"
+generated: "2024-11-06T08:36:32.340389105Z"
