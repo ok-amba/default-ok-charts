@@ -1,4 +1,4 @@
 apiVersion: v2
 name: cronjob
 description: Kubernetes CronJob Resource
-version: 0.4.0-rc
+version: 0.3.0
