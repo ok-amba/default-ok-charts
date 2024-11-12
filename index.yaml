@@ -2,6 +2,14 @@ apiVersion: v1
 entries:
   cronjob:
   - apiVersion: v2
+    created: "2024-11-12T10:39:11.425673923Z"
+    description: Kubernetes CronJob Resource
+    digest: a2deb7a887fd058d5dd8def30fbd1a8ee007594ef805b290fbdc59a8ae0bcbbb
+    name: cronjob
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/cronjob-0.4.0-rc/cronjob-0.4.0-rc.tgz
+    version: 0.4.0-rc
+  - apiVersion: v2
     created: "2024-03-04T07:42:21.771642629Z"
     description: Kubernetes CronJob Resource
     digest: f6b8384d52101f56b9a3b7d3d5a3b6955ddde3197340a75f11684378ca495e99
@@ -179,6 +187,14 @@ entries:
     - https://github.com/ok-amba/default-ok-charts/releases/download/datadog-monitor-0.1.0-rc1/datadog-monitor-0.1.0-rc1.tgz
     version: 0.1.0-rc1
   db-migration:
+  - apiVersion: v2
+    created: "2024-11-12T10:39:11.602373416Z"
+    description: A Helm chart for a running a DB migration.
+    digest: 255378078677545dd1ba38bad31afb9080b45419c04f44e75085f7f930003604
+    name: db-migration
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/db-migration-1.1.0-rc/db-migration-1.1.0-rc.tgz
+    version: 1.1.0-rc
   - apiVersion: v2
     created: "2023-09-01T10:13:20.492278277Z"
     description: A Helm chart for a running a DB migration.
@@ -528,6 +544,15 @@ entries:
     version: 0.0.1
   legend-deployment:
   - apiVersion: v2
+    created: "2024-11-12T10:39:11.787322707Z"
+    description: A Helm chart for a legend deployment, incl. service and ingress,
+      while also have support for gatekeeper and environment variable secrets
+    digest: 794b271ac539ccf582e3a54ec2005e5a43a322091da82f650bb82912727c89c5
+    name: legend-deployment
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/legend-deployment-0.2.0-rc3/legend-deployment-0.2.0-rc3.tgz
+    version: 0.2.0-rc3
+  - apiVersion: v2
     created: "2024-11-07T08:31:36.938970021Z"
     description: A Helm chart for a legend deployment, incl. service and ingress,
       while also have support for gatekeeper and environment variable secrets
@@ -592,6 +617,14 @@ entries:
     - https://github.com/ok-amba/default-ok-charts/releases/download/nats-streaming-0.1.0-rc-1/nats-streaming-0.1.0-rc-1.tgz
     version: 0.1.0-rc-1
   simple-deployment:
+  - apiVersion: v2
+    created: "2024-11-12T10:39:11.96987514Z"
+    description: A Helm chart for a simple deployment, incl. service and ingress.
+    digest: 409615c410739cc7992fbc9d6380c4a4add55aca74bc820a8d9c93c9159296d4
+    name: simple-deployment
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/simple-deployment-1.3.0-rc3/simple-deployment-1.3.0-rc3.tgz
+    version: 1.3.0-rc3
   - apiVersion: v2
     created: "2024-11-07T08:31:37.15428549Z"
     description: A Helm chart for a simple deployment, incl. service and ingress.
@@ -888,4 +921,4 @@ entries:
     urls:
     - https://ok-amba.github.io/default-ok-charts/.cr-release-packages/simple-deployment-0.1.0.tgz
     version: 0.1.0
-generated: "2024-11-07T08:31:37.154823039Z"
+generated: "2024-11-12T10:39:11.970372827Z"
