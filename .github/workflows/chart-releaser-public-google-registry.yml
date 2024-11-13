@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - feature/add-push-to-google-registry
+      - feature/added-workflow-for-releasing-feature-branches
     paths:
       - '**/Chart.yaml'
 
