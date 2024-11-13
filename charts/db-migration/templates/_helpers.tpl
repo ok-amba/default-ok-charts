@@ -29,7 +29,7 @@ chart-version: {{ .Chart.Version | quote }}
 {{- end -}}
 
 - name: cloud-sql-proxy
-  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:{{ .cloudSQLProxy.imageTag | default "2.4.0" }}"
+  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:{{ .cloudSQLProxy.imageTag | default "2.14.0" }}"
   command:
     - "/cloud-sql-proxy"
     - "{{ $.Values.global.projectID }}:{{ .cloudSQLProxy.region | default "europe-west3" }}:{{ .cloudSQLProxy.instanceName }}"
