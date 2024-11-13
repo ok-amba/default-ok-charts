@@ -11,7 +11,6 @@ on:
 jobs:
   chart-releaser:
     runs-on: ubuntu-latest
-    environment: google-pulic-artifact-registry
     steps:
       - name: Checkout
         uses: actions/checkout@v1
