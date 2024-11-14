@@ -1,3 +1,8 @@
+
+{{- if (not (kindIs "string" .Values.deployment.container.tag)) }}
+    {{- fail "tag can only be set as a string" }}
+{{- end }}
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
