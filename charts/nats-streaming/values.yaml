@@ -250,7 +250,7 @@ cluster:
   enabled: true
 
   # NOTE: Recommended to enable if running behind a load balancer.
-  noAdvertise: false
+  noAdvertise: true
 
 # Leafnode connections to extend a cluster:
 #
