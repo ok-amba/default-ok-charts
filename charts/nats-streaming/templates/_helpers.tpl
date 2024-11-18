@@ -2,7 +2,7 @@
 Expand the name of the chart.
 */}}
 {{- define "stan.name" -}}
-{{- default (printf "%s-%s".Release.Name $.Values.kubernetesNamespace) .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- default (printf "%s-%s" .Release.Name $.Values.kubernetesNamespace) .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
