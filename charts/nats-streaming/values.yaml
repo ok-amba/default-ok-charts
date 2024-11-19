@@ -258,68 +258,6 @@ cluster:
   # NOTE: Recommended to enable if running behind a load balancer.
   noAdvertise: true
 
-# Leafnode connections to extend a cluster:
-#
-# https://docs.nats.io/nats-server/configuration/leafnodes
-#
-leafnodes:
-  enabled: false
-  noAdvertise: false
-  # remotes:
-  #   - url: "tls://connect.ngs.global:7422"
-
-  #######################
-  #                     #
-  #  TLS Configuration  #
-  #                     #
-  #######################
-  #
-  #  # You can find more on how to setup and trouble shoot TLS connnections at:
-  #
-  #  # https://docs.nats.io/nats-server/configuration/securing_nats/tls
-  #
-
-  #
-  # tls:
-  #   secret:
-  #     name: nats-client-tls
-  #   ca: "ca.crt"
-  #   cert: "tls.crt"
-  #   key: "tls.key"
-
-# Gateway connections to create a super cluster
-#
-# https://docs.nats.io/nats-server/configuration/gateways
-#
-gateway:
-  enabled: false
-  name: 'default'
-
-  #############################
-  #                           #
-  #  List of remote gateways  #
-  #                           #
-  #############################
-  # gateways:
-  #   - name: other
-  #     url: nats://my-gateway-url:7522
-
-  #######################
-  #                     #
-  #  TLS Configuration  #
-  #                     #
-  #######################
-  #
-  #  # You can find more on how to setup and trouble shoot TLS connnections at:
-  #
-  #  # https://docs.nats.io/nats-server/configuration/securing_nats/tls
-  #
-  # tls:
-  #   secret:
-  #     name: nats-client-tls
-  #   ca: "ca.crt"
-  #   cert: "tls.crt"
-  #   key: "tls.key"
 
 # In case of both external access and advertisements being
 # enabled, an initializer container will be used to gather
