@@ -27,7 +27,7 @@ stan:
     enabled: false
 
     secretRef:
-      secret: test-secret
+      secret: 
       usernameKey: 
       passwordKey:
       # Create ExternalSecret manifest that synchronises credentials from e.g. Google Secret Manager.
