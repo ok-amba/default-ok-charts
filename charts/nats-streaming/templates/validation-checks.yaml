@@ -25,7 +25,7 @@
       {{- fail "stan.auth.passwordKey must be set if stan.auth is enabled." }}
    {{- end }}
 
-   {{- if $.Values.stan.auth.secretRef.externalSecret.enable}}
+   {{- if $.Values.stan.auth.secretRef.externalSecret.enabled }}
       {{- if not $.Values.stan.auth.secretRef.externalSecret.remoteUsernameRef }}
          {{- fail "stan.auth.secretRef.externalSecret.remoteUsernameRef must be set if externalSecret has been enabled" }}
       {{- end }}
