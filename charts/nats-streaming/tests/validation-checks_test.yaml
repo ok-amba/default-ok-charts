@@ -1,0 +1,86 @@
+suite: Validation check tests
+tests: 
+  - it: "Should fail if kubernetesNamespace has not been set"
+    set: 
+      kubernetesNamespace: null
+    asserts:
+      - failedTemplate: {}
+
+  - it: "Should not fail if kubernetesNamespace has been set"
+    set: 
+      kubernetesNamespace: "test"
+    asserts:
+      - notFailedTemplate: {}
+  
+  - it: "Should fail if stan.auth is enabled, but no secretRef has been set"
+    set:
+      kubernetesNamespace: "test"
+      stan.auth.enabled: true
+      stan.auth.secretRef.secret: ""
+      stan.auth.secretRef.usernameKey: user
+      stan.auth.secretRef.passwordKey: user
+    asserts:
+      - failedTemplate: {}
+          
+
+  - it: "Should not fail if stan.auth is enabled and secretRef has been set"
+    set:
+      kubernetesNamespace: "test"
+      stan.auth.enabled: true
+      stan.auth.secretRef.secret: "test"
+      stan.auth.secretRef.usernameKey: user
+      stan.auth.secretRef.passwordKey: user
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: "Should fail if stan.auth is enabled, but usernameKey is not set"
+    set:
+      kubernetesNamespace: "test"
+      stan.auth.enabled: true
+      stan.auth.secretRef.secret: "test"
+      stan.auth.secretRef.usernameKey: ""
+      stan.auth.secretRef.passwordKey: user
+    asserts:
+      - failedTemplate: {}
+
+  - it: "Should fail if stan.auth is enabled, but passwordKey is not set"
+    set:
+      kubernetesNamespace: "test"
+      stan.auth.enabled: true
+      stan.auth.secretRef.secret: "test"
+      stan.auth.secretRef.usernameKey: "user"
+      stan.auth.secretRef.passwordKey: "" 
+    asserts:
+      - failedTemplate: {}
+
+  - it: "Should fail if nodePort is enabled, but nodePort is below range"
+    set:
+      kubernetesNamespace: "test"
+      nodePort.enabled: true
+      nodePort.nodePort: 29999
+    asserts:
+      - failedTemplate: {}
+
+  - it: "Should fail if nodePort is enabled, but nodePort is above range"
+    set:
+      kubernetesNamespace: "test"
+      nodePort.enabled: true
+      nodePort.nodePort: 32768
+    asserts:
+      - failedTemplate: {}
+
+  - it: "Should not fail if nodePort is enabled, if nodePort is within range"
+    set:
+      kubernetesNamespace: "test"
+      nodePort.enabled: true
+      nodePort.nodePort: 30000
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: "Should not fail if nodePort is enabled, if nodePort is within range"
+    set:
+      kubernetesNamespace: "test"
+      nodePort.enabled: true
+      nodePort.nodePort: 32767
+    asserts:
+      - notFailedTemplate: {}

@@ -32,7 +32,7 @@ stan:
       passwordKey:
       # Create ExternalSecret manifest that synchronises credentials from e.g. Google Secret Manager.
       externalSecret:
-        enable: false
+        enabled: false
         secretStore: google-secret-manager
         remoteUsernameRef:
         remotePasswordRef:
