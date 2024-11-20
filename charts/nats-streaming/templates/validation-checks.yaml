@@ -2,9 +2,9 @@
     {{- fail "namespace must be set for cluster service DNS lookup to work correctly." }}
  {{- end }}
 
-{{- if $.Values.nodePort.enable }}
+{{- if $.Values.nodePort.enabled }}
  {{- if not $.Values.nodePort.nodePort }}
-    {{- fail "nodePort.nodePort must be set if nodePort.enable has been set to true" }}
+    {{- fail "nodePort.nodePort must be set if nodePort.enabled has been set to true" }}
  {{- end }}
 
    {{- if or (lt (int $.Values.nodePort.nodePort) (int 30000)) (gt (int $.Values.nodePort.nodePort) (int 32767)) }}
