@@ -560,6 +560,15 @@ entries:
     version: 0.0.1
   legend-deployment:
   - apiVersion: v2
+    created: "2024-11-21T09:41:18.661643817Z"
+    description: A Helm chart for a legend deployment, incl. service and ingress,
+      while also have support for gatekeeper and environment variable secrets
+    digest: 233277f554e6263cb7a05b676e362bc70c130a74ffe49ed65679ad7af2732432
+    name: legend-deployment
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/legend-deployment-1.1.0/legend-deployment-1.1.0.tgz
+    version: 1.1.0
+  - apiVersion: v2
     created: "2024-11-15T12:59:34.434416437Z"
     description: A Helm chart for a legend deployment, incl. service and ingress,
       while also have support for gatekeeper and environment variable secrets
@@ -623,6 +632,15 @@ entries:
     - https://github.com/ok-amba/default-ok-charts/releases/download/legend-deployment-0.0.1/legend-deployment-0.0.1.tgz
     version: 0.0.1
   nats-streaming:
+  - apiVersion: v2
+    created: "2024-11-21T09:41:18.782238952Z"
+    description: Stan helm chart fork that supports configuring auth through secrets.
+      Only used for migration purposes and no maintenance effort planned.
+    digest: 4a98901afe1a8790fbff7620def915adb58c1b1b97b5e153d385ef9bbc82b0af
+    name: nats-streaming
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/nats-streaming-0.1.0/nats-streaming-0.1.0.tgz
+    version: 0.1.0
   - apiVersion: v2
     created: "2024-11-19T14:52:27.437158366Z"
     description: Stan helm chart fork that supports configuring auth through secrets.
@@ -1007,4 +1025,4 @@ entries:
     urls:
     - https://ok-amba.github.io/default-ok-charts/.cr-release-packages/simple-deployment-0.1.0.tgz
     version: 0.1.0
-generated: "2024-11-19T14:52:27.437590619Z"
+generated: "2024-11-21T09:41:18.782620597Z"
