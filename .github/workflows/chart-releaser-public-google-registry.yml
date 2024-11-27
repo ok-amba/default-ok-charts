@@ -15,11 +15,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
+
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.8.1
+      
+      - name: Retrieve Chart Version
+        id: chartversionstep
+        run: |
+          echo "helmversion=$(cat projectFile | grep -Po '(?<=Version>).*(?=</Version>)')" >> $GITHUB_OUTPUT
+
       - name: Chart | Push
         uses: appany/helm-oci-chart-releaser@v0.3.0
         with:
           name: simple-deployment
           repository: helm-test
+          tag: ${{ steps.chartversionstep.outputs.helmversion }}
           path: charts/simple-deployment # Default charts/{name}
           registry: europe-west3-docker.pkg.dev/tinkerbell-329710/ok-public-registry
           registry_username: ${{ secrets.REGISTRY_USERNAME }}
