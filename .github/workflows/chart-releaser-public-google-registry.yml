@@ -42,7 +42,7 @@ jobs:
           echo "helmname=$(helm show chart . | grep -E "^name:" | awk '{print $2}')" >> $GITHUB_OUTPUT
 
       - name: Simple Deployment - Chart | Push
-        uses: appany/helm-oci-chart-releaser@v0.3.0
+        uses: appany/helm-oci-chart-releaser@v0.4.2
         with:
           name: ${{ steps.chartnamestep.outputs.helmname }}
           repository: helm-dev
@@ -51,4 +51,4 @@ jobs:
           registry: europe-west3-docker.pkg.dev/tinkerbell-329710/ok-public-registry
           registry_username: ${{ secrets.REGISTRY_USERNAME }}
           registry_password: ${{ secrets.REGISTRY_PASSWORD }}
-          update_dependencies: 'false' # Defaults to false
+          update_dependencies: 'true' # Defaults to false
