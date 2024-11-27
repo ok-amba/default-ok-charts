@@ -1,0 +1,268 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "stan.name" . }}
+  labels:
+    app: {{ template "stan.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "stan.name" . }}
+
+  replicas: {{ include "stan.replicaCount" .  | required ".Values.stan.replicas should be greater or equal to 3 in clustered mode" }}
+
+  # NATS Streaming service name
+  serviceName: {{ template "stan.name" . }}
+
+  template:
+    metadata:
+      {{- if or .Values.podAnnotations .Values.exporter.enabled }}
+      annotations:
+        {{- if .Values.exporter.enabled }}
+        prometheus.io/path: /metrics
+        prometheus.io/port: "7777"
+        prometheus.io/scrape: "true"
+        {{- end }}
+        {{- if .Values.podAnnotations }}
+        {{- toYaml .Values.podAnnotations | nindent 8 }}
+        {{- end }}
+      {{- end }}
+      labels:
+        app: {{ template "stan.name" . }}
+        chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.securityContext }}
+      securityContext:
+        {{ toYaml . | indent 8 }}
+      {{- end }}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          name: {{ template "stan.name".  }}-config
+          defaultMode: 0755
+        name: config-volume
+
+      {{- if .Values.store.volume.enabled }}
+        {{- if .Values.store.volume.persistentVolumeClaim }}
+      - name: {{ template "stan.name" . }}-pvc
+        persistentVolumeClaim:
+          {{- if not .Values.store.volume.persistentVolumeClaim.existingClaim }}
+          claimName: {{ template "stan.name" . }}-pvc
+          {{ else }}
+          claimName: {{ .Values.store.volume.persistentVolumeClaim.claimName }}
+          {{ end }}
+        {{- end }}
+      {{- end }}
+      {{- if .Values.stan.credentials }}
+      - name: stan-sys-creds
+        secret:
+          secretName: {{ .Values.stan.credentials.secret.name }}
+      {{- end }}
+      {{- if .Values.stan.auth.nkeySeedFile }}
+      - name: stan-sys-nkey-seed-file
+        secret:
+          secretName: {{ .Values.stan.auth.nkeySeedFile.secret.name }}
+      {{- end }}
+
+      # Local volume shared with the reloader.
+      - name: pid
+        emptyDir: {}
+
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - {{ template "stan.name" . }}
+            topologyKey: kubernetes.io/hostname
+      {{- if .Values.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- range .Values.topologySpreadConstraints }}
+        {{- if and .maxSkew .topologyKey }}
+      - maxSkew: {{ .maxSkew }}
+        topologyKey: {{ .topologyKey }}
+        {{- if .whenUnsatisfiable }}
+        whenUnsatisfiable: {{ .whenUnsatisfiable }}
+        {{- end }}
+        labelSelector:
+          matchLabels:
+            app: {{ template "stan.name" $ }}
+            chart: {{ $.Chart.Name }}-{{ $.Chart.Version | replace "+" "_" }}
+        {{- end }}
+        {{- end }}
+      {{- end }}
+      containers:
+        ####################
+        #  NATS Streaming  #
+        ####################
+        - name: stan
+          image: {{ .Values.stan.image }}
+          {{- if .Values.stan.securityContext }}
+          securityContext:
+            {{- toYaml .Values.stan.securityContext | nindent 12 }}
+          {{- end }}
+          args:
+          - -sc
+          - /etc/stan-config/stan.conf
+          env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          {{- if and .Values.stan.auth.enabled .Values.stan.auth.secretRef }}
+          # These environment variables are loaded in the config map. See configmap.yaml
+          # All undefined variable references in the configuration file will be resolved from environment variable if possible. 
+          - name: AUTH_USER
+            valueFrom:
+              secretKeyRef: 
+                name: {{ .Values.stan.auth.secretRef.secret }}
+                key: {{ .Values.stan.auth.secretRef.usernameKey}}
+          - name: AUTH_PASSWORD
+            valueFrom:
+              secretKeyRef: 
+                name: {{ .Values.stan.auth.secretRef.secret }}
+                key: {{ .Values.stan.auth.secretRef.passwordKey}}
+          {{- end }} 
+          - name: CLUSTER_ADVERTISE
+            value: {{ template "nats.clusterAdvertise" . }}
+          - name: STAN_SERVICE_NAME
+            value: {{ template "stan.name" . }}
+          - name: STAN_REPLICAS
+            value: "{{ .Values.stan.replicas }}"
+          ports:
+          - containerPort: 8222
+            name: monitor
+          - containerPort: 7777
+            name: metrics
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          {{- if and .Values.store.cluster.enabled .Values.clusterReadinessProbe.enabled }}
+          {{- with .Values.clusterReadinessProbe.probe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- else }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.livenessProbe.enabled }}
+          {{- with .Values.livenessProbe.probe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- end }}
+
+          volumeMounts:
+          - name: config-volume
+            mountPath: /etc/stan-config
+          {{- if eq .Values.store.type "file" }}
+          {{- if .Values.store.volume.enabled }}
+          - name: {{ template "stan.name" . }}-pvc
+            mountPath: {{ .Values.store.volume.mount }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.stan.credentials }}
+          - name: stan-sys-creds
+            mountPath: /etc/stan-creds
+          {{- end }}
+          {{- if .Values.stan.auth.nkeySeedFile }}
+          - name: stan-sys-nkey-seed-file
+            mountPath: /etc/nkey-seed-file
+            subPath: {{ .Values.stan.auth.nkeySeedFile.secret.key }}
+          {{- end }}
+          - name: pid
+            mountPath: /var/run/stan
+
+        {{- if .Values.exporter.enabled }}
+        #################################
+        #                               #
+        #  NATS Prometheus Exporter     #
+        #                               #
+        #################################
+        - name: metrics
+          image: {{ .Values.exporter.image }}
+          {{- if .Values.exporter.securityContext }}
+          securityContext:
+            {{- toYaml .Values.exporter.securityContext | nindent 12 }}
+          {{- end }}
+          args:
+          {{- if .Values.exporter.args }}
+          {{- toYaml .Values.exporter.args | nindent 10 }}
+          {{- else }}
+          - -connz
+          - -routez
+          - -subz
+          - -varz
+          - -channelz
+          - -serverz
+          - http://localhost:8222/
+          {{- end }}
+          ports:
+          - containerPort: 7777
+            name: metrics
+          {{- with .Values.exporter.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+        {{- end }}
+
+        {{- if .Values.reloader.enabled }}
+        #################################
+        #                               #
+        #  NATS Configuration Reloader  #
+        #                               #
+        #################################
+        - name: reloader
+          image: {{ .Values.reloader.image }}
+          imagePullPolicy: {{ .Values.reloader.pullPolicy }}
+          command:
+           - "nats-server-config-reloader"
+           - "-pid"
+           - "/var/run/stan/stan.pid"
+           - "-config"
+           - "/etc/stan-config/stan.conf"
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/stan-config
+            - name: pid
+              mountPath: /var/run/stan
+        {{- end }}
+
+  {{- if eq .Values.store.type "file" }}
+  {{- if .Values.store.volume.enabled }}
+  {{- if not .Values.store.volume.persistentVolumeClaim }}
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ template "stan.name" . }}-pvc
+    spec:
+      {{- with .Values.store.volume.storageClass }}
+      storageClassName: {{ . }}
+      {{- end }}
+      accessModes:
+      {{- with .Values.store.volume.accessModes }}
+      - {{ . }}
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.store.volume.storageSize }}
+  {{- end }}
+  {{- end }}
+  {{- end }}

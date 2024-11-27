@@ -190,6 +190,13 @@ ingress:
 
   # URL of the application
   host: example.org
+  
+  additionalIngress: 
+    enable: false
+    clusterIssuer: null 
+    # Additional URLs e.g. old service URLs that needs to be routable during migration.
+    hosts: []
+    
 
   # Create cname records
   createDNSRecord: true

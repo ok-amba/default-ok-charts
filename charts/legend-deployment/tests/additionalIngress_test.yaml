@@ -1,0 +1,56 @@
+suite: Additional Ingress tests
+templates:
+  - additionalIngress.yaml
+tests:
+  - it: "Should not render additional ingress object when disabled"
+    set:
+      deployment.container.containerPort: 8080
+      service.enable: true
+      ingress.enable: true
+      ingress.additionalIngress.enable: false
+    asserts:
+      - hasDocuments:
+          count: 0
+  - it: "Should not render additional ingress object when enabled, but no additional hosts"
+    set:
+      deployment.container.containerPort: 8080
+      service.enable: true
+      ingress.enable: true
+      ingress.additionalIngress.enable: true
+      ingress.additionalIngress.hosts: []
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: "Should render additional ingress object when enabled and has additional hosts"
+    set:
+      deployment.container.containerPort: 8080
+      service.enable: true
+      ingress.enable: true
+      ingress.additionalIngress.enable: true
+      ingress.additionalIngress.hosts: ["ingress-test.test.okdc.dk"]
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.annotations["cert-manager.io/cluster-issuer"]
+          value: "cloudflare-dns01-issuer"
+      - lengthEqual:
+          path: "spec.rules"
+          count: 1
+      - lengthEqual:
+          path: "spec.tls"
+          count: 1
+
+  - it: "Should allow specifying different issuers"
+    set:
+      deployment.container.containerPort: 8080
+      service.enable: true
+      ingress.enable: true
+      ingress.additionalIngress.enable: true
+      ingress.additionalIngress.hosts: ["ingress-test.test.okdc.dk"]
+      ingress.additionalIngress.clusterIssuer: nginx-http01
+    asserts:
+      - equal:
+          path: metadata.annotations["cert-manager.io/cluster-issuer"]
+          value: "nginx-http01"
