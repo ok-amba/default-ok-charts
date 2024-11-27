@@ -15,9 +15,13 @@ on:
         type: string
         description: Relative path to the helm chart
         required: true
+      environment:
+        required: true
+        type: string
 
 jobs:
   chart-releaser:
+    environment: ${{ inputs.environment}}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -50,6 +54,6 @@ jobs:
           tag: ${{ steps.chartversionstep.outputs.helmversion }}
           path: ${{ inputs.helmChartPath }} # Default charts/{name}
           registry: europe-west3-docker.pkg.dev/tinkerbell-329710/ok-public-registry
-          registry_username: ${{ inputs.registryUsername }}
-          registry_password: ${{ inputs.registryPassword }}
+          registry_username: ${{ secrets.REGISTRY_USERNAME }}
+          registry_password: ${{ secrets.REGISTRY_PASSWORD }}
           update_dependencies: 'false' # Defaults to false
