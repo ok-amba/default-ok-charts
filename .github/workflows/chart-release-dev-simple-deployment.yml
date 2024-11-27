@@ -10,7 +10,6 @@ on:
 
 jobs:
   chart-releaser-public-google-registry:
-    environment: google-pulic-artifact-registry
     uses: ./.github/workflows/chart-releaser-public-google-registry.yml
     with:
       helmChartPath: charts/simple-deployment
