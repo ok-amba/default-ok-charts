@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - nothing
+      - feature/added-workflow-for-releasing-feature-branches
     paths:
       - 'chart/simple-deployment/**'
 
