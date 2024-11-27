@@ -14,7 +14,4 @@ jobs:
     secrets: inherit
     with:
       helmChartPath: charts/simple-deployment
-      registryUsername: sdfsd
-      registryPassword: fsdfsdf
-      environment: google-pulic-artifact-registry
       

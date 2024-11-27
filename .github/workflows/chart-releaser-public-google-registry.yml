@@ -7,21 +7,10 @@ on:
         type: string
         description: Relative path to the helm chart
         required: true
-      registryUsername:
-        type: string
-        description: Relative path to the helm chart
-        required: true
-      registryPassword:
-        type: string
-        description: Relative path to the helm chart
-        required: true
-      environment:
-        required: true
-        type: string
 
 jobs:
   chart-releaser:
-    environment: ${{ inputs.environment}}
+    environment: google-pulic-artifact-registry
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
