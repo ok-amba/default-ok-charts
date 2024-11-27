@@ -24,7 +24,7 @@ jobs:
       - name: Retrieve Chart Version
         id: chartversionstep
         run: |
-          echo "helmversion=$(cat projectFile | grep -Po '(?<=Version>).*(?=</Version>)')" >> $GITHUB_OUTPUT
+          echo "helmversion=$(helm show chart . | grep -E "^version:" | awk '{print $2}')" >> $GITHUB_OUTPUT
 
       - name: Chart | Push
         uses: appany/helm-oci-chart-releaser@v0.3.0
