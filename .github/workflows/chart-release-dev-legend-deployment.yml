@@ -1,4 +1,4 @@
-name: Chart Releaser Dev - simple-deployment
+name: Chart Releaser Dev - legend-deployment
 
 on:
   workflow_dispatch:
@@ -6,11 +6,11 @@ on:
     branches-ignore:
       - main
     paths:
-      - 'charts/simple-deployment/**'
+      - 'charts/legend-deployment/**'
 
 jobs:
   chart-releaser-public-google-registry:
     uses: ./.github/workflows/chart-releaser-public-google-registry.yml
     secrets: inherit
     with:
-      helmChartPath: charts/simple-deployment
+      helmChartPath: charts/legend-deployment
