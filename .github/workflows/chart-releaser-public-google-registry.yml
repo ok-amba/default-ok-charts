@@ -25,12 +25,14 @@ jobs:
         id: chartversionstep
         working-directory: ${{ inputs.helmChartPath }}
         run: |
+          echo "helmversion=$(helm show chart . | grep -E "^version:" | awk '{print $2}')"
           echo "helmversion=$(helm show chart . | grep -E "^version:" | awk '{print $2}')" >> $GITHUB_OUTPUT
 
       - name: Retrieve Chart Name
         id: chartnamestep
         working-directory: ${{ inputs.helmChartPath }}
         run: |
+          echo "helmname=$(helm show chart . | grep -E "^name:" | awk '{print $2}')"
           echo "helmname=$(helm show chart . | grep -E "^name:" | awk '{print $2}')" >> $GITHUB_OUTPUT
 
       - name: Simple Deployment - Chart | Push
