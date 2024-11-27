@@ -21,11 +21,11 @@ jobs:
         with:
           version: v3.8.1
       
-      - name: Add SHORT_SHA env property with commit short sha
+      - name: Retrieve github SHA
         id: githubshortsha
         run: |
-          echo "shortsha=`echo ${GITHUB_SHA} | cut -c1-8`"
-          echo "shortsha=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_OUTPUT
+          echo "shortsha=`echo ${GITHUB_SHA}`"
+          echo "shortsha=`echo ${GITHUB_SHA}`" >> $GITHUB_OUTPUT
       
       - name: Retrieve Chart Version
         id: chartversionstep
