@@ -10,8 +10,8 @@ on:
 
 jobs:
   chart-releaser:
-    runs-on: ubuntu-latest
     environment: google-pulic-artifact-registry
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -21,24 +21,32 @@ jobs:
         with:
           version: v3.8.1
       
+      - name: Retrieve github SHA
+        id: githubshortsha
+        run: |
+          echo "shortsha=`echo ${GITHUB_SHA}`"
+          echo "shortsha=`echo ${GITHUB_SHA}`" >> $GITHUB_OUTPUT
+      
       - name: Retrieve Chart Version
         id: chartversionstep
         working-directory: ${{ inputs.helmChartPath }}
         run: |
+          echo "helmversion=$(helm show chart . | grep -E "^version:" | awk '{print $2}')"
           echo "helmversion=$(helm show chart . | grep -E "^version:" | awk '{print $2}')" >> $GITHUB_OUTPUT
 
       - name: Retrieve Chart Name
         id: chartnamestep
         working-directory: ${{ inputs.helmChartPath }}
         run: |
+          echo "helmname=$(helm show chart . | grep -E "^name:" | awk '{print $2}')"
           echo "helmname=$(helm show chart . | grep -E "^name:" | awk '{print $2}')" >> $GITHUB_OUTPUT
 
       - name: Simple Deployment - Chart | Push
         uses: appany/helm-oci-chart-releaser@v0.3.0
         with:
           name: ${{ steps.chartnamestep.outputs.helmname }}
-          repository: helm-test
-          tag: ${{ steps.chartversionstep.outputs.helmversion }}
+          repository: helm-dev
+          tag: ${{ steps.chartversionstep.outputs.helmversion }}-${{ steps.githubshortsha.outputs.shortsha }}
           path: ${{ inputs.helmChartPath }} # Default charts/{name}
           registry: europe-west3-docker.pkg.dev/tinkerbell-329710/ok-public-registry
           registry_username: ${{ secrets.REGISTRY_USERNAME }}

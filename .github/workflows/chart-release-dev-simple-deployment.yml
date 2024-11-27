@@ -3,13 +3,15 @@ name: Chart Releaser Dev Simple Deployment
 on:
   workflow_dispatch:
   push:
-    branches:
-      - feature/added-workflow-for-releasing-feature-branches
+    branches-ignore:
+      - main
     paths:
-      - 'chart/simple-deployment/**'
+      - 'charts/simple-deployment/**'
 
 jobs:
   chart-releaser-public-google-registry:
     uses: ./.github/workflows/chart-releaser-public-google-registry.yml
+    secrets: inherit
     with:
-      helmChartPath: chart/simple-deployment
+      helmChartPath: charts/simple-deployment
+      
