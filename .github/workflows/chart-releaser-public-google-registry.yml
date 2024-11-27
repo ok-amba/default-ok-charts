@@ -20,7 +20,7 @@ jobs:
         with:
           name: simple-deployment
           repository: helm-test
-          tag: 0.1.0
+          tag: ${{ github.sha }}
           path: charts/simple-deployment # Default charts/{name}
           registry: europe-west3-docker.pkg.dev/tinkerbell-329710/ok-public-registry
           registry_username: ${{ secrets.REGISTRY_USERNAME }}
