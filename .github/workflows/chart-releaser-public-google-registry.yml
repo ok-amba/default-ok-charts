@@ -1,12 +1,12 @@
 name: Chart Releaser Google Artifact Registry
 
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - feature/added-workflow-for-releasing-feature-branches
-    paths:
-      - '**/Chart.yaml'
+  workflow_call:
+    inputs:
+      helmChartPath:
+        type: string
+        description: Relative path to the helm chart
+        required: true
 
 jobs:
   chart-releaser:
@@ -23,16 +23,23 @@ jobs:
       
       - name: Retrieve Chart Version
         id: chartversionstep
+        working-directory: ${{ github.event.inputs.message }}
         run: |
           echo "helmversion=$(helm show chart . | grep -E "^version:" | awk '{print $2}')" >> $GITHUB_OUTPUT
 
-      - name: Chart | Push
+      - name: Retrieve Chart Name
+        id: chartnamestep
+        working-directory: ${{ github.event.inputs.message }}
+        run: |
+          echo "helmname=$(helm show chart . | grep -E "^name:" | awk '{print $2}')" >> $GITHUB_OUTPUT
+
+      - name: Simple Deployment - Chart | Push
         uses: appany/helm-oci-chart-releaser@v0.3.0
         with:
-          name: simple-deployment
+          name: ${{ steps.chartnamestep.outputs.helmname }}
           repository: helm-test
           tag: ${{ steps.chartversionstep.outputs.helmversion }}
-          path: charts/simple-deployment # Default charts/{name}
+          path: ${{ github.event.inputs.message }} # Default charts/{name}
           registry: europe-west3-docker.pkg.dev/tinkerbell-329710/ok-public-registry
           registry_username: ${{ secrets.REGISTRY_USERNAME }}
           registry_password: ${{ secrets.REGISTRY_PASSWORD }}
