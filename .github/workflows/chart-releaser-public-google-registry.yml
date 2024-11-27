@@ -23,13 +23,13 @@ jobs:
       
       - name: Retrieve Chart Version
         id: chartversionstep
-        working-directory: ${{ github.event.inputs.message }}
+        working-directory: ${{ inputs.helmChartPath }}
         run: |
           echo "helmversion=$(helm show chart . | grep -E "^version:" | awk '{print $2}')" >> $GITHUB_OUTPUT
 
       - name: Retrieve Chart Name
         id: chartnamestep
-        working-directory: ${{ github.event.inputs.message }}
+        working-directory: ${{ inputs.helmChartPath }}
         run: |
           echo "helmname=$(helm show chart . | grep -E "^name:" | awk '{print $2}')" >> $GITHUB_OUTPUT
 
@@ -39,7 +39,7 @@ jobs:
           name: ${{ steps.chartnamestep.outputs.helmname }}
           repository: helm-test
           tag: ${{ steps.chartversionstep.outputs.helmversion }}
-          path: ${{ github.event.inputs.message }} # Default charts/{name}
+          path: ${{ inputs.helmChartPath }} # Default charts/{name}
           registry: europe-west3-docker.pkg.dev/tinkerbell-329710/ok-public-registry
           registry_username: ${{ secrets.REGISTRY_USERNAME }}
           registry_password: ${{ secrets.REGISTRY_PASSWORD }}
