@@ -21,6 +21,10 @@ jobs:
         with:
           version: v3.8.1
       
+      - name: Add SHORT_SHA env property with commit short sha
+          id: githubshortsha
+          run: echo "shortsha=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_OUTPUT
+      
       - name: Retrieve Chart Version
         id: chartversionstep
         working-directory: ${{ inputs.helmChartPath }}
@@ -40,7 +44,7 @@ jobs:
         with:
           name: ${{ steps.chartnamestep.outputs.helmname }}
           repository: helm-test
-          tag: ${{ steps.chartversionstep.outputs.helmversion }}
+          tag: ${{ steps.chartversionstep.outputs.helmversion }}-${{ steps.githubshortsha.outputs.shortsha }}
           path: ${{ inputs.helmChartPath }} # Default charts/{name}
           registry: europe-west3-docker.pkg.dev/tinkerbell-329710/ok-public-registry
           registry_username: ${{ secrets.REGISTRY_USERNAME }}
