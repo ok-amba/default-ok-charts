@@ -7,6 +7,14 @@ on:
         type: string
         description: Relative path to the helm chart
         required: true
+      registryUsername:
+        type: string
+        description: Relative path to the helm chart
+        required: true
+      registryPassword:
+        type: string
+        description: Relative path to the helm chart
+        required: true
 
 jobs:
   chart-releaser:
@@ -43,6 +51,6 @@ jobs:
           tag: ${{ steps.chartversionstep.outputs.helmversion }}
           path: ${{ inputs.helmChartPath }} # Default charts/{name}
           registry: europe-west3-docker.pkg.dev/tinkerbell-329710/ok-public-registry
-          registry_username: ${{ secrets.REGISTRY_USERNAME }}
-          registry_password: ${{ secrets.REGISTRY_PASSWORD }}
+          registry_username: ${{ inputs.registryUsername }}
+          registry_password: ${{ inputs.registryPassword }}
           update_dependencies: 'false' # Defaults to false
