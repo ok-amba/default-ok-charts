@@ -13,3 +13,6 @@ jobs:
     uses: ./.github/workflows/chart-releaser-public-google-registry.yml
     with:
       helmChartPath: charts/simple-deployment
+      registryUsername: ${{ secrets.REGISTRY_USERNAME }}
+      registryPassword: ${{ secrets.REGISTRY_PASSWORD }}
+      
