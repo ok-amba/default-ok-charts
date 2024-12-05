@@ -1,0 +1,16 @@
+suite: job tests
+templates:
+  - job.yaml
+tests:
+  - it: "Should render secrets correctly"
+    set:
+      job.imagePullSecrets: ["secret-1", "secret-2"]
+    asserts:
+      - contains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: "secret-1"
+      - contains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: "secret-2"
