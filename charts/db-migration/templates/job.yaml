@@ -37,7 +37,9 @@ spec:
     spec:
       {{- if .imagePullSecrets }}
       imagePullSecrets:
-        {{- .imagePullSecrets | toYaml | nindent 8 }}
+        {{- range $secret := .imagePullSecrets }}
+        - name: {{ $secret }}
+        {{- end }}
       {{- end }}
       restartPolicy: {{ .restartPolicy }}
       shareProcessNamespace: {{ .shareProcessNamespace | default "false" }}
