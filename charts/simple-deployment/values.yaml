@@ -93,6 +93,15 @@ deployment:
     # - name: cache-volume
     #   mountPath: /some/path
 
+    # Below add external secrets
+    externalSecrets: []
+    #  - name: "Secrets"
+    #    data:
+    #    - key: "secret 1"
+    #      remoteSecret: "key.json"
+    #    - key: "secret 2"
+    #      remoteSecret: "key2.json"
+
   # Add additional volumes.
   additionalVolumes: []
   # - name: cache-volume
