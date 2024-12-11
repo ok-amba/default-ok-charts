@@ -2,7 +2,6 @@
 {{- if not (has .Values.job.restartPolicy $types) }}
 {{- fail (printf "job.restartPolicy [%s] does not have a valid type. Valid type: %s" .Values.job.restartPolicy (join ", " $types)) }}
 {{- end }}
-
 apiVersion: batch/v1
 kind: Job
 metadata:
