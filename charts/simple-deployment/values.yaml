@@ -133,6 +133,7 @@ deployment:
 # Remember to set the container port when enabling the service.
 service:
   enable: false
+  portName: ""
   # Labels on the Service definition.
   labels: {}
 
