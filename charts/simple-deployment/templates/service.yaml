@@ -19,7 +19,7 @@ spec:
   - protocol: TCP
     port: {{ .Values.deployment.container.containerPort | required "A container port is required on the container." }}
     targetPort: {{ .Values.deployment.container.containerPort | required "A container port is required on the container." }}
-    {{- if .Values.deployment.container.portName }}
+    {{- if .Values.service.portName }}
     name: {{ .Values.service.portName }}
     {{- end}}
 {{- end }}
