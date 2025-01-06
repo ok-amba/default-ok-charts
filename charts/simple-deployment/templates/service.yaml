@@ -20,6 +20,6 @@ spec:
     port: {{ .Values.deployment.container.containerPort | required "A container port is required on the container." }}
     targetPort: {{ .Values.deployment.container.containerPort | required "A container port is required on the container." }}
     {{- if .Values.service.portName }}
-    name: {{ .Values.service.portName }}
+    name: "{{ .Values.service.portName }}"
     {{- end}}
 {{- end }}
