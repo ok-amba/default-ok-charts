@@ -31,7 +31,7 @@ metadata:
 spec:
   ingressClassName: {{ .Values.ingress.ingressClassName | default "nginx" }}
   rules:
-  {{- if .createDNSRecord }}
+  {{- if .Values.ingress.createDNSRecord }}
   {{- if regexMatch "(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$" .Values.ingress.host }}
   - lala: "IT WORKED!"
   - host: .Values.ingress.host
