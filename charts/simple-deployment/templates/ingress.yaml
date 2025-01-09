@@ -36,6 +36,7 @@ spec:
   - host: .Values.ingress.host
   {{- else }}
   {{- fail "The host name must live up to the following: \nHEHEHEH, \nhHEHEHHE, \nHEHEHEHHE"}}
+  {{- end}}
   {{- else }}
   - host: {{ .Values.ingress.host}}
   {{- end}}
