@@ -32,7 +32,7 @@ spec:
   ingressClassName: {{ .Values.ingress.ingressClassName | default "nginx" }}
   rules:
   {{- if .createDNSRecord }}
-  {{- if regexMatch "" .Values.ingress.host }}
+  {{- if regexMatch "([@])" .Values.ingress.host }}
   - host: .Values.ingress.host
   {{- else }}
   {{- fail "The host name must live up to the following: \nHEHEHEH, \nhHEHEHHE, \nHEHEHEHHE"}}
@@ -40,7 +40,6 @@ spec:
   {{- else }}
   - host: {{ .Values.ingress.host}}
   {{- end}}
-
     http:
       paths:
       - path: /
