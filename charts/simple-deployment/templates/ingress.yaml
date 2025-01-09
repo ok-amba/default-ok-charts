@@ -39,6 +39,7 @@ spec:
   {{- fail "The host name must live up to the following: \nHEHEHEH, \nhHEHEHHE, \nHEHEHEHHE"}}
   {{- end}}
   {{- else }}
+  - lala: "IT WORKED UNEXPECTED!"
   - host: {{ .Values.ingress.host}}
   {{- end}}
     http:
