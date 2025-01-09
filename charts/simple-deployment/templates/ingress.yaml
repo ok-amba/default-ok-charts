@@ -31,7 +31,15 @@ metadata:
 spec:
   ingressClassName: {{ .Values.ingress.ingressClassName | default "nginx" }}
   rules:
-  - host: {{ .Values.ingress.host }}
+  {{- if .createDNSRecord }}
+  {{- if regexMatch "" .Values.ingress.host }}
+  - host: .Values.ingress.host
+  {{- else }}
+  {{- fail "The host name must live up to the following: \nHEHEHEH, \nhHEHEHHE, \nHEHEHEHHE"}}
+  {{- else }}
+  - host: {{ .Values.ingress.host}}
+  {{- end}}
+
     http:
       paths:
       - path: /
