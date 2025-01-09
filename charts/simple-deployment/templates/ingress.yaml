@@ -33,6 +33,7 @@ spec:
   rules:
   {{- if .createDNSRecord }}
   {{- if regexMatch "(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$" .Values.ingress.host }}
+  - lala: "IT WORKED!"
   - host: .Values.ingress.host
   {{- else }}
   {{- fail "The host name must live up to the following: \nHEHEHEH, \nhHEHEHHE, \nHEHEHEHHE"}}
