@@ -41,12 +41,12 @@ spec:
   {{- if or (not $.Values.ingress.ingressClassName) (eq $.Values.ingress.ingressClassName "nginx") (eq $.Values.ingress.ingressClassName "nginx-public") }}
   {{- if not regexMatch "^[a-zA-Z0-9.-]+\\.private\\.(?:test.|prodtest.|)okdc\\.dk$" .Values.ingress.host }}
   ingressClassName: {{ "nginx-public" }}
-  {{- else}}
+  {{- else }}
   ingressClassName: {{ "nginx" }}
-  {{- end}}
+  {{- end }}
   {{- else }}
   ingressClassName: {{ .Values.ingress.ingressClassName }}
-  {{- end}}
+  {{- end }}
   rules:
   - host: {{ .Values.ingress.host }}
     http:
@@ -59,7 +59,7 @@ spec:
             port:
               number: {{ .Values.deployment.container.containerPort | required "A container port is required on the container." }}
         {{- with .Values.ingress.addtionalPaths }}
-        {{ toYaml . | nindent 6}}
+        {{ toYaml . | nindent 6 }}
         {{- end }}
   tls:
   - hosts:
