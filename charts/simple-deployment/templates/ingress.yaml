@@ -17,7 +17,7 @@ metadata:
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
     {{- end }}
     nginx.ingress.kubernetes.io/ssl-redirect: {{ .sslRedirect | default "false" | quote }}
-    {{- if regexMatch "^[a-zA-Z0-9.-]+\\.(?:test.|staging.|)domain\\.dk$" .Values.ingress.host }}
+    {{- if regexMatch "^[a-zA-Z0-9.-]+\\.(?:test.|staging.|)domain\\.dk$" $.Values.ingress.host }}
     debug-message: "we got domain"
     cert-manager.io/cluster-issuer: "clouddns-dns01-issuer"
     {{- else }}
@@ -38,7 +38,7 @@ metadata:
   {{- end }}
 spec:
   {{- if or (not $.Values.ingress.ingressClassName) (eq $.Values.ingress.ingressClassName "nginx") (eq $.Values.ingress.ingressClassName "nginx-public") }}
-  {{- if not (regexMatch "^[a-zA-Z0-9.-]+\\.private\\.(?:test.|staging.|)domain\\.dk$" .Values.ingress.host) }}
+  {{- if not (regexMatch "^[a-zA-Z0-9.-]+\\.private\\.(?:test.|staging.|)domain\\.dk$" $.Values.ingress.host) }}
   ingressClassName: "nginx-public"
   {{- else }}
   ingressClassName: "nginx"
@@ -47,7 +47,7 @@ spec:
   ingressClassName: {{ .Values.ingress.ingressClassName }}
   {{- end }}
   rules:
-  - host: {{ .Values.ingress.host }}
+  - host: {{ $.Values.ingress.host }}
     http:
       paths:
       - path: /
@@ -62,9 +62,9 @@ spec:
         {{- end }}
   tls:
   - hosts:
-    - {{ .Values.ingress.host }}
+    - {{ $.Values.ingress.host }}
     {{- if .Values.ingress.wwwRedirect }}
-    - "www.{{ .Values.ingress.host }}"
+    - "www.{{ $.Values.ingress.host }}"
     {{- end }}
-    secretName: "le-cert-{{ .Values.ingress.host | replace "." "-" | trunc 54 | trimSuffix "-" }}"
+    secretName: "le-cert-{{ $.Values.ingress.host | replace "." "-" | trunc 54 | trimSuffix "-" }}"
 {{- end }}
