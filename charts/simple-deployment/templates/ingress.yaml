@@ -17,11 +17,11 @@ metadata:
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
     {{- end }}
     nginx.ingress.kubernetes.io/ssl-redirect: {{ .sslRedirect | default "false" | quote }}
-    {{- if regexMatch "^[a-zA-Z0-9.-]+\\.(?:test.|staging.|)domain\\.dk$" $.Values.ingress.host }}
-    debug-message: "we got domain"
+    {{- if regexMatch "^[a-zA-Z0-9.-]+\\.(?:test.|staging.|)okdc\\.dk$" $.Values.ingress.host }}
+    debug-message: "we got okdc"
     cert-manager.io/cluster-issuer: "clouddns-dns01-issuer"
     {{- else }}
-    debug-message: "we do not have domain"
+    debug-message: "we do not have okdc"
     cert-manager.io/cluster-issuer: "nginx-http01"
     {{- end }}
     {{- else }}
@@ -38,7 +38,7 @@ metadata:
   {{- end }}
 spec:
   {{- if or (not $.Values.ingress.ingressClassName) (eq $.Values.ingress.ingressClassName "nginx") (eq $.Values.ingress.ingressClassName "nginx-public") }}
-  {{- if not (regexMatch "^[a-zA-Z0-9.-]+\\.private\\.(?:test.|staging.|)domain\\.dk$" $.Values.ingress.host) }}
+  {{- if not (regexMatch "^[a-zA-Z0-9.-]+\\.private\\.(?:test.|staging.|)okdc\\.dk$" $.Values.ingress.host) }}
   ingressClassName: "nginx-public"
   {{- else }}
   ingressClassName: "nginx"
