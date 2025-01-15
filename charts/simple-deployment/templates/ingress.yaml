@@ -15,7 +15,7 @@ metadata:
     {{ if regexMatch "^[a-z-]*\\.private\\.(test.|prodtest.|)okdc\\.dk$" .Values.ingress.host }}
     $.Values.ingress.ingressClassName "nginx-private"
     cert-manager.io/cluster-issuer: "clouddns-dns01-issuer"
-    {{ elseif regexMatch "^[a-z-]*\\.(test.|prodtest.|)okdc\\.dk$" .Values.ingress.host }}
+    {{ else if regexMatch "^[a-z-]*\\.(test.|prodtest.|)okdc\\.dk$" .Values.ingress.host }}
     $.Values.ingress.ingressClassName "nginx-public"
     {{ else }}
     $.Values.ingress.ingressClassName "nginx"
