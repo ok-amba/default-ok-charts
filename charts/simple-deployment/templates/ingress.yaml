@@ -22,6 +22,7 @@ metadata:
     {{- else }}
     cert-manager.io/cluster-issuer: "nginx-http01"
     {{- end }}
+    {{- end }}
   labels:
     {{- include "deployment.labels" $ | nindent 4 }}
     {{- range $k, $v := .labels }}
