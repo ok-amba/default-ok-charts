@@ -12,20 +12,22 @@ metadata:
     {{- with .annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-    {{ if regexMatch "^[a-z-]*\\.private\\.(test.|prodtest.|)okdc\\.dk$" .Values.ingress.host }}
-    $.Values.ingress.ingressClassName "nginx-private"
-    cert-manager.io/cluster-issuer: "clouddns-dns01-issuer"
-    {{ else if regexMatch "^[a-z-]*\\.(test.|prodtest.|)okdc\\.dk$" .Values.ingress.host }}
-    $.Values.ingress.ingressClassName "nginx-public"
-    {{ else }}
-    $.Values.ingress.ingressClassName "nginx"
-    cert-manager.io/cluster-issuer: "nginx-http01"
-    {{ end }}
+
+
+    {{- if or (not $.Values.ingress.ingressClassName) (eq $.Values.ingress.ingressClassName "nginx") (eq $.Values.ingress.ingressClassName "nginx-public") }}
     {{- if .wwwRedirect }}
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
     {{- end }}
     nginx.ingress.kubernetes.io/ssl-redirect: {{ .sslRedirect | default "false" | quote }}
+    {{- if regexMatch "^[a-z-]*\\.(test.|prodtest.|)okdc\\.dk$" .Values.ingress.host }}
+    debug-message: "we got OKDC"
+    cert-manager.io/cluster-issuer: "clouddns-dns01-issuer"
+    {{- else }}
+    debug-message: "we do not have OKDC"
+    cert-manager.io/cluster-issuer: "nginx-http01"
     {{- end }}
+    {{- end }}
+    debug-message: "We are not NGINX"
   labels:
     {{- include "deployment.labels" $ | nindent 4 }}
     {{- range $k, $v := .labels }}
@@ -36,11 +38,15 @@ metadata:
     {{- end }}
   {{- end }}
 spec:
-  ingressClassName: {{- if .Values.ingress.ingressClassName }}
-    {{ .Values.ingress.ingressClassName }}
+  {{- if or (not $.Values.ingress.ingressClassName) (eq $.Values.ingress.ingressClassName "nginx") (eq $.Values.ingress.ingressClassName "nginx-public") }}
+  {{- if not regexMatch "^[a-z-]*\\.private\\.(test.|prodtest.|)okdc\\.dk$" .Values.ingress.host }}
+  ingressClassName: "nginx-public"
+  {{- else}}
+  ingressClassName: "nginx"
+  {{- end}}
   {{- else }}
-    {{- fail "Ingress Class Name is not defined. Aborting" }}
-  {{- end }}
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  {{- end}}
   rules:
   - host: {{ .Values.ingress.host }}
     http:
