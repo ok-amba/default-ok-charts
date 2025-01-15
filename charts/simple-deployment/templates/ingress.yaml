@@ -34,7 +34,7 @@ metadata:
   {{- end }}
 spec:
   {{- if or (not $.Values.ingress.ingressClassName) (eq $.Values.ingress.ingressClassName "nginx") (eq $.Values.ingress.ingressClassName "nginx-public") }}
-  {{- if and (regexMatch "^[a-zA-Z0-9.-]+\\.(?:test.|prodtest.|)okdc\\.dk$" $.Values.ingress.host) not (regexMatch "^[a-zA-Z0-9.-]+\\.private\\.(?:test.|prodtest.|)okdc\\.dk$" $.Values.ingress.host) }}
+  {{- if and (regexMatch "^[a-zA-Z0-9.-]+\\.(?:test.|prodtest.|)okdc\\.dk$" $.Values.ingress.host)  (not (regexMatch "^[a-zA-Z0-9.-]+\\.private\\.(?:test.|prodtest.|)okdc\\.dk$" $.Values.ingress.host)) }}
   ingressClassName: "nginx-public"
   {{- else }}
   ingressClassName: "nginx"
