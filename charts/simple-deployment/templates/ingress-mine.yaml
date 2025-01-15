@@ -12,19 +12,12 @@ metadata:
     {{- with .annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-    {{ if regexMatch "^[a-z-]*\.private\.(test.|prodtest.|)okdc\.dk$" Values.ingress.host }}
-    $.Values.ingress.ingressClassName "nginx-private"
-    cert-manager.io/cluster-issuer: "clouddns-dns01-issuer"
-    {{ elseif regexMatch "^[a-z-]*\.(test.|prodtest.|)okdc\.dk$" Values.ingress.host }}
-    $.Values.ingress.ingressClassName "nginx-public"
-    {{ else }}
-    $.Values.ingress.ingressClassName "nginx"
-    cert-manager.io/cluster-issuer: "nginx-http01"
-    {{ end }}
+    {{- if or (not $.Values.ingress.ingressClassName) (eq $.Values.ingress.ingressClassName "nginx") }}
     {{- if .wwwRedirect }}
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
     {{- end }}
     nginx.ingress.kubernetes.io/ssl-redirect: {{ .sslRedirect | default "false" | quote }}
+    cert-manager.io/cluster-issuer: nginx-http01
     {{- end }}
   labels:
     {{- include "deployment.labels" $ | nindent 4 }}
@@ -36,13 +29,45 @@ metadata:
     {{- end }}
   {{- end }}
 spec:
-  ingressClassName: {{- if .Values.ingress.ingressClassName }}
-    {{ .Values.ingress.ingressClassName }}
-  {{- else }}
-    {{- fail "Ingress Class Name is not defined. Aborting" }}
-  {{- end }}
+  ingressClassName: {{ .Values.ingress.ingressClassName | default "nginx" }}
   rules:
-  - host: {{ .Values.ingress.host }}
+  {{- if .Values.ingress.createDNSRecord }}
+  {{- if regexMatch "^[a-zA-Z0-9.-]+(?:\\.test\\.domain\\.dk)||(?:\\.prod-test\\.domain\\.dk)||(?:\\.domain\\.dk)$" .Values.ingress.host }}
+  - lala: "IT WORKED!"
+  {{- end }}
+
+  {{- $env := .Values.environment -}}
+  regex: "^[a-zA-Z0-9.-]+(?:\\." + $env + "\\.domain\\.dk)$"
+
+  {{- $env := .Values.environment -}}
+  {{- $regex := "^[a-zA-Z0-9.-]+(?:(\\.test|\\.prodtest|)\\.domain\\.dk)$" -}}
+
+    {{ if regexMatch "^[a-z-]*\.private\.(test.|prodtest.|)okdc\.dk$" Values.ingress.host }}
+    $.Values.ingress.ingressClassName "nginx-private"
+    cert-manager.io/cluster-issuer: "clouddns-dns01-issuer"
+    {{ elseif regexMatch "^[a-z-]*\.(test.|prodtest.|)okdc\.dk$" Values.ingress.host }}
+    $.Values.ingress.ingressClassName "nginx-public"
+    {{ else }}
+    $.Values.ingress.ingressClassName "nginx"
+    cert-manager.io/cluster-issuer: "nginx-http01"
+    {{ end }}
+
+
+
+result: |
+  Match Result_ regexMatch $regex $value}}
+
+
+
+
+  - host: .Values.ingress.host
+  {{- else }}
+  {{- fail "The host name must adhere to the following: \nCan only contain letters, numbers, dashes and periods, \nMust end on .test.okcloud.dk or .prod-test.okcloud.dk"}}
+  {{- end}}
+  {{- else }}
+  - lala: "IT WORKED UNEXPECTED!"
+  - host: {{ .Values.ingress.host}}
+  {{- end}}
     http:
       paths:
       - path: /
