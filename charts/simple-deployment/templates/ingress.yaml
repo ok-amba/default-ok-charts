@@ -40,9 +40,9 @@ metadata:
 spec:
   {{- if or (not $.Values.ingress.ingressClassName) (eq $.Values.ingress.ingressClassName "nginx") (eq $.Values.ingress.ingressClassName "nginx-public") }}
   {{- if not regexMatch "^[a-z-]*\\.private\\.(test.|prodtest.|)okdc\\.dk$" .Values.ingress.host }}
-  ingressClassName: "nginx-public"
+  ingressClassName: nginx-public
   {{- else}}
-  ingressClassName: "nginx"
+  ingressClassName: nginx
   {{- end}}
   {{- else }}
   ingressClassName: {{ .Values.ingress.ingressClassName }}
