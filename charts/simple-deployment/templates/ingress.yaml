@@ -2,8 +2,8 @@
 {{- fail "The service is not enabled, which is a dependency for the ingress."}}
 {{- end }}
 
-{{- if regexMatch "^[a-zA-Z0-9.-]+\\.private\\.(?:test.|prodtest.|)okcloud\\.dk$" $.Values.ingress.host }}
-{{- fail "Private subdomain for okcloud.dk is not allowed"}}
+{{- if regexMatch "^[a-zA-Z0-9-]+\\.private\\.(?:test.|prodtest.|)okcloud\\.dk$" $.Values.ingress.host }}
+{{- fail "Private subdomain for okcloud.dk is not allowed."}}
 {{- end }}
 
 {{- if and (.Values.ingress.enable) (.Values.service.enable) }}
@@ -21,7 +21,7 @@ metadata:
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
     {{- end }}
     nginx.ingress.kubernetes.io/ssl-redirect: {{ .sslRedirect | default "false" | quote }}
-    {{- if regexMatch "^[a-zA-Z0-9.-]+\\.(?:test.|prodtest.|)okdc\\.dk$" $.Values.ingress.host }}
+    {{- if or (regexMatch "^[a-zA-Z0-9-]+\\.(?:test.|prodtest.|)okdc\\.dk$" $.Values.ingress.host) (regexMatch "^[a-zA-Z0-9-]+\\.private\\.(?:test.|prodtest.|)okdc\\.dk$" $.Values.ingress.host) }}
     cert-manager.io/cluster-issuer: "clouddns-dns01-issuer"
     {{- else }}
     cert-manager.io/cluster-issuer: "nginx-http01"
@@ -38,7 +38,7 @@ metadata:
   {{- end }}
 spec:
   {{- if or (not $.Values.ingress.ingressClassName) (eq $.Values.ingress.ingressClassName "nginx") (eq $.Values.ingress.ingressClassName "nginx-public") }}
-  {{- if and (regexMatch "^[a-zA-Z0-9.-]+\\.(?:test.|prodtest.|)okdc\\.dk$" $.Values.ingress.host)  (not (regexMatch "^[a-zA-Z0-9.-]+\\.private\\.(?:test.|prodtest.|)okdc\\.dk$" $.Values.ingress.host)) }}
+  {{- if and (regexMatch "^[a-zA-Z0-9-]+\\.(?:test.|prodtest.|)okdc\\.dk$" $.Values.ingress.host)  (not (regexMatch "^[a-zA-Z0-9-]+\\.private\\.(?:test.|prodtest.|)okdc\\.dk$" $.Values.ingress.host)) }}
   ingressClassName: "nginx-public"
   {{- else }}
   ingressClassName: "nginx"
