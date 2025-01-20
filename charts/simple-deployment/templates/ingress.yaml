@@ -2,6 +2,10 @@
 {{- fail "The service is not enabled, which is a dependency for the ingress."}}
 {{- end }}
 
+{{- if regexMatch "^[a-zA-Z0-9.-]+\\.private\\.(?:test.|prodtest.|)okcloud\\.dk$" $.Values.ingress.host }}
+{{- fail "Private subdomain for okcloud.dk is not allowed"}}
+{{- end }}
+
 {{- if and (.Values.ingress.enable) (.Values.service.enable) }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -12,12 +16,16 @@ metadata:
     {{- with .annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-    {{- if or (not $.Values.ingress.ingressClassName) (eq $.Values.ingress.ingressClassName "nginx") }}
+    {{- if or (not $.Values.ingress.ingressClassName) (eq $.Values.ingress.ingressClassName "nginx") (eq $.Values.ingress.ingressClassName "nginx-public") }}
     {{- if .wwwRedirect }}
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
     {{- end }}
     nginx.ingress.kubernetes.io/ssl-redirect: {{ .sslRedirect | default "false" | quote }}
-    cert-manager.io/cluster-issuer: nginx-http01
+    {{- if regexMatch "^[a-zA-Z0-9.-]+\\.(?:test.|prodtest.|)okdc\\.dk$" $.Values.ingress.host }}
+    cert-manager.io/cluster-issuer: "clouddns-dns01-issuer"
+    {{- else }}
+    cert-manager.io/cluster-issuer: "nginx-http01"
+    {{- end }}
     {{- end }}
   labels:
     {{- include "deployment.labels" $ | nindent 4 }}
@@ -29,9 +37,17 @@ metadata:
     {{- end }}
   {{- end }}
 spec:
-  ingressClassName: {{ .Values.ingress.ingressClassName | default "nginx" }}
+  {{- if or (not $.Values.ingress.ingressClassName) (eq $.Values.ingress.ingressClassName "nginx") (eq $.Values.ingress.ingressClassName "nginx-public") }}
+  {{- if and (regexMatch "^[a-zA-Z0-9.-]+\\.(?:test.|prodtest.|)okdc\\.dk$" $.Values.ingress.host)  (not (regexMatch "^[a-zA-Z0-9.-]+\\.private\\.(?:test.|prodtest.|)okdc\\.dk$" $.Values.ingress.host)) }}
+  ingressClassName: "nginx-public"
+  {{- else }}
+  ingressClassName: "nginx"
+  {{- end }}
+  {{- else }}
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  {{- end }}
   rules:
-  - host: {{ .Values.ingress.host }}
+  - host: {{ $.Values.ingress.host }}
     http:
       paths:
       - path: /
@@ -42,13 +58,13 @@ spec:
             port:
               number: {{ .Values.deployment.container.containerPort | required "A container port is required on the container." }}
         {{- with .Values.ingress.addtionalPaths }}
-        {{ toYaml . | nindent 6}}
+        {{ toYaml . | nindent 6 }}
         {{- end }}
   tls:
   - hosts:
-    - {{ .Values.ingress.host }}
+    - {{ $.Values.ingress.host }}
     {{- if .Values.ingress.wwwRedirect }}
-    - "www.{{ .Values.ingress.host }}"
+    - "www.{{ $.Values.ingress.host }}"
     {{- end }}
-    secretName: "le-cert-{{ .Values.ingress.host | replace "." "-" | trunc 54 | trimSuffix "-" }}"
+    secretName: "le-cert-{{ $.Values.ingress.host | replace "." "-" | trunc 54 | trimSuffix "-" }}"
 {{- end }}
