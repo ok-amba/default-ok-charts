@@ -12,12 +12,16 @@ metadata:
     {{- with .annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-    {{- if or (not $.Values.ingress.ingressClassName) (eq $.Values.ingress.ingressClassName "nginx") }}
+    {{- if or (not $.Values.ingress.ingressClassName) (contains "nginx" $.Values.ingress.ingressClassName) }}
     {{- if .wwwRedirect }}
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
     {{- end }}
     nginx.ingress.kubernetes.io/ssl-redirect: {{ .sslRedirect | default "false" | quote }}
+    {{- if contains ".okdc.dk" $.Values.ingress.host }}
+    cert-manager.io/cluster-issuer: clouddns-dns01-issuer
+    {{- else }}
     cert-manager.io/cluster-issuer: nginx-http01
+    {{- end }}
     {{- end }}
   labels:
     {{- include "deployment.labels" $ | nindent 4 }}
@@ -29,7 +33,17 @@ metadata:
     {{- end }}
   {{- end }}
 spec:
-  ingressClassName: {{ .Values.ingress.ingressClassName | default (include "ingress.classname" .) }}
+  {{- if not $.Values.ingress.ingressClassName }}
+  {{- if contains ".private." $.Values.ingress.host }}
+  ingressClassName: "nginx-private"
+  {{- else if contains ".okdc.dk" $.Values.ingress.host }}
+  ingressClassName: "nginx-public"
+  {{- else }}
+  ingressClassName: "nginx"
+  {{- end}}
+  {{- else }}
+  ingressClassName: {{ $.Values.ingress.ingressClassName }}
+  {{- end}}
   rules:
   - host: {{ .Values.ingress.host }}
     http:

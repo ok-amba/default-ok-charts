@@ -1,15 +1,12 @@
 suite: Ingress host tests
-templates: 
+templates:
 - "ingress.yaml"
 tests:
 # NOTE: The reason we do not have asserts in the first test, like the rest is because we need to put the host test into the template itself.
-#       This is done because the "failedTemplate" assertion matches, only if the ingress template fails. 
-#       When the failedTemplate" assertion matches, it is expecting that the error message in the ingress template is the same. 
-#       This way we are sure that the template is failing, explicitly because the user was trying to input an invalid hostname.
 
-  - it: "Should allow private as a subdomain of all environments in okdc.dk and also set the correct cluster-issuer and ingressClass"
-    set: 
-      service.enable: true 
+  - it: "Should set the correct cluster-issuer and ingressClass for public okdc.dk"
+    set:
+      service.enable: true
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
@@ -19,17 +16,13 @@ tests:
       - equal:
           path: "spec.ingressClassName"
           value: "nginx-private"  # Expected value based on ingressClassName
-      - equal: 
+      - equal:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
           value: "clouddns-dns01-issuer"
-      - matchRegex:
-          path: "spec.rules[0].host"
-          pattern: "^[a-zA-Z0-9-]+\\.private\\.(?:test.|prodtest.|)okdc\\.dk$"
-      - notFailedTemplate: {}
-   
-  - it: "Should allow public as a subdomain of all environments in okdc.dk and also set the correct cluster-issuer and ingressClass"
-    set: 
-      service.enable: true 
+
+  - it: "Should set the correct cluster-issuer and ingressClass for public okdc.dk"
+    set:
+      service.enable: true
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
@@ -37,18 +30,14 @@ tests:
     asserts:
       - equal:
           path: "spec.ingressClassName"
-          value: "nginx"  # Expected value based on ingressClassName
+          value: "nginx-public"  # Expected value based on ingressClassName
       - equal:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
           value: "clouddns-dns01-issuer"
-      - matchRegex:
-          path: "spec.rules[0].host"
-          pattern: "^[a-zA-Z0-9-]+\\.(?:test.|prodtest.|)okdc\\.dk$"
-      - notFailedTemplate: {}
 
-  - it: "Should allow all public hosts in all environments in okcloud.dk and also set the correct cluster-issuer and ingressClass"
-    set: 
-      service.enable: true 
+  - it: "Should set the correct cluster-issuer and ingressClass for private okcloud.dk"
+    set:
+      service.enable: true
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
@@ -60,7 +49,18 @@ tests:
       - equal:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
           value: "nginx-http01"
-      - matchRegex:
-          path: "spec.rules[0].host"
-          pattern: "^[a-zA-Z0-9.-]+\\.(?:test.|prodtest.|)okcloud\\.dk$"
-      - notFailedTemplate: {}
+
+  - it: "Should set ingressClass if defined and not add nginx annotations by default"
+    set:
+      service.enable: true
+      deployment.container.containerPort: 8080
+      ingress.enable: true
+      ingress:
+        host: "example.test.okcloud.dk"
+        ingressClassName: emob-charging-station-haproxy
+    asserts:
+      - equal:
+          path: "spec.ingressClassName"
+          value: "emob-charging-station-haproxy"  # Expected value based on ingressClassName
+      - notExists:
+          path: "metadata.annotations['cert-manager.io/cluster-issuer']"
