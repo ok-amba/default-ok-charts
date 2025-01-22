@@ -1,3 +1,34 @@
+{{- define "ingress.classname" -}}
+  {{- if (regexMatch "^([a-zA-Z0-9-]+\\.)+(ok\\.dk)$" $.Values.ingress.host) }}
+    {{- if $.Values.ingress.isPrivate }}
+    # Allowed. We need ingressClassName to be the private ingress on gen 2. Which is nginx-private
+      nginx-private
+    {{- else }}
+    # Allowed. We need ingressClassName to be the public ingress on gen 2. Which is nginx
+      nginx
+    {{- end }}
+  {{- else if  (regexMatch "^([a-zA-Z0-9-]+\\.)+(okdc\\.dk)$" $.Values.ingress.host) }}
+    {{- if $.Values.ingress.isPrivate }}
+    # Allowed. We need ingressClassName to be the private ingress on gen 2. Which is nginx-private
+    nginx-private
+    {{- else }}
+    # Allowed. We need ingressClassName to be the public  ingress on gen 2. Which is nginx
+      nginx
+    {{- end }}
+  {{- else if  (regexMatch "^([a-zA-Z0-9-]+\\.)+(okcloud\\.dk)$" $.Values.ingress.host) }}
+    {{- if $.Values.ingress.isPrivate }}
+    # Not Allowed.
+      {{- fail "string here"}}
+    {{- else }}
+    # Allowed. We need ingressClassName to be the public  ingress on Cloud. Which is nginx
+      nginx
+    {{- end }}
+  {{- else }}
+  {{- fail "Parent domain not recognized"}}
+  {{- end }}
+{{- end -}}
+
+
 {{- define "deployment.name" -}}
 {{ .Values.fullnameOverride | default .Release.Name | trunc 63 | trimSuffix "-"}}
 {{- end -}}

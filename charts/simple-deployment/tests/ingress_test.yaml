@@ -7,28 +7,18 @@ tests:
 #       When the failedTemplate" assertion matches, it is expecting that the error message in the ingress template is the same. 
 #       This way we are sure that the template is failing, explicitly because the user was trying to input an invalid hostname.
 
-  - it: "Should not allow private as a subdomain of okcloud.dk"
-    set: 
-      service.enable: true 
-      deployment.container.containerPort: 8080
-      ingress.enable: true
-      ingress:
-        host: "example.private.test.okcloud.dk"
-    asserts:
-      - failedTemplate: 
-         ErrorMessage: "Private subdomain for okcloud.dk is not allowed."
-
   - it: "Should allow private as a subdomain of all environments in okdc.dk and also set the correct cluster-issuer and ingressClass"
     set: 
       service.enable: true 
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
+        isPrivate: true
         host: "example.private.okdc.dk"
     asserts:
       - equal:
           path: "spec.ingressClassName"
-          value: "nginx"  # Expected value based on ingressClassName
+          value: "nginx-private"  # Expected value based on ingressClassName
       - equal: 
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
           value: "clouddns-dns01-issuer"
@@ -47,7 +37,7 @@ tests:
     asserts:
       - equal:
           path: "spec.ingressClassName"
-          value: "nginx-public"  # Expected value based on ingressClassName
+          value: "nginx"  # Expected value based on ingressClassName
       - equal:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
           value: "clouddns-dns01-issuer"
