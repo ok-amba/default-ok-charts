@@ -128,6 +128,17 @@ ingress:
 
 ## Example 5
 
+**The new ingress in Gen 2 supports three different domains ok.dk, okdc.dk and okcloud.dk**
+
+### Example 5.1: Gen 2 private by default
+
+```yaml
+ingress:
+  enable: true
+  host: example.test.okdc.dk
+```
+
+### Example 5.2: Gen 2 public
 This example shows how to enable public ingress in Gen 2.
 
 ```yaml
@@ -135,4 +146,23 @@ ingress:
   enable: true
   host: example.test.okdc.dk
   isPrivate: false
+```
+
+### 5.3: The template will fail in two cases
+
+- If you specify "isPrivate: True"  when using  okcloud.dk.
+
+```yaml
+ingress:
+  enable: true
+  host: example.test.okcloud.dk
+  isPrivate: true
+```
+
+- If you try to deploy your service using an unsupported domain.
+
+```yaml
+ingress:
+  enable: true
+  host: example.blahblah.com
 ```
