@@ -8,6 +8,9 @@ Here's a few bullet points on what it's capable of.
 - Mounting secrets, configmaps or additional volumes into the pods.
 - Enabling a service for the deployment.
 - Enabling an ingress with TLS.
+- Private ingress by default in the Gen 2 kubernetes cluster.
+  - This is overwriteable with the boolean "isPrivate", or by setting your specific ingress with ingressClassName in your services' values file.
+- Public ingress by default in the GKE Cloud cluster.
 
 ## Examples 1
 
@@ -123,3 +126,14 @@ ingress:
           number: 3000
 ```
 
+## Example 5
+
+This example shows how to enable public ingress in Gen 2.
+
+```yaml
+ingress:
+    ingress:
+  enable: true
+  host: example.test.okdc.dk
+  isPrivate: false
+```
