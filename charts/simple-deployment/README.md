@@ -131,11 +131,12 @@ ingress:
 **The new ingress in Gen 2 supports three different domains ok.dk, okdc.dk and okcloud.dk**
 
 ### Example 5.1: Gen 2 private by default
+If you want a to deploy a new private service on the okdc.dk domain, you need to specify private as a subdomain.
 
 ```yaml
 ingress:
   enable: true
-  host: example.test.okdc.dk
+  host: example.private.test.okdc.dk
 ```
 
 ### Example 5.2: Gen 2 public
