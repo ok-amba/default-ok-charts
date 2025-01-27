@@ -132,7 +132,6 @@ This example shows how to enable public ingress in Gen 2.
 
 ```yaml
 ingress:
-    ingress:
   enable: true
   host: example.test.okdc.dk
   isPrivate: false
