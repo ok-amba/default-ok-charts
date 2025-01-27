@@ -50,7 +50,7 @@ tests:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
           value: "clouddns-dns01-issuer"
 
-  - it: "4: Explicit private host with nginx-private and clouddns-dns01-issuer expected"
+  - it: "4: Explicit private host with nginx-private and cloudflare-dns01-issuer expected"
     set:  
       service.enable: true 
       deployment.container.containerPort: 8080
@@ -64,9 +64,9 @@ tests:
           value: "nginx-private"
       - equal:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
-          value: "clouddns-dns01-issuer"
+          value: "cloudflare-dns01-issuer"
 
-  - it: "5: Explicit public host with nginx-public and clouddns-dns01-issuer expected"
+  - it: "5: Explicit public host with nginx-public and cloudflare-dns01-issuer expected"
     set: 
       service.enable: true 
       deployment.container.containerPort: 8080
@@ -80,9 +80,9 @@ tests:
           value: "nginx-public"
       - equal:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
-          value: "clouddns-dns01-issuer"
+          value: "cloudflare-dns01-issuer"
 
-  - it: "6: Default which is implicit private host with nginx-private and clouddns-dns01-issuer expected"
+  - it: "6: Default which is implicit private host with nginx-private and cloudflare-dns01-issuer expected"
     set: 
       service.enable: true 
       deployment.container.containerPort: 8080
@@ -95,7 +95,7 @@ tests:
           value: "nginx-private"
       - equal:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
-          value: "clouddns-dns01-issuer"
+          value: "cloudflare-dns01-issuer"
 
   - it: "7: Should not allow okcloud services to be private"
     set: 
