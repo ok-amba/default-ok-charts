@@ -128,10 +128,10 @@ ingress:
 
 ## Example 5
 
-**The new ingress in Gen 2 supports three different domains ok.dk, okdc.dk and okcloud.dk**
+**The new ingress in Gen 2 supports three different domains: ok.dk, okdc.dk and okcloud.dk**
 
 ### Example 5.1: Configuring a private ingress
-If you want to deploy a new service on the ok.dk or okdc.dk domain, and want to expose the ingress privately in ok the following example can be used. In this case 'isPrivate' it set to true.
+If you want to deploy a new service on the ok.dk or okdc.dk domain, and want to expose the ingress privately in OK, the following example can be used. In this case 'isPrivate' is set to true.
 
 ```yaml
 ingress:
@@ -141,7 +141,7 @@ ingress:
 ```
 
 ### Example 5.2: Configuring a public ingress
-If you want to deploy a new service on the ok.dk, okdc.dk or okcloud.dk domain, and want to expose the ingress publicly the following example can be used. In this case 'isPrivate' it set to false.
+If you want to deploy a new service on the ok.dk, okdc.dk or okcloud.dk domain, and want to expose the ingress publicly, the following example can be used. In this case 'isPrivate' is set to false.
 
 ```yaml
 ingress:
