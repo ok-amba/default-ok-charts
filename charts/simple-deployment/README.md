@@ -194,3 +194,31 @@ When using the okdc.dk domain one must add private as a subdomain before the env
 |*.test.okcloud.dk              |no   |yes  |test|
 |*.prod-test.okcloud.dk         |no   |yes  |prodtest|
 |*.okcloud.dk                   |no   |yes  |prod|
+
+# Exampel 6: External Secret Store
+Prequisite: Extrnal Secret Store must be enabled on the given project. If possible, please use the nuget package instead.
+
+In order to use the external secret store to create a kubernetes secret, the simple-deployment can be templated as follows.
+
+``` yaml
+  deployment:
+    container:
+      externalSecrets:
+      - name: "secret-name1"
+        data:
+        - key: "key1"
+          remoteSecret: "remote-secret-name1"
+      - name: "secret-name2"
+        data:
+        - key: "key1"
+          remoteSecret: "remote-secret-name2"
+        - key: "key2"
+          remoteSecret: "remote-secret-name3"
+      environment:
+        secret1Key1Path: /secrets/secret-name1/key1
+        secret2Key1Path: /secrets/secret-name2/key1
+        secret2Key1Path: /secrets/secret-name2/key2
+
+```
+It's possible to map one to one or multiple remote secrets into one kubernetes secret. The secret will automatically be mounted as a file with path `/secrets/<SECRET NAME>/<KEY NAME>`.
+
