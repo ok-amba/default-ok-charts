@@ -17,6 +17,6 @@ spec:
     app: {{ include "deployment.name" $ | quote }}
   ports:
   - protocol: TCP
-    port: {{ .Values.deployment.container.containerPort | add1 }}
-    targetPort: {{ .Values.deployment.container.containerPort | add1 }}
+    port: {{ .Values.deployment.gatekeeper.containerPort | default 8001 }}
+    targetPort: {{ .Values.deployment.gatekeeper.containerPort | default 8001 }}
 {{- end }}
