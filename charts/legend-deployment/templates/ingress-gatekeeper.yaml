@@ -34,7 +34,7 @@ spec:
           service:
             name: {{ include "deployment.name" $ }}-gatekeeper
             port:
-              number: {{ .Values.deployment.container.containerPort | add1 }}
+              number: {{ .Values.deployment.gatekeeper.containerPort | default 8001 }}
   tls:
   - hosts:
     - {{ .Values.deployment.gatekeeper.ingress.host }}
