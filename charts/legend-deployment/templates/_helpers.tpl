@@ -120,7 +120,7 @@ failureThreshold: {{ .readinessProbe.failureThreshold | default 3 }}
   image: "{{ .gatekeeper.image }}"
   args:
 {{- /*    - --forbidden-page=/etc/keycloak/templates/forbidden.html.tmpl*/}}
-    - "--listen=0.0.0.0:{{ .container.containerPort | add1 }}"
+    - "--listen=0.0.0.0:{{ .gatekeeper.containerPort | default 8001 }}"
     - "--enable-authorization-header=true"
     - "--upstream-url=http://localhost:{{ .container.containerPort }}"
     - "--client-id={{ .gatekeeper.client }}"
@@ -145,7 +145,7 @@ failureThreshold: {{ .readinessProbe.failureThreshold | default 3 }}
         key: key
         name: gatekeeper-encryption
   ports:
-  - containerPort: {{ .container.containerPort | add1 }}
+  - containerPort: {{ .gatekeeper.containerPort | default 8001 }}
     name: cp-gatekeeper
     protocol: TCP
 {{- end -}}
