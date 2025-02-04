@@ -187,7 +187,7 @@ In order to use the external secret store to create a kubernetes secret, the leg
 ```
 It's possible to map one to one or multiple remote secrets into one kubernetes secret. The secret will automatically be mounted as a file with path `/secrets/<SECRET NAME>/<KEY NAME>`.
 
-Another possiblity to reference the secret as an environment variable directly. However this is not recommended due to how trivial it is inspect a Containers environment variables. This approach is only recommended during migration of a service.
+Another possiblity is to reference the secret as an environment variable directly. However this is not recommended due to how trivial it is inspect a Containers environment variables. This approach is only recommended during migration of a service.
 
 ``` yaml
   deployment:
