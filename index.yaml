@@ -568,6 +568,15 @@ entries:
     version: 0.0.1
   legend-deployment:
   - apiVersion: v2
+    created: "2025-02-04T08:54:19.945413057Z"
+    description: A Helm chart for a legend deployment, incl. service and ingress,
+      while also have support for gatekeeper and environment variable secrets
+    digest: 354e5dbadceabd6d595d677e40e0629b6d6808bcec48a32748e78e3fd333b395
+    name: legend-deployment
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/legend-deployment-1.4.0/legend-deployment-1.4.0.tgz
+    version: 1.4.0
+  - apiVersion: v2
     created: "2025-02-03T12:27:05.80340033Z"
     description: A Helm chart for a legend deployment, incl. service and ingress,
       while also have support for gatekeeper and environment variable secrets
@@ -1083,4 +1092,4 @@ entries:
     urls:
     - https://ok-amba.github.io/default-ok-charts/.cr-release-packages/simple-deployment-0.1.0.tgz
     version: 0.1.0
-generated: "2025-02-03T12:27:05.803814029Z"
+generated: "2025-02-04T08:54:19.945849029Z"
