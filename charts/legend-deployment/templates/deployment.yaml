@@ -128,7 +128,7 @@ spec:
       {{- include "deployment.cloudSQLProxy" $ | nindent 6 }}
       {{- include "deployment.gatekeeper" $ | nindent 6 }}
       {{- with .Values.deployment }}
-      {{- if or (and .cloudSQLProxy.enable .cloudSQLProxy.secretKeyName) .container.secrets .container.configMaps .additionalVolumes }}
+      {{- if or (and .cloudSQLProxy.enable .cloudSQLProxy.secretKeyName) .container.secrets .container.configMaps .additionalVolumes .gatekeeper.enable }}
       volumes:
         {{- if and .cloudSQLProxy.enable .cloudSQLProxy.secretKeyName }}
         - name: {{ .cloudSQLProxy.secretKeyName }}
