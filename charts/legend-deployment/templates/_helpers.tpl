@@ -94,18 +94,14 @@ failureThreshold: {{ .readinessProbe.failureThreshold | default 3 }}
 - name: gatekeeper
   image: "{{ .gatekeeper.image }}"
   args:
-{{- /*    - --forbidden-page=/etc/keycloak/templates/forbidden.html.tmpl*/}}
     - "--listen=0.0.0.0:{{ .gatekeeper.containerPort | default 8001 }}"
-    - "--enable-authorization-header={{ .gatekeeper.authHeader }}"
     - "--upstream-url=http://localhost:{{ .container.containerPort }}"
     - "--client-id={{ .gatekeeper.client }}"
-    - "--secure-cookie={{ .gatekeeper.secureCookie }}"
-    - "--enable-default-deny={{ .gatekeeper.defaultDeny }}"
     - "--client-secret=$(KCP_CLIENT_OIDC_SECRET)"
     - "--cookie-domain={{ .gatekeeper.cookieDomain }}"
     - "--discovery-url={{ .gatekeeper.keycloak }}"
     - "--encryption-key=$(ENCRYPTION_KEY)"
-    - "--enable-refresh-tokens={{ .gatekeeper.tokenRefresh }}"
+    - "--forbidden-page=/etc/keycloak/templates/forbidden.html.tmpl"
     - "--verbose"
     {{- .gatekeeper.args | toYaml | nindent 4 }}
   env:
@@ -124,7 +120,8 @@ failureThreshold: {{ .readinessProbe.failureThreshold | default 3 }}
     name: cp-gatekeeper
     protocol: TCP
   volumeMounts:
-    {{- .gatekeeper.volumeMounts | toYaml | nindent 4 }}
+  - mountPath: /etc/keycloak/templates
+    name: custom-error-pages
 {{- end -}}
 {{- end -}}
 {{- end -}}

@@ -163,21 +163,14 @@ deployment:
     image: quay.io/keycloak/keycloak-gatekeeper:10.0.0
 #    image: quay.io/gogatekeeper/gatekeeper:2.10.0
     keycloak: url-to-keycloak
-    cookieDomain: null
+    cookieDomain<: null
     client: oicclient
-    args: []
-    service:
-      labels: {}
-      annotations: {}
-    ingress:
-      host: null
-      # Create cname records
-      createDNSRecord: true
-      labels: {}
-      annotations: {}
-      sslRedirect: false
-      wwwRedirect: false
-
+    args: [
+    - "--enable-authorization-header=true"
+    - "--secure-cookie=true"
+    - "--enable-default-deny=true"
+    - "--enable-refresh-tokens=true"
+    ]
 
 ##################################################
 #                    Service                     #

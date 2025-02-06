@@ -152,6 +152,11 @@ spec:
         {{- with .additionalVolumes }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
+        {{- if .gatekeeper.enable }}
+        - configMap:
+            name: keycloak-errors
+          name: custom-error-pages
+        {{- end}}
       {{- end }}
       {{- end }}
 
