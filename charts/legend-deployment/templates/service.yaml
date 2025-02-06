@@ -19,7 +19,7 @@ spec:
   - protocol: TCP
     port: {{ .Values.deployment.container.containerPort | required "A container port is required on the container." }}
     {{- if .Values.deployment.gatekeeper.enable}}
-    targetPort: {{ .Values.deployment.gatekeeper.containerPort | default 8001" }}
+    targetPort: {{ .Values.deployment.gatekeeper.containerPort | default 8001 }}
     {{- else}}
     targetPort: {{ .Values.deployment.container.containerPort | required "A container port is required on the container." }}
     {{- end }}
