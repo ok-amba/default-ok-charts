@@ -166,10 +166,10 @@ deployment:
     cookieDomain<: null
     client: oicclient
     args:
-    - --enable-authorization-header=true
-    - --secure-cookie=true
-    - --enable-default-deny=true
-    - --enable-refresh-tokens=true
+    - "--enable-authorization-header=true"
+    - "--secure-cookie=true"
+    - "--enable-default-deny=true"
+    - "--enable-refresh-tokens=true"
 
 ##################################################
 #                    Service                     #
