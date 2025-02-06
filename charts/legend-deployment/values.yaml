@@ -165,12 +165,11 @@ deployment:
     keycloak: url-to-keycloak
     cookieDomain<: null
     client: oicclient
-    args: [
+    args:
     - --enable-authorization-header=true
     - --secure-cookie=true
     - --enable-default-deny=true
     - --enable-refresh-tokens=true
-    ]
 
 ##################################################
 #                    Service                     #
