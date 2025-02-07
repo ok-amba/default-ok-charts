@@ -17,7 +17,7 @@ metadata:
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
     {{- end }}
     nginx.ingress.kubernetes.io/ssl-redirect: {{ .sslRedirect | default "false" | quote }}
-    cert-manager.io/cluster-issuer: {{ include "ingress.cluster-issuer" $ | trim }}
+    cert-manager.io/cluster-issuer: nginx-http01
     {{- end }}
   labels:
     {{- include "deployment.labels" $ | nindent 4 }}
@@ -29,7 +29,7 @@ metadata:
     {{- end }}
   {{- end }}
 spec:
-  ingressClassName: {{ .Values.ingress.ingressClassName | default ( include "ingress.classname" $) | trim }}
+  ingressClassName: {{ .Values.ingress.ingressClassName | default "nginx" }}
   rules:
   - host: {{ .Values.ingress.host }}
     http:
@@ -42,7 +42,7 @@ spec:
             port:
               number: {{ .Values.deployment.container.containerPort | required "A container port is required on the container." }}
         {{- with .Values.ingress.addtionalPaths }}
-        {{ toYaml . | nindent 5}}
+        {{ toYaml . | nindent 6}}
         {{- end }}
   tls:
   - hosts:
