@@ -165,19 +165,21 @@ deployment:
     keycloak: url-to-keycloak
     cookieDomain: null
     client: oicclient
-    args: []
-    service:
-      labels: {}
-      annotations: {}
-    ingress:
-      host: null
-      # Create cname records
-      createDNSRecord: true
-      labels: {}
-      annotations: {}
-      sslRedirect: false
-      wwwRedirect: false
 
+    # Enabling the authorization header in order for you to control the header.
+    authHeader: true
+
+    # Enables auth cookies to only be transmitted by HTTPS. Ensures that cookies are not sent unencrypted over HTTP.
+    secureCookie: true
+
+    # Automatically deny all requests that has not valied token. 
+    # OBS: If the token is valid, there will be no check of groups/roles etc. So if you intend to use groups and roles, set this to false
+    defaultDeny: true
+    
+    # If the request contains a refresh-token, the proxy will automatically refresh the access token.
+    refreshTokens: true
+    
+    args: []
 
 ##################################################
 #                    Service                     #
