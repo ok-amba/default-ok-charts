@@ -119,19 +119,19 @@ failureThreshold: {{ .readinessProbe.failureThreshold | default 3 }}
 - name: gatekeeper
   image: "{{ .gatekeeper.image }}"
   args:
-    - "--listen=0.0.0.0:{{ .gatekeeper.containerPort | default 8001 }}"
-    - "--upstream-url=http://localhost:{{ .container.containerPort }}"
-    - "--client-id={{ .gatekeeper.client }}"
-    - "--client-secret=$(KCP_CLIENT_OIDC_SECRET)"
-    - "--cookie-domain={{ .gatekeeper.cookieDomain }}"
-    - "--discovery-url={{ .gatekeeper.keycloak }}"
-    - "--encryption-key=$(ENCRYPTION_KEY)"
-    - "--forbidden-page=/etc/keycloak/templates/forbidden.html.tmpl"
-    - "--verbose"
-    - "--enable-authorization-header={{ .gatekeeper.authHeader | default true }}"
-    - "--secure-cookie={{ .gatekeeper.secureCookie | default true }}"
-    - "--enable-default-deny={{ .gatekeeper.defaultDeny | default true }}"
-    - "--enable-refresh-tokens={{ .gatekeeper.refreshTokens | default true }}"
+    - --listen=0.0.0.0:{{ .gatekeeper.containerPort | default 8001 }}
+    - --upstream-url=http://localhost:{{ .container.containerPort }}
+    - --client-id={{ .gatekeeper.client }}
+    - --client-secret=$(KCP_CLIENT_OIDC_SECRET)
+    - --cookie-domain={{ .gatekeeper.cookieDomain }}
+    - --discovery-url={{ .gatekeeper.keycloak }}
+    - --encryption-key=$(ENCRYPTION_KEY)
+    - --forbidden-page=/etc/keycloak/templates/forbidden.html.tmpl
+    - --verbose
+    - --enable-authorization-header={{ .gatekeeper.authHeader | default true }}
+    - --secure-cookie={{ .gatekeeper.secureCookie | default true }}
+    - --enable-default-deny={{ .gatekeeper.defaultDeny | default true }}
+    - --enable-refresh-tokens={{ .gatekeeper.refreshTokens | default true }}
     {{- .gatekeeper.args | toYaml | nindent 4 }}
   env:
   - name: KCP_CLIENT_OIDC_SECRET
