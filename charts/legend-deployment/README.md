@@ -123,3 +123,84 @@ ingress:
         port:
           number: 3000
 ```
+## Example 5
+
+**The new ingress in Gen 2 supports private or public mode**
+
+### Example 5.1: Configuring a private ingress
+If you want to deploy a new service on the ok.dk or okdc.dk domain, and want to expose the ingress privately in OK, the following example can be used. In this case 'isPrivate' is set to true.
+
+```yaml
+ingress:
+  enable: true
+  host: example.private.test.okdc.dk
+  isPrivate: true
+```
+
+### Example 5.2: Configuring a public ingress
+If you want to deploy a service on the ok.dk or okdc.dk domain, and want to expose the ingress publicly, the following example can be used. In this case 'isPrivate' is set to false.
+
+```yaml
+ingress:
+  enable: true
+  host: example.test.ok.dk
+  isPrivate: false
+```
+
+### 5.3: Using the default privacy of a domain
+If you do NOT specify 'isPrivate' on an ingress controller the domains default will be used instead. Reference the following table for defaults.
+|Domain|Default privacy|
+|---|---|
+|*.ok.dk|private|
+
+The below example will result in a private ingress because the host is using the ok.dk domain.
+```yaml
+ingress:
+  enable: true
+  host: example.test.ok.dk
+```
+
+# Exampel 6: External Secret Store
+Prequisite: Extrnal Secret Store must be enabled on the given project. If possible, please use the nuget package instead.
+
+In order to use the external secret store to create a kubernetes secret, the legend-deployment can be templated as follows.
+
+``` yaml
+  deployment:
+    container:
+      externalSecrets:
+        - name: "secret-name1"
+          data:
+          - key: "key1"
+            remoteSecret: "remote-secret-name1"
+        - name: "secret-name2"
+          data:
+          - key: "key1"
+            remoteSecret: "remote-secret-name2"
+          - key: "key2"
+            remoteSecret: "remote-secret-name3"
+      environment:
+        secret1Key1Path: /secrets/secret-name1/key1
+        secret2Key1Path: /secrets/secret-name2/key1
+        secret2Key1Path: /secrets/secret-name2/key2
+
+```
+It's possible to map one to one or multiple remote secrets into one kubernetes secret. The secret will automatically be mounted as a file with path `/secrets/<SECRET NAME>/<KEY NAME>`.
+
+Another possiblity is to reference the secret as an environment variable directly. However this is not recommended due to how trivial it is inspect a Containers environment variables. This approach is only recommended during migration of a service.
+
+``` yaml
+  deployment:
+    container:
+      externalSecretsRef:
+      - secretName: "kubernetes-secret-name1"
+        data:
+        - secretKey: "key1"
+          refName: "remote-secret-ref1"
+
+      secretRefEnvironment:
+      - name: "environment-variable-name1"
+        secret: "kubernetes-secret-name1"
+        key: "key1"
+```
+In this case the secret in the remote store should be named `SecretName__refName` e. g. `kubernetes-secret-name1__key1`. e. g.the output will then be kubernetes secret with name `kubernetes-secret-name1` with key `key1`. This is a limitation of the remote store not being able to contain multiple keys and naming conventions for a given kubernetes secret. The secret can then be referenced using `secretRefEnvironment` to inject the secret as an environment variable.

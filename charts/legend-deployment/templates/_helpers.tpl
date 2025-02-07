@@ -1,6 +1,31 @@
+{{- define "ingress.classname" -}}
+  {{- if (regexMatch "^([a-zA-Z0-9-]+\\.)+(ok|okdc)(\\.dk)$" $.Values.ingress.host) }}
+    {{- if (eq nil $.Values.ingress.isPrivate) }}
+     nginx-private
+    {{- else if ($.Values.ingress.isPrivate) }}
+      nginx-private
+    {{- else }}
+      nginx-public
+    {{- end }}
+  {{- else }}
+    {{- fail "Parent domain not recognized"}}
+  {{- end }}
+{{- end -}}
+
+{{- define "ingress.cluster-issuer" -}}
+  {{- if (regexMatch "^([a-zA-Z0-9-]+\\.)+(ok\\.dk)$" $.Values.ingress.host) }}
+      cloudflare-dns01-issuer
+  {{- else if (regexMatch "^([a-zA-Z0-9-]+\\.)+(okdc\\.dk)$" $.Values.ingress.host) }}
+      clouddns-dns01-issuer
+  {{- else }}
+   {{- fail "Parent domain not recognized"}}
+  {{- end }}
+{{- end -}}
+
 {{- define "deployment.name" -}}
 {{ .Values.fullnameOverride | default .Release.Name | trunc 63 | trimSuffix "-"}}
 {{- end -}}
+
 
 {{- define "deployment.labels" -}}
 app: {{ include "deployment.name" $ | quote }}
