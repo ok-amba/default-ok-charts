@@ -128,25 +128,25 @@ ingress:
 
 ## Example 5
 
-**The new ingress in Gen 2 supports three different domains: ok.dk, okdc.dk and okcloud.dk**
+**The new ingress in Gen 2 supports two different domains: ok.dk and okcloud.dk**
 
 ### Example 5.1: Configuring a private ingress
-If you want to deploy a new service on the ok.dk or okdc.dk domain, and want to expose the ingress privately in OK, the following example can be used. In this case 'isPrivate' is set to true.
+If you want to deploy a new service on the ok.dk domain, and want to expose the ingress privately in OK, the following example can be used. In this case 'isPrivate' is set to true.
 
 ```yaml
 ingress:
   enable: true
-  host: example.private.test.okdc.dk
+  host: example.test.ok.dk
   isPrivate: true
 ```
 
 ### Example 5.2: Configuring a public ingress
-If you want to deploy a new service on the ok.dk, okdc.dk or okcloud.dk domain, and want to expose the ingress publicly, the following example can be used. In this case 'isPrivate' is set to false.
+If you want to deploy a new service on the ok.dk domain, and want to expose the ingress publicly, the following example can be used. In this case 'isPrivate' is set to false.
 
 ```yaml
 ingress:
   enable: true
-  host: example.test.okcloud.dk
+  host: example.test.ok.dk
   isPrivate: false
 ```
 
@@ -155,7 +155,6 @@ If you do NOT specify 'isPrivate' on an ingress controller the domains default w
 |Domain|Default privacy|
 |---|---|
 |*.ok.dk|private|
-|*.okdc.dk|private|
 |*.okcloud.dk|public|
 
 The below example will result in a private ingress because the host is using the ok.dk domain.
@@ -175,17 +174,9 @@ ingress:
 ### Domains supported by simple-deployment
 Note that if you're using a domain that is not in the following table simple-deployment will throw an error. \
 All possible domain/env combinations are listed below along with the supported ingress privacy. \
-When using the okdc.dk domain one must add private as a subdomain before the environment in order to use 'isPrivate: true'.
 
 | Domain  | Supports Private | Supports Public | Environment|
 | ---| --- | --- | --- |
-|**okdc.dk**||||
-|*.private.test.okdc.dk         |yes  |no   |test|
-|*.private.prod-test.okdc.dk    |yes  |no   |prodtest|
-|*.private.okdc.dk              |yes  |no   |prod|
-|*.test.okdc.dk                 |no   |yes  |test|
-|*.prod-test.okdc.dk            |no   |yes  |prodtest|
-|*.okdc.dk                      |no   |yes  |prod|
 |**ok.dk**||||
 |*.test.ok.dk                   |yes  |yes  |test|
 |*.prod-test.ok.dk              |yes  |yes  |prodtest|
