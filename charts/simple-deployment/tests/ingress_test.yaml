@@ -87,8 +87,8 @@ tests:
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
-        host: example.test.okcloud.dk
         isPrivate: true
+        host: "example.test.okcloud.dk"
     asserts:
       - failedTemplate:
         errorMessage: "Services hosted in cloud are public only."
