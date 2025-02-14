@@ -164,4 +164,13 @@ Another possiblity is to reference the secret as an environment variable directl
           refName: "remote-secret-ref1"
 
 ```
-In this case the secret in the remote store should be named `SecretName__secretKey` e. g. `kubernetes-secret-name1__key1`. e. g.the output will then be kubernetes secret with name `kubernetes-secret-name1` with key `key1`. This is a limitation of the remote store not being able to contain multiple keys and naming conventions for a given kubernetes secret. The secret is automatically referenced as an environment variable with the refName so that an environment variable is created with name e. g. `remote-secret-ref1`.
+In this case the secret in the remote store should be named `SecretName__secretKey` e. g. `kubernetes-secret-name1__key1`. e. g.the output will then be kubernetes secret with name `kubernetes-secret-name1` with key `key1`. This is a limitation of the remote store not being able to contain multiple keys and naming conventions for a given kubernetes secret. The secret is automatically referenced as an environment variable with the refName so that an environment variable is created with name e. g. `remote-secret-ref1`. The secret can be mapped to another environment variable with:
+
+``` yaml
+  deployment:
+    container:
+      secretEnvironmentRef:
+      - name: "environment-variable1"
+        secret: "kubernetes-secret-name1"
+        key: "key1"
+```
