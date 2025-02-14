@@ -152,7 +152,7 @@ In order to use the external secret store to create a kubernetes secret, the leg
 ```
 It's possible to map one to one or multiple remote secrets into one kubernetes secret. The secret will automatically be mounted as a file with path `/secrets/<SECRET NAME>/<KEY NAME>`.
 
-Another possiblity is to reference the secret as an environment variable directly. However this is not recommended due to how trivial it is inspect a Containers environment variables. This approach is only recommended during migration of a service.
+Another possiblity is to reference the secret as an environment variable directly. However this is not recommended due to how trivial it is inspect a container environment variables. This approach is only recommended during migration of a service.
 
 ``` yaml
   deployment:
@@ -163,9 +163,5 @@ Another possiblity is to reference the secret as an environment variable directl
         - secretKey: "key1"
           refName: "remote-secret-ref1"
 
-      secretRefEnvironment:
-      - name: "environment-variable-name1"
-        secret: "kubernetes-secret-name1"
-        key: "key1"
 ```
-In this case the secret in the remote store should be named `SecretName__refName` e. g. `kubernetes-secret-name1__key1`. e. g.the output will then be kubernetes secret with name `kubernetes-secret-name1` with key `key1`. This is a limitation of the remote store not being able to contain multiple keys and naming conventions for a given kubernetes secret. The secret can then be referenced using `secretRefEnvironment` to inject the secret as an environment variable.
+In this case the secret in the remote store should be named `SecretName__secretKey` e. g. `kubernetes-secret-name1__key1`. e. g.the output will then be kubernetes secret with name `kubernetes-secret-name1` with key `key1`. This is a limitation of the remote store not being able to contain multiple keys and naming conventions for a given kubernetes secret. The secret is automatically referenced as an environment variable with the refName so that an environment variable is created with name e. g. `remote-secret-ref1`.
