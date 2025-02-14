@@ -16,7 +16,7 @@
       nginx
     {{- end }}
   {{- else }}
-    {{- fail "Parent domain not recognized"}}
+    {{- fail "Parent domain not recognized."}}
   {{- end }}
 {{- end -}}
 
