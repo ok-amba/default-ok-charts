@@ -76,7 +76,7 @@ spec:
         readinessProbe:
         {{- include "deployment.readinessProbe" . | nindent 10 }}
         {{- end }}
-        {{- if or .environment .fieldRefEnvironment .secretEnvironmentRef .externalSecretsRef}}
+        {{- if or .environment .fieldRefEnvironment .secretRef .externalSecretsRef}}
         env:
           {{- range $name, $value := .fieldRefEnvironment }}
           - name: {{ $name }}
@@ -88,7 +88,7 @@ spec:
           - name: {{ $name }}
             value: {{ $value | quote }}
           {{- end }}
-          {{- range $value := .secretEnvironmentRef }}
+          {{- range $value := .secretRef }}
           - name: {{ $value.name }}
             valueFrom:
               secretKeyRef:
