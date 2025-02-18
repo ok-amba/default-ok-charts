@@ -104,3 +104,27 @@ tests:
     asserts:
       - failedTemplate:
         errorMessage: "Parent domain not recognized."
+
+
+  - it: "9: Should work with custom ingress"
+    set:
+      service.enable: true
+      deployment.container.containerPort: 8080
+      ingress:
+        enable: true
+        host: "example.ok.dk"
+        ingressClassName: haproxy
+      
+    asserts:
+      - equal:
+          path: "spec.ingressClassName"
+          value: "haproxy"
+
+      - notContains:
+          path: "metadata.annotations['nginx.ingress.kubernetes.io/from-to-www-redirect']"
+
+      - notContains:
+          path: "metadata.annotations['nginx.ingress.kubernetes.io/ssl-redirect']"
+
+      - notContains:
+          path: "metadata.annotations['cert-manager.io/cluster-issuer']"
