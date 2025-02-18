@@ -1,63 +1,16 @@
 suite: Ingress host tests
-templates: 
+templates:
 - "ingress.yaml"
 tests:
 
-  - it: "1: Explicit private host with nginx-private and clouddns-dns01-issuer expected"
-    set: 
-      service.enable: true 
+  - it: "1: Should set nginx-private and cloudflare-dns01-issuer when private host is set."
+    set:
+      service.enable: true
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
         isPrivate: true
-        host: "example.private.okdc.dk"
-    asserts:
-      - equal:
-          path: "spec.ingressClassName"
-          value: "nginx-private"
-      - equal:
-          path: "metadata.annotations['cert-manager.io/cluster-issuer']"
-          value: "clouddns-dns01-issuer"
-
-  - it: "2: Explicit public host with nginx-public and clouddns-dns01-issuer expected"
-    set: 
-      service.enable: true 
-      deployment.container.containerPort: 8080
-      ingress.enable: true
-      ingress:
-        isPrivate: false
-        host: "example.test.okdc.dk"
-    asserts:
-      - equal:
-          path: "spec.ingressClassName"
-          value: "nginx-public"
-      - equal:
-          path: "metadata.annotations['cert-manager.io/cluster-issuer']"
-          value: "clouddns-dns01-issuer"
-
-  - it: "3: Default which is implicit private host with nginx-private and clouddns-dns01-issuer expected"
-    set: 
-      service.enable: true 
-      deployment.container.containerPort: 8080
-      ingress.enable: true
-      ingress:
-        host: "example.test.okdc.dk"
-    asserts:
-      - equal:
-          path: "spec.ingressClassName"
-          value: "nginx-private"
-      - equal:
-          path: "metadata.annotations['cert-manager.io/cluster-issuer']"
-          value: "clouddns-dns01-issuer"
-
-  - it: "4: Explicit private host with nginx-private and cloudflare-dns01-issuer expected"
-    set:  
-      service.enable: true 
-      deployment.container.containerPort: 8080
-      ingress.enable: true
-      ingress:
-        isPrivate: true
-        host: "example.private.ok.dk"
+        host: "example.test.ok.dk"
     asserts:
       - equal:
           path: "spec.ingressClassName"
@@ -66,9 +19,9 @@ tests:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
           value: "cloudflare-dns01-issuer"
 
-  - it: "5: Explicit public host with nginx-public and cloudflare-dns01-issuer expected"
-    set: 
-      service.enable: true 
+  - it: "2: Should set nginx-public and cloudflare-dns01-issuer when public host is set."
+    set:
+      service.enable: true
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
@@ -82,9 +35,9 @@ tests:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
           value: "cloudflare-dns01-issuer"
 
-  - it: "6: Default which is implicit private host with nginx-private and cloudflare-dns01-issuer expected"
-    set: 
-      service.enable: true 
+  - it: "3: Should set nginx-private and cloudflare-dns01-issuer when implicit private host is set."
+    set:
+      service.enable: true
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
@@ -97,9 +50,52 @@ tests:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
           value: "cloudflare-dns01-issuer"
 
-  - it: "7: Should not allow a domain in host we do not know"
+  - it: "5: Should set nginx and nginx-http01 when public host in cloud is set."
+    set:
+      service.enable: true
+      deployment.container.containerPort: 8080
+      ingress.enable: true
+      ingress:
+        isPrivate: false
+        host: "example.test.okcloud.dk"
+    asserts:
+      - equal:
+          path: "spec.ingressClassName"
+          value: "nginx"
+      - equal:
+          path: "metadata.annotations['cert-manager.io/cluster-issuer']"
+          value: "nginx-http01"
+
+  - it: "6: Should set nginx and nginx-http01 when implicit public host in cloud is set."
     set: 
       service.enable: true 
+      deployment.container.containerPort: 8080
+      ingress.enable: true
+      ingress:
+        host: "example.test.okcloud.dk"
+    asserts:
+      - equal:
+          path: "spec.ingressClassName"
+          value: "nginx"
+      - equal:
+          path: "metadata.annotations['cert-manager.io/cluster-issuer']"
+          value: "nginx-http01"
+
+  - it: "7: Should not allow private service in cloud. We expect a failed template."
+    set:
+      service.enable: true
+      deployment.container.containerPort: 8080
+      ingress.enable: true
+      ingress:
+        isPrivate: true
+        host: "example.test.okcloud.dk"
+    asserts:
+      - failedTemplate:
+        errorMessage: "Services hosted in cloud are public only."
+
+  - it: "8: Should not allow a domain in host we do not know."
+    set:
+      service.enable: true
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
@@ -107,4 +103,4 @@ tests:
         host: "example.blahblah.com"
     asserts:
       - failedTemplate:
-        errorMessage: "Parent domain not recognized"
+        errorMessage: "Parent domain not recognized."

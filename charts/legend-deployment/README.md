@@ -128,17 +128,17 @@ ingress:
 **The new ingress in Gen 2 supports private or public mode**
 
 ### Example 5.1: Configuring a private ingress
-If you want to deploy a new service on the ok.dk or okdc.dk domain, and want to expose the ingress privately in OK, the following example can be used. In this case 'isPrivate' is set to true.
+If you want to deploy a new service on the ok.dk domain, and want to expose the ingress privately in OK, the following example can be used. In this case 'isPrivate' is set to true.
 
 ```yaml
 ingress:
   enable: true
-  host: example.private.test.okdc.dk
+  host: example.test.ok.dk
   isPrivate: true
 ```
 
 ### Example 5.2: Configuring a public ingress
-If you want to deploy a service on the ok.dk or okdc.dk domain, and want to expose the ingress publicly, the following example can be used. In this case 'isPrivate' is set to false.
+If you want to deploy a service on the ok.dk domain, and want to expose the ingress publicly, the following example can be used. In this case 'isPrivate' is set to false.
 
 ```yaml
 ingress:
