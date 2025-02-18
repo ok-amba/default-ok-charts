@@ -1,5 +1,5 @@
 {{- define "ingress.classname" -}}
-  {{- if (regexMatch "^([a-zA-Z0-9-]+\\.)+(ok|okdc)(\\.dk)$" $.Values.ingress.host) }}
+  {{- if (regexMatch "^([a-zA-Z0-9-]+\\.)+(ok\\.dk)$" $.Values.ingress.host) }}
     {{- if (eq nil $.Values.ingress.isPrivate) }}
      nginx-private
     {{- else if ($.Values.ingress.isPrivate) }}
@@ -15,8 +15,6 @@
 {{- define "ingress.cluster-issuer" -}}
   {{- if (regexMatch "^([a-zA-Z0-9-]+\\.)+(ok\\.dk)$" $.Values.ingress.host) }}
       cloudflare-dns01-issuer
-  {{- else if (regexMatch "^([a-zA-Z0-9-]+\\.)+(okdc\\.dk)$" $.Values.ingress.host) }}
-      clouddns-dns01-issuer
   {{- else }}
    {{- fail "Parent domain not recognized"}}
   {{- end }}
