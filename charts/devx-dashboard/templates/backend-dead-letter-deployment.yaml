@@ -77,7 +77,7 @@ spec:
           - name: {{ include "devx.name" $ }}-appsettings
             mountPath: "/app/Config/"
       - name: cloud-sql-proxy
-        image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8"
+        image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.14.0"
         command:
           - "/cloud-sql-proxy"
           - "{{ $.Values.global.projectID }}:europe-west3:{{ $.Values.sqlinstance.name }}"
