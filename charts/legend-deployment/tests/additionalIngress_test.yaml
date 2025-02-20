@@ -28,7 +28,7 @@ tests:
       service.enable: true
       ingress.enable: true
       ingress.additionalIngress.enable: true
-      ingress.additionalIngress.hosts: ["ingress-test.test.okdc.dk"]
+      ingress.additionalIngress.hosts: ["ingress-test.test.ok.dk"]
     asserts:
       - hasDocuments:
           count: 1
@@ -48,7 +48,7 @@ tests:
       service.enable: true
       ingress.enable: true
       ingress.additionalIngress.enable: true
-      ingress.additionalIngress.hosts: ["ingress-test.test.okdc.dk"]
+      ingress.additionalIngress.hosts: ["ingress-test.test.ok.dk"]
       ingress.additionalIngress.clusterIssuer: nginx-http01
     asserts:
       - equal:
