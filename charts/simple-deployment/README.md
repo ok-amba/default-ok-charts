@@ -8,12 +8,9 @@ Here's a few bullet points on what it's capable of.
 - Mounting secrets, configmaps or additional volumes into the pods.
 - Enabling a service for the deployment.
 - Enabling an ingress with TLS.
-<<<<<<< HEAD
 - Internal OK exposure by default in the Gen 2 kubernetes cluster.
   - This is overwriteable with the boolean "exposure", or by setting your specific ingress with ingressClassName in your services' values file.
 - Public ingress by default in the GKE Cloud cluster.
-=======
->>>>>>> main
 
 ## Examples 1
 
@@ -129,7 +126,6 @@ ingress:
           number: 3000
 ```
 
-<<<<<<< HEAD
 ## Example 5
 
 **The new ingress in Gen 2 supports two different domains: ok.dk and okcloud.dk**
@@ -189,8 +185,6 @@ All possible domain/env combinations are listed below along with the supported i
 |*.test.okcloud.dk              |no   |yes  |test|
 |*.prod-test.okcloud.dk         |no   |yes  |prodtest|
 |*.okcloud.dk                   |no   |yes  |prod|
-=======
->>>>>>> main
 
 # Exampel 6: External Secret Store
 Prequisite: Extrnal Secret Store must be enabled on the given project. If possible, please use the nuget package instead.
