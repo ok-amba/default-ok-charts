@@ -123,6 +123,42 @@ ingress:
         port:
           number: 3000
 ```
+## Example 5
+
+**The new ingress in Gen 2 supports exposure levels**
+
+### Example 5.1: Configuring internal OK exposure
+If you want to deploy a new service on the ok.dk domain, and want to expose the ingress internal OK, the following example can be used. In this case 'exposure' is set to internalOK.
+
+```yaml
+ingress:
+  enable: true
+  host: example.private.test.ok.dk
+  exposure: internalOK
+```
+
+### Example 5.2: Configuring public exposure
+If you want to deploy a service on the ok.dk domain, and want to expose the ingress publicly, the following example can be used. In this case 'exposure' is set to public.
+
+```yaml
+ingress:
+  enable: true
+  host: example.test.ok.dk
+  exposure: public
+```
+
+### 5.3: Using the default exposure of a domain
+If you do NOT specify 'exposure' on an ingress the domains default will be used instead. Reference the following table for defaults.
+|Domain|Default privacy|
+|---|---|
+|*.ok.dk|internalOK|
+
+The below example will result in a internal OK exposure because the host is using the ok.dk domain.
+```yaml
+ingress:
+  enable: true
+  host: example.test.ok.dk
+```
 
 
 # Exampel 6: External Secret Store

@@ -1,0 +1,81 @@
+suite: Ingress host tests
+templates: 
+- "ingress.yaml"
+tests:
+  - it: "4: Explicit private host with nginx-private and cloudflare-dns01-issuer expected"
+    set:  
+      service.enable: true 
+      deployment.container.containerPort: 8080
+      ingress.enable: true
+      ingress:
+        exposure: internalOK
+        host: "example.private.ok.dk"
+    asserts:
+      - equal:
+          path: "spec.ingressClassName"
+          value: "nginx-private"
+      - equal:
+          path: "metadata.annotations['cert-manager.io/cluster-issuer']"
+          value: "cloudflare-dns01-issuer"
+
+  - it: "5: Explicit public host with nginx-public and cloudflare-dns01-issuer expected"
+    set: 
+      service.enable: true 
+      deployment.container.containerPort: 8080
+      ingress.enable: true
+      ingress:
+        exposure: public
+        host: "example.test.ok.dk"
+    asserts:
+      - equal:
+          path: "spec.ingressClassName"
+          value: "nginx-public"
+      - equal:
+          path: "metadata.annotations['cert-manager.io/cluster-issuer']"
+          value: "cloudflare-dns01-issuer"
+
+  - it: "6: Default which is implicit private host with nginx-private and cloudflare-dns01-issuer expected"
+    set: 
+      service.enable: true 
+      deployment.container.containerPort: 8080
+      ingress.enable: true
+      ingress:
+        host: "example.test.ok.dk"
+    asserts:
+      - equal:
+          path: "spec.ingressClassName"
+          value: "nginx-private"
+      - equal:
+          path: "metadata.annotations['cert-manager.io/cluster-issuer']"
+          value: "cloudflare-dns01-issuer"
+
+  - it: "7: Should not allow a domain in host we do not know"
+    set: 
+      service.enable: true 
+      deployment.container.containerPort: 8080
+      ingress.enable: true
+      ingress:
+        exposure: internalOK
+        host: "example.blahblah.com"
+    asserts:
+      - failedTemplate:
+        errorMessage: "Parent domain not recognized"
+
+  - it: "9: Should work with custom ingress"
+    set:
+      service.enable: true
+      deployment.container.containerPort: 8080
+      ingress:
+        enable: true
+        host: "example.ok.dk"
+        ingressClassName: haproxy
+    asserts:
+      - equal:
+          path: "spec.ingressClassName"
+          value: "haproxy"
+      - notContains:
+          path: "metadata.annotations['nginx.ingress.kubernetes.io/from-to-www-redirect']"
+      - notContains:
+          path: "metadata.annotations['nginx.ingress.kubernetes.io/ssl-redirect']"
+      - notContains:
+          path: "metadata.annotations['cert-manager.io/cluster-issuer']"
