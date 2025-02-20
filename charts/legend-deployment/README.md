@@ -125,35 +125,35 @@ ingress:
 ```
 ## Example 5
 
-**The new ingress in Gen 2 supports private or public mode**
+**The new ingress in Gen 2 supports exposure levels**
 
-### Example 5.1: Configuring a private ingress
-If you want to deploy a new service on the ok.dk or okdc.dk domain, and want to expose the ingress privately in OK, the following example can be used. In this case 'isPrivate' is set to true.
+### Example 5.1: Configuring internal OK exposure
+If you want to deploy a new service on the ok.dk or okdc.dk domain, and want to expose the ingress internal OK, the following example can be used. In this case 'exposure' is set to internalOK.
 
 ```yaml
 ingress:
   enable: true
   host: example.private.test.okdc.dk
-  isPrivate: true
+  exposure: internalOK
 ```
 
-### Example 5.2: Configuring a public ingress
-If you want to deploy a service on the ok.dk or okdc.dk domain, and want to expose the ingress publicly, the following example can be used. In this case 'isPrivate' is set to false.
+### Example 5.2: Configuring public exposure
+If you want to deploy a service on the ok.dk or okdc.dk domain, and want to expose the ingress publicly, the following example can be used. In this case 'exposure' is set to public.
 
 ```yaml
 ingress:
   enable: true
   host: example.test.ok.dk
-  isPrivate: false
+  exposure: public
 ```
 
-### 5.3: Using the default privacy of a domain
-If you do NOT specify 'isPrivate' on an ingress controller the domains default will be used instead. Reference the following table for defaults.
+### 5.3: Using the default exposure of a domain
+If you do NOT specify 'exposure' on an ingress the domains default will be used instead. Reference the following table for defaults.
 |Domain|Default privacy|
 |---|---|
-|*.ok.dk|private|
+|*.ok.dk|internalOK|
 
-The below example will result in a private ingress because the host is using the ok.dk domain.
+The below example will result in a internal OK exposure because the host is using the ok.dk domain.
 ```yaml
 ingress:
   enable: true
