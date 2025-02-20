@@ -1,0 +1,16 @@
+deployment:
+  replicas: 1
+  container:
+    image: rahulgadre/snake-game
+    tag: latest
+    containerPort: 80
+    livenessProbe:
+      enable: false
+    readinessProbe:
+      enable: false
+service:
+  enable: true
+ingress:
+  enable: true
+  host: snake-demo-app-legend.test.okcloud.dk
+  exposure: internalOK
