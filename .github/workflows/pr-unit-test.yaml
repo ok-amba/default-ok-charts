@@ -11,7 +11,8 @@ jobs:
   helm_unit-test:
     runs-on: ubuntu-latest
     steps:
-      - run: | 
+      - run: |
+          helm plugin install https://github.com/helm-unittest/helm-unittest.git
           for chart in ./charts/*;
           do
             helm unittest "$chart"
