@@ -50,6 +50,22 @@ tests:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
           value: "cloudflare-dns01-issuer"
 
+  - it: "4: Explicit private host with nginx-private and cloudflare-dns01-issuer expected"
+    set:  
+      service.enable: true 
+      deployment.container.containerPort: 8080
+      ingress.enable: true
+      ingress:
+        exposure: internalOK
+        host: "example.private.ok.dk"
+    asserts:
+      - equal:
+          path: "spec.ingressClassName"
+          value: "nginx-private"
+      - equal:
+          path: "metadata.annotations['cert-manager.io/cluster-issuer']"
+          value: "cloudflare-dns01-issuer" 
+
   - it: "5: Should set nginx and nginx-http01 when explicit public host in cloud is set."
     set:
       service.enable: true
