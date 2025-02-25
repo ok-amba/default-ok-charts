@@ -13,11 +13,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
-        
+
       - run: |
           helm plugin install https://github.com/helm-unittest/helm-unittest.git
           
           for chart in ./charts/*;
           do
-            helm unittest "$chart"
+            helm unittest "$chart" --color
           done
