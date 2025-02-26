@@ -128,10 +128,10 @@ failureThreshold: {{ .readinessProbe.failureThreshold | default 3 }}
     - --encryption-key=$(ENCRYPTION_KEY)
     - --forbidden-page=/etc/keycloak/templates/forbidden.html.tmpl
     - --verbose
-    - --enable-authorization-header={{ .gatekeeper.authHeader | default true }}
-    - --secure-cookie={{ .gatekeeper.secureCookie | default true }}
-    - --enable-default-deny={{ .gatekeeper.defaultDeny | default true }}
-    - --enable-refresh-tokens={{ .gatekeeper.refreshTokens | default true }}
+    - --enable-authorization-header={{ .gatekeeper.authHeader | default true | ternary .gatekeeper.authHeader true }}
+    - --secure-cookie={{ .gatekeeper.secureCookie | default true | ternary .gatekeeper.secureCookie true }}
+    - --enable-default-deny={{ .gatekeeper.defaultDeny | default true | ternary .gatekeeper.defaultDeny true }}
+    - --enable-refresh-tokens={{ .gatekeeper.refreshTokens | default true | ternary .gatekeeper.refreshTokens true }}
     {{- .gatekeeper.args | toYaml | nindent 4 }}
   env:
   - name: KCP_CLIENT_OIDC_SECRET
