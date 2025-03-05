@@ -1,0 +1,23 @@
+name: Helm Unit Tests
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, reopened, edited]
+  pull_request_review:
+    types: [edited, dismissed]
+
+jobs:
+  helm_unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - run: |
+          helm plugin install https://github.com/helm-unittest/helm-unittest.git
+          
+          for chart in ./charts/*;
+          do
+            helm unittest "$chart" --color
+          done

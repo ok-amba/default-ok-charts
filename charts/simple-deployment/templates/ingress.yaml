@@ -12,7 +12,7 @@ metadata:
     {{- with .annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-    {{- if or (not $.Values.ingress.ingressClassName) (eq $.Values.ingress.ingressClassName "nginx") }}
+    {{- if not $.Values.ingress.ingressClassName }}
     {{- if .wwwRedirect }}
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
     {{- end }}
@@ -42,7 +42,7 @@ spec:
             port:
               number: {{ .Values.deployment.container.containerPort | required "A container port is required on the container." }}
         {{- with .Values.ingress.addtionalPaths }}
-        {{ toYaml . | nindent 5}}
+        {{ toYaml . | nindent 6}}
         {{- end }}
   tls:
   - hosts:

@@ -1,34 +1,36 @@
 {{- define "ingress.classname" -}}
-  {{- if (regexMatch "^([a-zA-Z0-9-]+\\.)+(ok|okdc)(\\.dk)$" $.Values.ingress.host) }}
-    {{- if (eq nil $.Values.ingress.isPrivate) }}
+  {{- if (regexMatch "^([a-zA-Z0-9-]+\\.)+(ok\\.dk)$" $.Values.ingress.host) }}
+    {{- if (eq nil $.Values.ingress.exposure) }}
      nginx-private
-    {{- else if ($.Values.ingress.isPrivate) }}
+    {{- else if (eq "internalOK" $.Values.ingress.exposure) }}
       nginx-private
-    {{- else }}
+    {{- else if (eq "public" $.Values.ingress.exposure) }}
       nginx-public
+    {{- else }}
+      {{- fail "Ingress exposure not recognized"}}
     {{- end }}
   {{- else if  (regexMatch "^([a-zA-Z0-9-]+\\.)+(okcloud\\.dk)$" $.Values.ingress.host) }}
-    {{- if (eq nil $.Values.ingress.isPrivate) }}
+    {{- if (eq nil $.Values.ingress.exposure) }}
       nginx
-    {{- else if $.Values.ingress.isPrivate }}
-      {{- fail "Services hosted in cloud are public only"}}
+    {{- else if (eq "internalOK" $.Values.ingress.exposure) }}
+      {{- fail "Services hosted in cloud are public only."}}
+    {{- else if (eq "public" $.Values.ingress.exposure) }}
+      nginx
     {{- else }}
-      nginx
+      {{- fail "Ingress exposure not recognized"}}
     {{- end }}
   {{- else }}
-    {{- fail "Parent domain not recognized"}}
+    {{- fail "Parent domain not recognized."}}
   {{- end }}
 {{- end -}}
 
 {{- define "ingress.cluster-issuer" -}}
   {{- if (regexMatch "^([a-zA-Z0-9-]+\\.)+(ok\\.dk)$" $.Values.ingress.host) }}
       cloudflare-dns01-issuer
-  {{- else if (regexMatch "^([a-zA-Z0-9-]+\\.)+(okdc\\.dk)$" $.Values.ingress.host) }}
-      clouddns-dns01-issuer
   {{- else if  (regexMatch "^([a-zA-Z0-9-]+\\.)+(okcloud\\.dk)$" $.Values.ingress.host) }}
       nginx-http01
   {{- else }}
-   {{- fail "Parent domain not recognized"}}
+   {{- fail "Parent domain not recognized."}}
   {{- end }}
 {{- end -}}
 

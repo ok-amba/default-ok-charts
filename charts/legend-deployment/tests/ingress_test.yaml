@@ -2,53 +2,52 @@ suite: Ingress host tests
 templates: 
 - "ingress.yaml"
 tests:
-
-  - it: "1: Explicit private host with nginx-private and clouddns-dns01-issuer expected"
-    set: 
-      service.enable: true 
+  - it: "1: Should set nginx-private and cloudflare-dns01-issuer when private host is set."
+    set:
+      service.enable: true
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
-        isPrivate: true
-        host: "example.private.okdc.dk"
+        exposure: internalOK
+        host: "example.test.ok.dk"
     asserts:
       - equal:
           path: "spec.ingressClassName"
           value: "nginx-private"
       - equal:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
-          value: "clouddns-dns01-issuer"
+          value: "cloudflare-dns01-issuer"
 
-  - it: "2: Explicit public host with nginx-public and clouddns-dns01-issuer expected"
-    set: 
+  - it: "2: Should set nginx-public and cloudflare-dns01-issuer when public host is set."
+    set:
       service.enable: true 
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
-        isPrivate: false
-        host: "example.test.okdc.dk"
+        exposure: public
+        host: "example.test.ok.dk"
     asserts:
       - equal:
           path: "spec.ingressClassName"
           value: "nginx-public"
       - equal:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
-          value: "clouddns-dns01-issuer"
+          value: "cloudflare-dns01-issuer"
 
-  - it: "3: Default which is implicit private host with nginx-private and clouddns-dns01-issuer expected"
-    set: 
-      service.enable: true 
+  - it: "3: Should set nginx-private and cloudflare-dns01-issuer when implicit private host is set."
+    set:
+      service.enable: true
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
-        host: "example.test.okdc.dk"
+        host: "example.test.ok.dk"
     asserts:
       - equal:
           path: "spec.ingressClassName"
           value: "nginx-private"
       - equal:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
-          value: "clouddns-dns01-issuer"
+          value: "cloudflare-dns01-issuer"
 
   - it: "4: Explicit private host with nginx-private and cloudflare-dns01-issuer expected"
     set:  
@@ -56,7 +55,7 @@ tests:
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
-        isPrivate: true
+        exposure: internalOK
         host: "example.private.ok.dk"
     asserts:
       - equal:
@@ -72,7 +71,7 @@ tests:
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
-        isPrivate: false
+        exposure: public
         host: "example.test.ok.dk"
     asserts:
       - equal:
@@ -103,8 +102,27 @@ tests:
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
-        isPrivate: true
+        exposure: internalOK
         host: "example.blahblah.com"
     asserts:
       - failedTemplate:
         errorMessage: "Parent domain not recognized"
+
+  - it: "8: Should work with custom ingress"
+    set:
+      service.enable: true
+      deployment.container.containerPort: 8080
+      ingress:
+        enable: true
+        host: "example.ok.dk"
+        ingressClassName: haproxy
+    asserts:
+      - equal:
+          path: "spec.ingressClassName"
+          value: "haproxy"
+      - notContains:
+          path: "metadata.annotations['nginx.ingress.kubernetes.io/from-to-www-redirect']"
+      - notContains:
+          path: "metadata.annotations['nginx.ingress.kubernetes.io/ssl-redirect']"
+      - notContains:
+          path: "metadata.annotations['cert-manager.io/cluster-issuer']"

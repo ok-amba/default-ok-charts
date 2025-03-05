@@ -8,8 +8,8 @@ Here's a few bullet points on what it's capable of.
 - Mounting secrets, configmaps or additional volumes into the pods.
 - Enabling a service for the deployment.
 - Enabling an ingress with TLS.
-- Private ingress by default in the Gen 2 kubernetes cluster.
-  - This is overwriteable with the boolean "isPrivate", or by setting your specific ingress with ingressClassName in your services' values file.
+- Internal OK exposure by default in the Gen 2 kubernetes cluster.
+  - This is overwriteable with the boolean "exposure", or by setting your specific ingress with ingressClassName in your services' values file.
 - Public ingress by default in the GKE Cloud cluster.
 
 ## Examples 1
@@ -128,44 +128,43 @@ ingress:
 
 ## Example 5
 
-**The new ingress in Gen 2 supports three different domains: ok.dk, okdc.dk and okcloud.dk**
+**The new ingress in Gen 2 supports two different domains: ok.dk and okcloud.dk**
 
-### Example 5.1: Configuring a private ingress
-If you want to deploy a new service on the ok.dk or okdc.dk domain, and want to expose the ingress privately in OK, the following example can be used. In this case 'isPrivate' is set to true.
+### Example 5.1: Configuring internal OK exposure
+If you want to deploy a new service on the ok.dk domain, and want to expose the ingress privately in OK, the following example can be used. In this case 'exposure' is set to internalOK.
 
 ```yaml
 ingress:
   enable: true
-  host: example.private.test.okdc.dk
-  isPrivate: true
+  host: example.test.ok.dk
+  exposure: internalOK
 ```
 
-### Example 5.2: Configuring a public ingress
-If you want to deploy a new service on the ok.dk, okdc.dk or okcloud.dk domain, and want to expose the ingress publicly, the following example can be used. In this case 'isPrivate' is set to false.
+### Example 5.2: Configuring public exposure
+If you want to deploy a new service on the ok.dk domain, and want to expose the ingress publicly, the following example can be used. In this case 'exposure' is set to public.
 
 ```yaml
 ingress:
   enable: true
-  host: example.test.okcloud.dk
-  isPrivate: false
+  host: example.test.ok.dk
+  exposure: public
 ```
 
 ### 5.3: Using the default privacy of a domain
-If you do NOT specify 'isPrivate' on an ingress controller the domains default will be used instead. Reference the following table for defaults.
+If you do NOT specify 'exposure' on an ingress controller the domains default will be used instead. Reference the following table for defaults.
 |Domain|Default privacy|
 |---|---|
-|*.ok.dk|private|
-|*.okdc.dk|private|
+|*.ok.dk|internalOK|
 |*.okcloud.dk|public|
 
-The below example will result in a private ingress because the host is using the ok.dk domain.
+The below example will result in internal OK exposure because the host is using the ok.dk domain.
 ```yaml
 ingress:
   enable: true
   host: example.test.ok.dk
 ```
 
-The below example will result in a public ingress because the host is using the okcloud.dk domain.
+The below example will result in public exposure because the host is using the okcloud.dk domain.
 ```yaml
 ingress:
   enable: true
@@ -174,18 +173,10 @@ ingress:
 
 ### Domains supported by simple-deployment
 Note that if you're using a domain that is not in the following table simple-deployment will throw an error. \
-All possible domain/env combinations are listed below along with the supported ingress privacy. \
-When using the okdc.dk domain one must add private as a subdomain before the environment in order to use 'isPrivate: true'.
+All possible domain/env combinations are listed below along with the supported ingress exposure.
 
-| Domain  | Supports Private | Supports Public | Environment|
+| Domain  | Supports internalOK | Supports Public | Environment|
 | ---| --- | --- | --- |
-|**okdc.dk**||||
-|*.private.test.okdc.dk         |yes  |no   |test|
-|*.private.prod-test.okdc.dk    |yes  |no   |prodtest|
-|*.private.okdc.dk              |yes  |no   |prod|
-|*.test.okdc.dk                 |no   |yes  |test|
-|*.prod-test.okdc.dk            |no   |yes  |prodtest|
-|*.okdc.dk                      |no   |yes  |prod|
 |**ok.dk**||||
 |*.test.ok.dk                   |yes  |yes  |test|
 |*.prod-test.ok.dk              |yes  |yes  |prodtest|

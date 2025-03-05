@@ -125,40 +125,41 @@ ingress:
 ```
 ## Example 5
 
-**The new ingress in Gen 2 supports private or public mode**
+**The new ingress in Gen 2 supports exposure levels**
 
-### Example 5.1: Configuring a private ingress
-If you want to deploy a new service on the ok.dk or okdc.dk domain, and want to expose the ingress privately in OK, the following example can be used. In this case 'isPrivate' is set to true.
+### Example 5.1: Configuring internal OK exposure
+If you want to deploy a new service on the ok.dk domain, and want to expose the ingress internal OK, the following example can be used. In this case 'exposure' is set to internalOK.
 
 ```yaml
 ingress:
   enable: true
-  host: example.private.test.okdc.dk
-  isPrivate: true
+  host: example.private.test.ok.dk
+  exposure: internalOK
 ```
 
-### Example 5.2: Configuring a public ingress
-If you want to deploy a service on the ok.dk or okdc.dk domain, and want to expose the ingress publicly, the following example can be used. In this case 'isPrivate' is set to false.
+### Example 5.2: Configuring public exposure
+If you want to deploy a service on the ok.dk domain, and want to expose the ingress publicly, the following example can be used. In this case 'exposure' is set to public.
 
 ```yaml
 ingress:
   enable: true
   host: example.test.ok.dk
-  isPrivate: false
+  exposure: public
 ```
 
-### 5.3: Using the default privacy of a domain
-If you do NOT specify 'isPrivate' on an ingress controller the domains default will be used instead. Reference the following table for defaults.
+### 5.3: Using the default exposure of a domain
+If you do NOT specify 'exposure' on an ingress the domains default will be used instead. Reference the following table for defaults.
 |Domain|Default privacy|
 |---|---|
-|*.ok.dk|private|
+|*.ok.dk|internalOK|
 
-The below example will result in a private ingress because the host is using the ok.dk domain.
+The below example will result in a internal OK exposure because the host is using the ok.dk domain.
 ```yaml
 ingress:
   enable: true
   host: example.test.ok.dk
 ```
+
 
 # Exampel 6: External Secret Store
 Prequisite: Extrnal Secret Store must be enabled on the given project. If possible, please use the nuget package instead.
@@ -187,7 +188,7 @@ In order to use the external secret store to create a kubernetes secret, the leg
 ```
 It's possible to map one to one or multiple remote secrets into one kubernetes secret. The secret will automatically be mounted as a file with path `/secrets/<SECRET NAME>/<KEY NAME>`.
 
-Another possiblity is to reference the secret as an environment variable directly. However this is not recommended due to how trivial it is inspect a Containers environment variables. This approach is only recommended during migration of a service.
+Another possiblity is to reference the secret as an environment variable directly. However this is not recommended due to how trivial it is inspect a container environment variables. This approach is only recommended during migration of a service.
 
 ``` yaml
   deployment:
@@ -198,9 +199,14 @@ Another possiblity is to reference the secret as an environment variable directl
         - secretKey: "key1"
           refName: "remote-secret-ref1"
 
-      secretRefEnvironment:
-      - name: "environment-variable-name1"
+```
+In this case the secret in the remote store should be named `SecretName__secretKey` e. g. `kubernetes-secret-name1__key1`. e. g.the output will then be kubernetes secret with name `kubernetes-secret-name1` with key `key1`. This is a limitation of the remote store not being able to contain multiple keys and naming conventions for a given kubernetes secret. The secret is automatically referenced as an environment variable with the refName so that an environment variable is created with name e. g. `remote-secret-ref1`. The secret can be mapped to another environment variable with:
+
+``` yaml
+  deployment:
+    container:
+      secretEnvironmentRef:
+      - name: "environment-variable1"
         secret: "kubernetes-secret-name1"
         key: "key1"
 ```
-In this case the secret in the remote store should be named `SecretName__refName` e. g. `kubernetes-secret-name1__key1`. e. g.the output will then be kubernetes secret with name `kubernetes-secret-name1` with key `key1`. This is a limitation of the remote store not being able to contain multiple keys and naming conventions for a given kubernetes secret. The secret can then be referenced using `secretRefEnvironment` to inject the secret as an environment variable.

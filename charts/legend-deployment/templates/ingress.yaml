@@ -12,11 +12,13 @@ metadata:
     {{- with .annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
+    {{- if not $.Values.ingress.ingressClassName }}
     {{- if .wwwRedirect }}
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
     {{- end }}
     nginx.ingress.kubernetes.io/ssl-redirect: {{ .sslRedirect | default "false" | quote }}
     cert-manager.io/cluster-issuer: {{ include "ingress.cluster-issuer" $ | trim }}
+    {{- end }}
   labels:
     {{- include "deployment.labels" $ | nindent 4 }}
     {{- range $k, $v := .labels }}
