@@ -119,19 +119,19 @@ failureThreshold: {{ .readinessProbe.failureThreshold | default 3 }}
 - name: gatekeeper
   image: "{{ .gatekeeper.image }}"
   args:
-{{- /*    - --forbidden-page=/etc/keycloak/templates/forbidden.html.tmpl*/}}
-    - "--listen=0.0.0.0:{{ .gatekeeper.containerPort | default 8001 }}"
-    - "--enable-authorization-header=true"
-    - "--upstream-url=http://localhost:{{ .container.containerPort }}"
-    - "--client-id={{ .gatekeeper.client }}"
-    - "--secure-cookie=true"
-    - "--enable-default-deny=true"
-    - "--client-secret=$(KCP_CLIENT_OIDC_SECRET)"
-    - "--cookie-domain={{ .gatekeeper.cookieDomain }}"
-    - "--discovery-url={{ .gatekeeper.keycloak }}"
-    - "--encryption-key=$(ENCRYPTION_KEY)"
-    - "--enable-refresh-tokens=true"
-    - "--verbose"
+    - --listen=0.0.0.0:{{ .gatekeeper.containerPort | default 8001 }}
+    - --upstream-url=http://localhost:{{ .container.containerPort }}
+    - --client-id={{ .gatekeeper.client }}
+    - --client-secret=$(KCP_CLIENT_OIDC_SECRET)
+    - --cookie-domain={{ .gatekeeper.cookieDomain }}
+    - --discovery-url={{ .gatekeeper.keycloak }}
+    - --encryption-key=$(ENCRYPTION_KEY)
+    - --forbidden-page=/etc/keycloak/templates/forbidden.html.tmpl
+    - --verbose
+    - --enable-authorization-header={{ .gatekeeper.authHeader | default true | ternary .gatekeeper.authHeader true }}
+    - --secure-cookie={{ .gatekeeper.secureCookie | default true | ternary .gatekeeper.secureCookie true }}
+    - --enable-default-deny={{ .gatekeeper.defaultDeny | default true | ternary .gatekeeper.defaultDeny true }}
+    - --enable-refresh-tokens={{ .gatekeeper.refreshTokens | default true | ternary .gatekeeper.refreshTokens true }}
     {{- .gatekeeper.args | toYaml | nindent 4 }}
   env:
   - name: KCP_CLIENT_OIDC_SECRET
@@ -148,6 +148,9 @@ failureThreshold: {{ .readinessProbe.failureThreshold | default 3 }}
   - containerPort: {{ .gatekeeper.containerPort | default 8001 }}
     name: cp-gatekeeper
     protocol: TCP
+  volumeMounts:
+  - mountPath: /etc/keycloak/templates
+    name: custom-error-pages
 {{- end -}}
 {{- end -}}
 {{- end -}}
