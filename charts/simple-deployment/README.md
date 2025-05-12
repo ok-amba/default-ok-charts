@@ -186,8 +186,9 @@ All possible domain/env combinations are listed below along with the supported i
 |*.prod-test.okcloud.dk         |no   |yes  |prodtest|
 |*.okcloud.dk                   |no   |yes  |prod|
 
-# Exampel 6: External Secret Store
+# Exampel 6: External Secret Store (Gen2)
 Prequisite: Extrnal Secret Store must be enabled on the given project. If possible, please use the nuget package instead.
+Furthermore, the deployment must be in gen2.
 
 In order to use the external secret store to create a kubernetes secret, the simple-deployment can be templated as follows.
 
