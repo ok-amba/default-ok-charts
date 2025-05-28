@@ -97,7 +97,7 @@ tests:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
           value: "nginx-http01"
 
-  - it: "7: Should set nginx and nginx-http01 when cluster is set to cloud, this allows our ok.dk domain in cloud."
+  - it: "7: Should set nginx and nginx-http01 when clusterOverwrite is set to true, this allows deploying our ok.dk domain in cloud."
     set:
       service.enable: true
       deployment.container.containerPort: 8080
