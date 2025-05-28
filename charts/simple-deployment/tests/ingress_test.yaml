@@ -97,7 +97,23 @@ tests:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
           value: "nginx-http01"
 
-  - it: "7: Should not allow private service in cloud. We expect a failed template."
+  - it: "7: Should set nginx and nginx-http01 when cluster is set to cloud, this allows our ok.dk domain in cloud."
+    set:
+      service.enable: true
+      deployment.container.containerPort: 8080
+      ingress.enable: true
+      ingress:
+        host: "example.test.ok.dk"
+        cluster: cloud
+    asserts:
+      - equal:
+          path: "spec.ingressClassName"
+          value: "nginx"
+      - equal:
+          path: "metadata.annotations['cert-manager.io/cluster-issuer']"
+          value: "nginx-http01"
+
+  - it: "8: Should not allow private service in cloud. We expect a failed template."
     set:
       service.enable: true
       deployment.container.containerPort: 8080
@@ -109,7 +125,7 @@ tests:
       - failedTemplate:
         errorMessage: "Services hosted in cloud are public only."
 
-  - it: "8: Should not allow a domain in host we do not know."
+  - it: "9: Should not allow a domain in host we do not know."
     set:
       service.enable: true
       deployment.container.containerPort: 8080
@@ -122,7 +138,7 @@ tests:
         errorMessage: "Parent domain not recognized."
 
 
-  - it: "9: Should work with custom ingress"
+  - it: "10: Should work with custom ingress"
     set:
       service.enable: true
       deployment.container.containerPort: 8080
