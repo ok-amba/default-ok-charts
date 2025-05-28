@@ -1,5 +1,5 @@
 {{- define "ingress.classname" -}}
-  {{- if ( eq "cloud" $.Values.ingress.cluster) }}
+  {{- if  $.Values.ingress.clusterOverwrite }}
     nginx
     {{- else if (regexMatch "^([a-zA-Z0-9-]+\\.)+(ok\\.dk)$" $.Values.ingress.host) }}
       {{- if (eq nil $.Values.ingress.exposure) }}
@@ -27,7 +27,7 @@
 {{- end -}}
 
 {{- define "ingress.cluster-issuer" -}}
-  {{- if ( eq "cloud" $.Values.ingress.cluster) }}
+  {{- if $.Values.ingress.clusterOverwrite }}
     nginx-http01
   {{- else if (regexMatch "^([a-zA-Z0-9-]+\\.)+(ok\\.dk)$" $.Values.ingress.host) }}
       cloudflare-dns01-issuer
