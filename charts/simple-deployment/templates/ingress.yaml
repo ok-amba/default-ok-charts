@@ -17,7 +17,7 @@ metadata:
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
     {{- end }}
     nginx.ingress.kubernetes.io/ssl-redirect: {{ .sslRedirect | default "false" | quote }}
-    cert-manager.io/cluster-issuer: {{ include "ingress.cluster-issuer" $ | trim }}
+    cert-manager.io/cluster-issuer: {{ $.Values.ingress.clusterIssuer | default ( include "ingress.cluster-issuer" $) | trim }}
     {{- end }}
   labels:
     {{- include "deployment.labels" $ | nindent 4 }}
