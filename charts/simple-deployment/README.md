@@ -128,63 +128,71 @@ ingress:
 
 ## Example 5
 
-**The new ingress in Gen 2 supports two different domains: ok.dk and okcloud.dk**
+**The new ingress in Gen 2 supports two different exposure levels**
 
-### Example 5.1: Configuring internal OK exposure
-If you want to deploy a new service on the ok.dk domain, and want to expose the ingress privately in OK, the following example can be used. In this case 'exposure' is set to internalOK.
+### Example 5.1: Configuring internal OK exposure (Gen 2 cluster only)
+If you want to deploy a new service in the Gen 2 cluster, and want to expose the ingress privately in OK, the following example can be used. In this case 'cluster' is set to "Gen 2" and 'exposure' is set to internalOK.
 
 ```yaml
 ingress:
   enable: true
   host: example.test.ok.dk
+  cluster: "Gen 2"
   exposure: internalOK
 ```
 
-### Example 5.2: Configuring public exposure
-If you want to deploy a new service on the ok.dk domain, and want to expose the ingress publicly, the following example can be used. In this case 'exposure' is set to public.
+### Example 5.2: Configuring public exposure in Gen 2
+If you want to deploy a new service in the Gen 2 cluster, and want to expose the ingress publicly, the following example can be used. In this case 'cluster' is set to "Gen 2" and 'exposure' is set to public.
 
 ```yaml
 ingress:
   enable: true
   host: example.test.ok.dk
+  cluster: "Gen 2"
   exposure: public
 ```
 
-### 5.3: Using the default privacy of a domain
-If you do NOT specify 'exposure' on an ingress controller the domains default will be used instead. Reference the following table for defaults.
-|Domain|Default privacy|
-|---|---|
-|*.ok.dk|internalOK|
-|*.okcloud.dk|public|
+### Example 5.2: Deploying a service in cloud
+If you want to deploy a new service in cloud the following example can be used. In this case 'cluster' is set to "Cloud".
 
-The below example will result in internal OK exposure because the host is using the ok.dk domain.
 ```yaml
 ingress:
   enable: true
   host: example.test.ok.dk
+  cluster: "Cloud"
 ```
 
-The below example will result in public exposure because the host is using the okcloud.dk domain.
+### 5.4: Using the default privacy of a cluster
+If you do NOT specify 'exposure' on an ingress controller the cluster default will be used instead. Reference the following table for defaults.
+|Cluster|Default privacy|
+|---|---|
+|Gen 2|internalOK|
+|Cloud|public|
+
+The below example will result in internal OK exposure because the serivce is deployed in the Gen 2 cluster.
+```yaml
+ingress:
+  enable: true
+  host: example.test.ok.dk
+  cluster: "Gen 2"
+```
+
+The below example will result in public exposure because the service is deployed in the cloud cluster.
 ```yaml
 ingress:
   enable: true
   host: example.test.okcloud.dk
+  cluster: "Cloud"
 ```
 
-### Domains supported by simple-deployment
-Note that if you're using a domain that is not in the following table simple-deployment will throw an error. \
-All possible domain/env combinations are listed below along with the supported ingress exposure.
+### Clusters supported by simple-deployment
+Note that if you're using a cluster that is not in the following table simple-deployment will throw an error. \
+All possible cluster/env combinations are listed below along with the supported ingress exposure.
 
-| Domain  | Supports internalOK | Supports Public | Environment|
+| Cluster  | Supports internalOK | Supports Public |
 | ---| --- | --- | --- |
-|**ok.dk**||||
-|*.test.ok.dk                   |yes  |yes  |test|
-|*.prod-test.ok.dk              |yes  |yes  |prodtest|
-|*.ok.dk                        |yes  |yes  |prod|
-|**okcloud.dk**||||
-|*.test.okcloud.dk              |no   |yes  |test|
-|*.prod-test.okcloud.dk         |no   |yes  |prodtest|
-|*.okcloud.dk                   |no   |yes  |prod|
+|Gen 2                          |yes  |yes  |
+|Cloud                          |no   |yes  |
 
 # Exampel 6: External Secret Store (Gen2)
 Prequisite: Extrnal Secret Store must be enabled on the given project. If possible, please use the nuget package instead.
