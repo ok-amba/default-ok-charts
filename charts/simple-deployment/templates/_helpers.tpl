@@ -1,40 +1,36 @@
 {{- define "ingress.classname" -}}
-  {{- if  $.Values.ingress.clusterOverwrite }}
-    nginx
-    {{- else if (regexMatch "^([a-zA-Z0-9-]+\\.)+(ok\\.dk)$" $.Values.ingress.host) }}
-      {{- if (eq nil $.Values.ingress.exposure) }}
-       nginx-private
-      {{- else if (eq "internalOK" $.Values.ingress.exposure) }}
-       nginx-private
-      {{- else if (eq "public" $.Values.ingress.exposure) }}
-        nginx-public
-      {{- else }}
-        {{- fail "Ingress exposure not recognized"}}
-      {{- end }}
-  {{- else if  (regexMatch "^([a-zA-Z0-9-]+\\.)+(okcloud\\.dk)$" $.Values.ingress.host) }}
+  {{- if (eq "gen2" $.Values.ingress.cluster) }}
     {{- if (eq nil $.Values.ingress.exposure) }}
-      nginx
+     nginx-private
     {{- else if (eq "internalOK" $.Values.ingress.exposure) }}
-      {{- fail "Services hosted in cloud are public only."}}
+     nginx-private
     {{- else if (eq "public" $.Values.ingress.exposure) }}
-      nginx
+     nginx-public
     {{- else }}
       {{- fail "Ingress exposure not recognized"}}
     {{- end }}
+  {{- else if  ( eq "cloud" $.Values.ingress.cluster) }}
+    {{- if (eq nil $.Values.ingress.exposure) }}
+     nginx
+    {{- else if (eq "internalOK" $.Values.ingress.exposure) }}
+      {{- fail "Services hosted in cloud are public only."}}
+    {{- else if (eq "public" $.Values.ingress.exposure) }}
+     nginx
+    {{- else }}
+      {{- fail "Ingress exposure not recognized."}}
+    {{- end }}
   {{- else }}
-    {{- fail "Parent domain not recognized."}}
+    {{- fail "Cluster not recognized. It Should be either gen2 or cloud."}}
   {{- end }}
 {{- end -}}
 
 {{- define "ingress.cluster-issuer" -}}
-  {{- if $.Values.ingress.clusterOverwrite }}
-    nginx-http01
-  {{- else if (regexMatch "^([a-zA-Z0-9-]+\\.)+(ok\\.dk)$" $.Values.ingress.host) }}
+  {{- if (eq "gen2" $.Values.ingress.cluster) }}
       cloudflare-dns01-issuer
-  {{- else if  (regexMatch "^([a-zA-Z0-9-]+\\.)+(okcloud\\.dk)$" $.Values.ingress.host) }}
+  {{- else if (eq "cloud" $.Values.ingress.cluster) }}
       nginx-http01
   {{- else }}
-   {{- fail "Parent domain not recognized."}}
+   {{- fail "Cluster name not recognized. Should be either gen2 or cloud."}}
   {{- end }}
 {{- end -}}
 

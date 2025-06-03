@@ -10,7 +10,7 @@ tests:
       ingress.enable: true
       ingress:
         exposure: internalOK
-        host: "example.test.ok.dk"
+        cluster: "gen2"
     asserts:
       - equal:
           path: "spec.ingressClassName"
@@ -26,7 +26,7 @@ tests:
       ingress.enable: true
       ingress:
         exposure: public
-        host: "example.test.ok.dk"
+        cluster: "gen2"
     asserts:
       - equal:
           path: "spec.ingressClassName"
@@ -41,7 +41,7 @@ tests:
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
-        host: "example.test.ok.dk"
+        cluster: "gen2"
     asserts:
       - equal:
           path: "spec.ingressClassName"
@@ -57,7 +57,7 @@ tests:
       ingress.enable: true
       ingress:
         exposure: internalOK
-        host: "example.private.ok.dk"
+        cluster: "gen2"
     asserts:
       - equal:
           path: "spec.ingressClassName"
@@ -73,7 +73,7 @@ tests:
       ingress.enable: true
       ingress:
         exposure: public
-        host: "example.test.okcloud.dk"
+        cluster: "cloud"
     asserts:
       - equal:
           path: "spec.ingressClassName"
@@ -88,7 +88,7 @@ tests:
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
-        host: "example.test.okcloud.dk"
+        cluster: "cloud"
     asserts:
       - equal:
           path: "spec.ingressClassName"
@@ -97,21 +97,21 @@ tests:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
           value: "nginx-http01"
 
-  - it: "7: Should set nginx and nginx-http01 when clusterOverwrite is set to true, this allows deploying our ok.dk domain in cloud."
-    set:
-      service.enable: true
-      deployment.container.containerPort: 8080
-      ingress.enable: true
-      ingress:
-        host: "example.test.ok.dk"
-        clusterOverwrite: true
-    asserts:
-      - equal:
-          path: "spec.ingressClassName"
-          value: "nginx"
-      - equal:
-          path: "metadata.annotations['cert-manager.io/cluster-issuer']"
-          value: "nginx-http01"
+            #  - it: "7: Should set nginx and nginx-http01 when clusterOverwrite is set to true, this allows deploying our ok.dk domain in cloud."
+            #    set:
+            #      service.enable: true
+            #      deployment.container.containerPort: 8080
+            #      ingress.enable: true
+            #      ingress:
+            #        host: "example.test.ok.dk"
+            #        clusterOverwrite: true
+            #    asserts:
+            #      - equal:
+            #          path: "spec.ingressClassName"
+            #          value: "nginx"
+            #      - equal:
+            #          path: "metadata.annotations['cert-manager.io/cluster-issuer']"
+            #          value: "nginx-http01"
 
   - it: "8: Should not allow private service in cloud. We expect a failed template."
     set:
@@ -125,14 +125,13 @@ tests:
       - failedTemplate:
         errorMessage: "Services hosted in cloud are public only."
 
-  - it: "9: Should not allow a domain in host we do not know."
+  - it: "9: Should not allow a cluster name we do not know."
     set:
       service.enable: true
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
-        exposure: internalOK
-        host: "example.blahblah.com"
+        host: "gen 1"
     asserts:
       - failedTemplate:
         errorMessage: "Parent domain not recognized."
@@ -144,7 +143,7 @@ tests:
       deployment.container.containerPort: 8080
       ingress:
         enable: true
-        host: "example.ok.dk"
+        cluster: cloud
         ingressClassName: haproxy
       
     asserts:

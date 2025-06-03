@@ -1,0 +1,14 @@
+deployment:
+  container:
+    image: example-image
+    tag: latest
+    containerPort: 8080
+
+service:
+  enable: true 
+
+ingress:
+  enable: true
+  host: portal.sdpe.prodtest.okdc.dk
+  exposure: public
+  cluster: cloud
