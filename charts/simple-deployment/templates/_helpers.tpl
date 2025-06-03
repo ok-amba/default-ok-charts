@@ -1,5 +1,5 @@
 {{- define "ingress.classname" -}}
-  {{- if (eq "gen2" $.Values.ingress.cluster) }}
+  {{- if (regexMatch "(?i)^gen[\\s-]?2$" $.Values.ingress.cluster) }}
     {{- if (eq nil $.Values.ingress.exposure) }}
      nginx-private
     {{- else if (eq "internalOK" $.Values.ingress.exposure) }}
@@ -9,7 +9,7 @@
     {{- else }}
       {{- fail "Ingress exposure not recognized"}}
     {{- end }}
-  {{- else if  ( eq "cloud" $.Values.ingress.cluster) }}
+  {{- else if (regexMatch "((?i)^cloud)$" $.Values.ingress.cluster) }}
     {{- if (eq nil $.Values.ingress.exposure) }}
      nginx
     {{- else if (eq "internalOK" $.Values.ingress.exposure) }}
@@ -20,17 +20,17 @@
       {{- fail "Ingress exposure not recognized."}}
     {{- end }}
   {{- else }}
-    {{- fail "Cluster not recognized. It Should be either gen2 or cloud."}}
+    {{- fail "Cluster not recognized."}}
   {{- end }}
 {{- end -}}
 
 {{- define "ingress.cluster-issuer" -}}
-  {{- if (eq "gen2" $.Values.ingress.cluster) }}
+  {{- if (regexMatch "((?i)^gen[\\s-]?2)$" $.Values.ingress.cluster) }}
       cloudflare-dns01-issuer
-  {{- else if (eq "cloud" $.Values.ingress.cluster) }}
+  {{- else if (regexMatch "((?i)^cloud)$" $.Values.ingress.cluster) }}
       nginx-http01
   {{- else }}
-   {{- fail "Cluster name not recognized. Should be either gen2 or cloud."}}
+   {{- fail "Cluster name not recognized."}}
   {{- end }}
 {{- end -}}
 
