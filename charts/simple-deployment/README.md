@@ -189,10 +189,10 @@ ingress:
 Note that if you're using a cluster that is not in the following table simple-deployment will throw an error. \
 All possible cluster/env combinations are listed below along with the supported ingress exposure.
 
-| Cluster  | Supports internalOK | Supports Public |
-| ---| --- | --- | --- |
-|Gen 2                          |yes  |yes  |
-|Cloud                          |no   |yes  |
+|Cluster|Supports internalOK|Supports Public|
+|---|---|---|
+|Gen 2|yes|yes|
+|Cloud|no|yes|
 
 # Exampel 6: External Secret Store (Gen2)
 Prequisite: Extrnal Secret Store must be enabled on the given project. If possible, please use the nuget package instead.
