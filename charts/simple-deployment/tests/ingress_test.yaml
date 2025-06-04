@@ -3,14 +3,14 @@ templates:
 - "ingress.yaml"
 tests:
 
-  - it: "1: Should set nginx-private and cloudflare-dns01-issuer when private host is set."
+  - it: "1: Should set nginx-private and cloudflare-dns01-issuer when private exposure is set."
     set:
       service.enable: true
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
         exposure: internalOK
-        host: "example.test.ok.dk"
+        cluster: "Gen 2"
     asserts:
       - equal:
           path: "spec.ingressClassName"
@@ -19,14 +19,14 @@ tests:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
           value: "cloudflare-dns01-issuer"
 
-  - it: "2: Should set nginx-public and cloudflare-dns01-issuer when public host is set."
+  - it: "2: Should set nginx-public and cloudflare-dns01-issuer when public exposure is set."
     set:
       service.enable: true 
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
         exposure: public
-        host: "example.test.ok.dk"
+        cluster: "Gen 2"
     asserts:
       - equal:
           path: "spec.ingressClassName"
@@ -35,13 +35,13 @@ tests:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
           value: "cloudflare-dns01-issuer"
 
-  - it: "3: Should set nginx-private and cloudflare-dns01-issuer when implicit private host is set."
+  - it: "3: Should set nginx-private and cloudflare-dns01-issuer when implicit private exposure is set."
     set:
       service.enable: true
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
-        host: "example.test.ok.dk"
+        cluster: "Gen 2"
     asserts:
       - equal:
           path: "spec.ingressClassName"
@@ -50,30 +50,14 @@ tests:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
           value: "cloudflare-dns01-issuer"
 
-  - it: "4: Explicit private host with nginx-private and cloudflare-dns01-issuer expected"
-    set:  
-      service.enable: true 
-      deployment.container.containerPort: 8080
-      ingress.enable: true
-      ingress:
-        exposure: internalOK
-        host: "example.private.ok.dk"
-    asserts:
-      - equal:
-          path: "spec.ingressClassName"
-          value: "nginx-private"
-      - equal:
-          path: "metadata.annotations['cert-manager.io/cluster-issuer']"
-          value: "cloudflare-dns01-issuer" 
-
-  - it: "5: Should set nginx and nginx-http01 when explicit public host in cloud is set."
+  - it: "4: Should set nginx and nginx-http01 when explicit public host in cloud is set."
     set:
       service.enable: true
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
         exposure: public
-        host: "example.test.okcloud.dk"
+        cluster: "cloud"
     asserts:
       - equal:
           path: "spec.ingressClassName"
@@ -82,13 +66,13 @@ tests:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
           value: "nginx-http01"
 
-  - it: "6: Should set nginx and nginx-http01 when implicit public host in cloud is set."
+  - it: "5: Should set nginx and nginx-http01 when implicit public host in cloud is set."
     set:
       service.enable: true
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
-        host: "example.test.okcloud.dk"
+        cluster: "cloud"
     asserts:
       - equal:
           path: "spec.ingressClassName"
@@ -97,7 +81,7 @@ tests:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
           value: "nginx-http01"
 
-  - it: "7: Should not allow private service in cloud. We expect a failed template."
+  - it: "6: Should not allow private service in cloud. We expect a failed template."
     set:
       service.enable: true
       deployment.container.containerPort: 8080
@@ -109,28 +93,26 @@ tests:
       - failedTemplate:
         errorMessage: "Services hosted in cloud are public only."
 
-  - it: "8: Should not allow a domain in host we do not know."
+  - it: "7: Should not allow a cluster name we do not know."
     set:
       service.enable: true
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
-        exposure: internalOK
-        host: "example.blahblah.com"
+        host: "gen 1"
     asserts:
       - failedTemplate:
         errorMessage: "Parent domain not recognized."
 
 
-  - it: "9: Should work with custom ingress"
+  - it: "8: Should work with custom ingress"
     set:
       service.enable: true
       deployment.container.containerPort: 8080
       ingress:
         enable: true
-        host: "example.ok.dk"
+        cluster: "cloud"
         ingressClassName: haproxy
-      
     asserts:
       - equal:
           path: "spec.ingressClassName"
