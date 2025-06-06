@@ -1,4 +1,7 @@
 {{- define "ingress.classname" -}}
+  {{- if not (regexMatch "^([a-zA-Z0-9-]+\\.)+(ok\\.dk)$" $.Values.ingress.host) }}
+    {{- fail "Parent domain not recognized."}}
+  {{-  end }}
   {{- if (regexMatch "(?i)^gen[\\s-]?2$" $.Values.ingress.cluster) }}
     {{- if (eq nil $.Values.ingress.exposure) }}
      nginx-private
