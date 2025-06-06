@@ -9,6 +9,7 @@ tests:
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
+        host: "example.test.ok.dk"
         exposure: internalOK
         cluster: "Gen 2"
     asserts:
@@ -25,6 +26,7 @@ tests:
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
+        host: "example.test.ok.dk"
         exposure: public
         cluster: "Gen 2"
     asserts:
@@ -41,6 +43,7 @@ tests:
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
+        host: "example.test.ok.dk"
         cluster: "Gen 2"
     asserts:
       - equal:
@@ -56,6 +59,7 @@ tests:
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
+        host: "example.test.ok.dk"
         exposure: public
         cluster: "cloud"
     asserts:
@@ -72,6 +76,7 @@ tests:
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
+        host: "example.test.ok.dk"
         cluster: "cloud"
     asserts:
       - equal:
@@ -99,18 +104,29 @@ tests:
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
-        host: "gen 1"
+        cluster: "Gen 1"
+    asserts:
+      - failedTemplate:
+        errorMessage: "Cluster not recognized."
+
+  - it: "8: Should not allow a domain name we do not know."
+    set:
+      service.enable: true
+      deployment.container.containerPort: 8080
+      ingress.enable: true
+      ingress:
+        host: "example.test.okblah.dk"
     asserts:
       - failedTemplate:
         errorMessage: "Parent domain not recognized."
 
-
-  - it: "8: Should work with custom ingress"
+  - it: "9: Should work with custom ingress"
     set:
       service.enable: true
       deployment.container.containerPort: 8080
       ingress:
         enable: true
+        host: "example.test.ok.dk"
         cluster: "cloud"
         ingressClassName: haproxy
     asserts:
