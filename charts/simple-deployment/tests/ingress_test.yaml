@@ -53,7 +53,7 @@ tests:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
           value: "cloudflare-dns01-issuer"
 
-  - it: "4: Should set nginx and nginx-http01 when explicit public host in cloud is set."
+  - it: "4: Should set nginx and nginx-http01 when explicit public exposure in cloud is set."
     set:
       service.enable: true
       deployment.container.containerPort: 8080
@@ -70,7 +70,7 @@ tests:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
           value: "nginx-http01"
 
-  - it: "5: Should set nginx and nginx-http01 when implicit public host in cloud is set."
+  - it: "5: Should set nginx and nginx-http01 when implicit public exposure in cloud is set."
     set:
       service.enable: true
       deployment.container.containerPort: 8080
@@ -86,7 +86,7 @@ tests:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
           value: "nginx-http01"
 
-  - it: "6: Should not allow private service in cloud. We expect a failed template."
+  - it: "6: Should not allow a private service in cloud. We expect a failed template."
     set:
       service.enable: true
       deployment.container.containerPort: 8080
