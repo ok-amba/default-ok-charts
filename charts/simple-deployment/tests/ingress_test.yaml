@@ -9,6 +9,7 @@ tests:
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
+        host: "example.test.ok.dk"
         exposure: internalOK
         cluster: "Gen 2"
     asserts:
@@ -25,6 +26,7 @@ tests:
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
+        host: "example.test.ok.dk"
         exposure: public
         cluster: "Gen 2"
     asserts:
@@ -41,6 +43,7 @@ tests:
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
+        host: "example.test.ok.dk"
         cluster: "Gen 2"
     asserts:
       - equal:
@@ -50,12 +53,13 @@ tests:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
           value: "cloudflare-dns01-issuer"
 
-  - it: "4: Should set nginx and nginx-http01 when explicit public host in cloud is set."
+  - it: "4: Should set nginx and nginx-http01 when explicit public exposure in cloud is set."
     set:
       service.enable: true
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
+        host: "example.test.ok.dk"
         exposure: public
         cluster: "cloud"
     asserts:
@@ -66,12 +70,13 @@ tests:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
           value: "nginx-http01"
 
-  - it: "5: Should set nginx and nginx-http01 when implicit public host in cloud is set."
+  - it: "5: Should set nginx and nginx-http01 when implicit public exposure in cloud is set."
     set:
       service.enable: true
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
+        host: "example.test.ok.dk"
         cluster: "cloud"
     asserts:
       - equal:
@@ -81,7 +86,7 @@ tests:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
           value: "nginx-http01"
 
-  - it: "6: Should not allow private service in cloud. We expect a failed template."
+  - it: "6: Should not allow a private service in cloud. We expect a failed template."
     set:
       service.enable: true
       deployment.container.containerPort: 8080
@@ -99,18 +104,29 @@ tests:
       deployment.container.containerPort: 8080
       ingress.enable: true
       ingress:
-        host: "gen 1"
+        cluster: "Gen 1"
+    asserts:
+      - failedTemplate:
+        errorMessage: "Cluster not recognized."
+
+  - it: "8: Should not allow a domain name we do not know."
+    set:
+      service.enable: true
+      deployment.container.containerPort: 8080
+      ingress.enable: true
+      ingress:
+        host: "example.test.okblah.dk"
     asserts:
       - failedTemplate:
         errorMessage: "Parent domain not recognized."
 
-
-  - it: "8: Should work with custom ingress"
+  - it: "9: Should work with custom ingress"
     set:
       service.enable: true
       deployment.container.containerPort: 8080
       ingress:
         enable: true
+        host: "example.test.ok.dk"
         cluster: "cloud"
         ingressClassName: haproxy
     asserts:
