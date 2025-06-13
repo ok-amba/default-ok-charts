@@ -2,7 +2,8 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: default-ok-charts
-  description: 
+  title: Default OK Charts
+  description: Helm chart repo for platform services
   annotations:
     github.com/project-slug: ok-amba/default-ok-charts
 spec:
