@@ -1,0 +1,11 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: default-ok-charts
+  description: 
+  annotations:
+    github.com/project-slug: ok-amba/default-ok-charts
+spec:
+  type: helmrepo
+  lifecycle: production
+  owner: platform-team
