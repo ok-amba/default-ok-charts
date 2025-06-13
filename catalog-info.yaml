@@ -6,6 +6,7 @@ metadata:
   description: Helm chart repo for platform services
   annotations:
     github.com/project-slug: ok-amba/default-ok-charts
+    backstage.io/techdocs-ref: dir:.
 spec:
   type: helmrepo
   lifecycle: production
