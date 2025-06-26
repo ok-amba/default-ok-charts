@@ -2,6 +2,14 @@ apiVersion: v1
 entries:
   cronjob:
   - apiVersion: v2
+    created: "2025-06-26T06:34:41.110638094Z"
+    description: Kubernetes CronJob Resource
+    digest: c3c411941baa4658ff52549bff5a5613e86c63c9dc15b0bdd20fab96e67c33b3
+    name: cronjob
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/cronjob-0.4.1/cronjob-0.4.1.tgz
+    version: 0.4.1
+  - apiVersion: v2
     created: "2024-11-13T12:45:53.768188868Z"
     description: Kubernetes CronJob Resource
     digest: 66d21d76f88b2ade91d967242ced6767737420207cd99658a61eb31000b607cd
@@ -196,6 +204,14 @@ entries:
     version: 0.1.0-rc1
   db-migration:
   - apiVersion: v2
+    created: "2025-06-26T06:34:41.342473645Z"
+    description: A Helm chart for a running a DB migration.
+    digest: 6ef9e7487062dc6305c518ff0c85c82d509afb5424abc5647710e3373b3039e6
+    name: db-migration
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/db-migration-1.1.2/db-migration-1.1.2.tgz
+    version: 1.1.2
+  - apiVersion: v2
     created: "2024-12-11T12:05:54.837766647Z"
     description: A Helm chart for a running a DB migration.
     digest: 8f2a9ab9e6db4184b14c5d874f85ee20c19fa78731437c1e80fd09837d763b86
@@ -276,6 +292,25 @@ entries:
     - https://github.com/ok-amba/default-ok-charts/releases/download/db-migration-0.0.1/db-migration-0.0.1.tgz
     version: 0.0.1
   devx-dashboard:
+  - apiVersion: v2
+    appVersion: 2.0.10
+    created: "2025-06-26T06:34:41.528085264Z"
+    dependencies:
+    - alias: iamServiceAccount
+      condition: deadLetter.enabled
+      name: iam-service-account
+      repository: https://ok-amba.github.io/config-connector-helm
+      version: 2.1.0
+    - condition: deadLetter.enabled
+      name: sqlinstance
+      repository: https://ok-amba.github.io/config-connector-helm
+      version: "3"
+    description: A developer dashboard for releasing software
+    digest: cfb17101783cfb6eb32d44cb195ad60717003a3114d3a71dc582b8163f7315f6
+    name: devx-dashboard
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/devx-dashboard-2.2.1/devx-dashboard-2.2.1.tgz
+    version: 2.2.1
   - apiVersion: v2
     appVersion: 2.0.10
     created: "2025-02-19T11:24:03.638730157Z"
@@ -587,6 +622,15 @@ entries:
     version: 0.0.1
   legend-deployment:
   - apiVersion: v2
+    created: "2025-06-26T06:34:41.764956612Z"
+    description: A Helm chart for a legend deployment, incl. service and ingress,
+      while also have support for gatekeeper and environment variable secrets
+    digest: bf8c8138bde55da0d05391da7eb824272bd9b98ea67c749067649cfe741e0069
+    name: legend-deployment
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/legend-deployment-3.1.1/legend-deployment-3.1.1.tgz
+    version: 3.1.1
+  - apiVersion: v2
     created: "2025-03-12T12:23:22.168594671Z"
     description: A Helm chart for a legend deployment, incl. service and ingress,
       while also have support for gatekeeper and environment variable secrets
@@ -804,6 +848,14 @@ entries:
     - https://github.com/ok-amba/default-ok-charts/releases/download/nats-streaming-0.1.0-rc-1/nats-streaming-0.1.0-rc-1.tgz
     version: 0.1.0-rc-1
   simple-deployment:
+  - apiVersion: v2
+    created: "2025-06-26T06:34:41.976412335Z"
+    description: A Helm chart for a simple deployment, incl. service and ingress.
+    digest: ed118493b6ad7978fa89ff7c55b457a7aff29b0a3b0a63ef24ed753219c94937
+    name: simple-deployment
+    urls:
+    - https://github.com/ok-amba/default-ok-charts/releases/download/simple-deployment-5.0.1/simple-deployment-5.0.1.tgz
+    version: 5.0.1
   - apiVersion: v2
     created: "2025-06-04T12:56:57.255060986Z"
     description: A Helm chart for a simple deployment, incl. service and ingress.
@@ -1196,4 +1248,4 @@ entries:
     urls:
     - https://ok-amba.github.io/default-ok-charts/.cr-release-packages/simple-deployment-0.1.0.tgz
     version: 0.1.0
-generated: "2025-06-04T12:56:57.255667908Z"
+generated: "2025-06-26T06:34:41.977038779Z"
