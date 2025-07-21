@@ -181,6 +181,14 @@ ingress:
   #       port:
   #         number: 3000
 
+  # Define what exposure you want for your application.
+  # Default is set based on the cluster.
+  exposure: null
+
+  # Define what cluster you want to deploy your service in.
+  cluster: "null"
+
+
 ##################################################
 #           Pod Disruption Budget               #
 ##################################################
