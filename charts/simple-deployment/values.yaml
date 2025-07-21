@@ -186,7 +186,7 @@ ingress:
   exposure: null
 
   # Define what cluster you want to deploy your service in.
-  cluster: null
+  cluster: "null"
 
 
 ##################################################
