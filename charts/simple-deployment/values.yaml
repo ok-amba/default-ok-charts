@@ -95,7 +95,7 @@ deployment:
 
     # Below add external secrets
     externalSecrets: []
-    #  - name: "Secrets"
+    #  - name: "secrets"
     #    data:
     #    - key: "secret 1"
     #      remoteSecret: "key.json"
