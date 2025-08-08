@@ -194,9 +194,8 @@ All possible cluster/env combinations are listed below along with the supported 
 |Gen 2|yes|yes|
 |Cloud|no|yes|
 
-# Exampel 6: External Secret Store (Gen2)
+# Exampel 6: External Secret Store
 Prequisite: Extrnal Secret Store must be enabled on the given project. If possible, please use the nuget package instead.
-Furthermore, the deployment must be in gen2.
 
 In order to use the external secret store to create a kubernetes secret, the simple-deployment can be templated as follows.
 
