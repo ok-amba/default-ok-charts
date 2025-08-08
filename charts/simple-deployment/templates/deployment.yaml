@@ -74,8 +74,11 @@ spec:
         readinessProbe:
         {{- include "deployment.readinessProbe" . | nindent 10 }}
         {{- end }}
-        {{- if or .environment .fieldRefEnvironment }}
+        {{- if or .rawEnv .environment .fieldRefEnvironment }}
         env:
+          {{- if .rawEnv }}
+          {{- toYaml .rawEnv | nindent 10 }}
+          {{- end }}
           {{- range $name, $value := .environment }}
           - name: {{ $name }}
             value: {{ $value | quote }}
