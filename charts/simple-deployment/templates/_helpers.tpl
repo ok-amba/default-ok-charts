@@ -82,6 +82,17 @@ successThreshold: {{ .readinessProbe.failureThreshold | default 1 }}
 failureThreshold: {{ .readinessProbe.failureThreshold | default 3 }}
 {{- end -}}
 
+{{- define "deployment.startupProbe" -}}
+httpGet:
+  path: {{ .startupProbe.httpGet.path }}
+  port: {{ .containerPort }}
+initialDelaySeconds: {{ .startupProbe.initialDelaySeconds | default 0 }}
+periodSeconds: {{ .startupProbe.periodSeconds | default 10}}
+timeoutSeconds: {{ .startupProbe.timeoutSeconds | default 1 }}
+successThreshold: {{ .startupProbe.failureThreshold | default 1 }}
+failureThreshold: {{ .startupProbe.failureThreshold | default 60 }}
+{{- end -}}
+
 {{- define "deployment.cloudSQLProxy" -}}
 {{- with .Values.deployment -}}
 {{- if .cloudSQLProxy.enable }}

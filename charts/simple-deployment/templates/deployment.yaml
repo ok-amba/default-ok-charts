@@ -74,6 +74,10 @@ spec:
         readinessProbe:
         {{- include "deployment.readinessProbe" . | nindent 10 }}
         {{- end }}
+        {{- if .startupProbe.enable }}
+        startupProbe:
+        {{- include "deployment.startupProbe" . | nindent 10 }}
+        {{- end }}
         {{- if or .environment .fieldRefEnvironment }}
         env:
           {{- range $name, $value := .environment }}
