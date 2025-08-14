@@ -69,6 +69,11 @@ deployment:
       httpGet:
         path: /readyz
 
+    startupProbe:
+      enable: false
+      httpGet:
+        path: /healthz
+
     environment: {}
       # SOME_ENV: some-value
 
