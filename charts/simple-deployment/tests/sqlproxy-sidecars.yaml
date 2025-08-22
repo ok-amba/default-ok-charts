@@ -1,0 +1,33 @@
+suite: SQL Proxy Sidecar
+templates:
+  - deployment.yaml
+tests:
+  - it: "Should create single Sql proxy sidecar"
+    set:
+      global:
+        projectID: knp-test
+      deployment:
+        cloudSQLProxy:
+          enable: true
+          instanceName: sqlinstance-name
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[1].command[1]
+          value: "knp-test:europe-west3:sqlinstance-name"
+  - it: "Should create two Sql proxy sidecar"
+    set:
+      global:
+        projectID: knp-test
+      deployment:
+        cloudSQLProxy:
+          enable: true
+          instanceName: 
+            - sqlinstance-name
+            - sqlinstance-name2
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[1].command[1]
+          value: "knp-test:europe-west3:sqlinstance-name"
+      - equal:
+          path: spec.template.spec.containers[1].command[2]
+          value: "knp-test:europe-west3:sqlinstance-name2"
