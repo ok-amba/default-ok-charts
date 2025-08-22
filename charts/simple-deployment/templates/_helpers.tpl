@@ -108,12 +108,16 @@ failureThreshold: {{ .startupProbe.failureThreshold | default 60 }}
 {{- if not $projectID }}
 {{- fail "The global.projectID is not set. It is required for Cloud SQL Proxy." -}}
 {{- end -}}
-
+{{- $cloudSQLProxy := .cloudSQLProxy}}
+{{- $instanceNames := $cloudSQLProxy.instanceName }}
+{{- $instanceNames = (typeIs "[]interface {}" $instanceNames | ternary $instanceNames (list $instanceNames)) }}
 - name: cloud-sql-proxy
   image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:{{ .cloudSQLProxy.imageTag | default "2.17.1" }}"
   command:
     - "/cloud-sql-proxy"
-    - "{{ $projectID }}:{{ .cloudSQLProxy.region | default "europe-west3" }}:{{ .cloudSQLProxy.instanceName }}"
+    {{- range $instanceName := $instanceNames}}
+    - "{{ $projectID }}:{{ $cloudSQLProxy.region | default "europe-west3" }}:{{ $instanceName }}"
+    {{- end }}
     - "--auto-iam-authn"
     - "--structured-logs"
     - "--health-check"
