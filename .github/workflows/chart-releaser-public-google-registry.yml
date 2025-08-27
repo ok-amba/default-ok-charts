@@ -47,11 +47,11 @@ jobs:
           if [ "${GITHUB_REF_NAME}" = "main" ]; then
             echo "value=${{ steps.chartversionstep.outputs.helmversion }}"
             echo "value=${{ steps.chartversionstep.outputs.helmversion }}" >> "$GITHUB_OUTPUT"
-            echo "repo"=helm >> "$GITHUB_OUTPUT"
+            echo "repo=helm" >> "$GITHUB_OUTPUT"
           else
             echo "value=${{ steps.chartversionstep.outputs.helmversion }}-${{ steps.githubshortsha.outputs.shortsha }}"
             echo "value=${{ steps.chartversionstep.outputs.helmversion }}-${{ steps.githubshortsha.outputs.shortsha }}" >> "$GITHUB_OUTPUT"
-            echo "repo"=helm-dev >> "$GITHUB_OUTPUT"
+            echo "repo=helm-dev" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Simple Deployment - Chart | Push
