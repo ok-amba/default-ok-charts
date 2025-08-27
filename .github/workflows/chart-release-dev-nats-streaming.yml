@@ -3,8 +3,6 @@ name: Chart Releaser Dev - nats-streaming
 on:
   workflow_dispatch:
   push:
-    branches-ignore:
-      - main
     paths:
       - 'charts/nats-streaming/**'
 

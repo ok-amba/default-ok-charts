@@ -3,8 +3,6 @@ name: Chart Releaser Dev - simple-deployment
 on:
   workflow_dispatch:
   push:
-    branches-ignore:
-      - main
     paths:
       - 'charts/simple-deployment/**'
 

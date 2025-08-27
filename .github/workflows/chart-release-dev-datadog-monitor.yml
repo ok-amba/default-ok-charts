@@ -3,8 +3,6 @@ name: Chart Releaser Dev - datadog-monitor
 on:
   workflow_dispatch:
   push:
-    branches-ignore:
-      - main
     paths:
       - 'charts/datadog-monitor/**'
 
