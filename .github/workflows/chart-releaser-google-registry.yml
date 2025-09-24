@@ -10,7 +10,7 @@ on:
 
 jobs:
   chart-releaser:
-    environment: google-pulic-artifact-registry
+    environment: google-artifact-registry
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -61,7 +61,7 @@ jobs:
           repository: ${{ steps.tag.outputs.repo }}
           tag: ${{ steps.tag.outputs.value }}
           path: ${{ inputs.helmChartPath }} # Default charts/{name}
-          registry: europe-west3-docker.pkg.dev/tinkerbell-329710/ok-public-registry
+          registry: europe-west3-docker.pkg.dev/tinkerbell-329710/ok-shared-registry
           registry_username: ${{ secrets.REGISTRY_USERNAME }}
           registry_password: ${{ secrets.REGISTRY_PASSWORD }}
           update_dependencies: 'true' # Defaults to false
