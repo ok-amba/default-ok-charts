@@ -10,7 +10,7 @@ on:
 
 jobs:
   chart-releaser:
-    environment: google-artifact-registry
+    environment: google-pulic-artifact-registry
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
