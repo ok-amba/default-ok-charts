@@ -47,7 +47,7 @@ deployment:
     enable: true
     instanceName: sqlinstance-name
 
-    # If you are not using Workload Identity, setting this will create an external secret looking in google secret manager
+    # If you are not using Workload Identity, this will create an external secret looking in google secret manager
     # secretKeyName: my-service-account-key
 ```
 
