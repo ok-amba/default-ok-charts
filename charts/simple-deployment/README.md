@@ -69,7 +69,7 @@ service:
 
 ingress:
   enable: true
-  host: example.org
+  host: example.test.ok.dk
 ```
 
 # Example 4
@@ -115,7 +115,7 @@ service:
 
 ingress:
   enable: true
-  host: example.org
+  host: example.test.ok.dk
   addtionalPaths:
   - path: /api/
     pathType: Prefix
@@ -152,7 +152,7 @@ ingress:
   exposure: public
 ```
 
-### Example 5.2: Deploying a service in cloud
+### Example 5.3: Deploying a service in cloud
 If you want to deploy a new service in cloud the following example can be used. In this case 'cluster' is set to "Cloud".
 
 ```yaml
