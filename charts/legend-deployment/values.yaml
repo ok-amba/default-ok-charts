@@ -67,7 +67,7 @@ deployment:
     #args: ["with", "--params=yes"]
 
     # containerPort needs to be set if the container has to receive traffic.
-    containerPort: null
+    containerPort: 8080
 
     # @todo Resource limits on-prem??
     resources:
