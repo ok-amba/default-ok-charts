@@ -56,7 +56,7 @@ httpGet:
 initialDelaySeconds: {{ .livenessProbe.initialDelaySeconds | default 5 }}
 periodSeconds: {{ .livenessProbe.periodSeconds | default 10}}
 timeoutSeconds: {{ .livenessProbe.timeoutSeconds | default 1 }}
-successThreshold: {{ .livenessProbe.failureThreshold | default 1 }}
+successThreshold: {{ .livenessProbe.successThreshold | default 1 }}
 failureThreshold: {{ .livenessProbe.failureThreshold | default 3 }}
 {{- end -}}
 
@@ -67,7 +67,7 @@ httpGet:
 initialDelaySeconds: {{ .readinessProbe.initialDelaySeconds | default 5 }}
 periodSeconds: {{ .readinessProbe.periodSeconds | default 10}}
 timeoutSeconds: {{ .readinessProbe.timeoutSeconds | default 1 }}
-successThreshold: {{ .readinessProbe.failureThreshold | default 1 }}
+successThreshold: {{ .readinessProbe.successThreshold | default 1 }}
 failureThreshold: {{ .readinessProbe.failureThreshold | default 3 }}
 {{- end -}}
 
