@@ -53,8 +53,7 @@ deployment:
 
 ## Examples 3
 
-Below example enables a service and an ingress definition with the deployment. By default the ingress configuration will create a standard path rule. All traffic with a PathPrefix of "/" will be routed to the service.
-You can add more path rules with the `addtionalPaths` property. A TLS configuration will also be created.
+Below example enables a service and an ingress definition with the deployment using the standardized containerPort of 8080. By default the ingress configuration will create a standard path rule. All traffic with a PathPrefix of "/" will be routed to the service. You can add more path rules with the `addtionalPaths` property. A TLS configuration will also be created.
 
 ```yaml
 deployment:
@@ -62,7 +61,6 @@ deployment:
   container:
     image: my-image
     tag: v0.1.5
-    containerPort: 8080
 
 service:
   enable: true
