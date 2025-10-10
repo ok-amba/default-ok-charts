@@ -42,7 +42,7 @@ spec:
           service:
             name: {{ include "deployment.name" $ }}
             port:
-              number: {{ .Values.deployment.container.containerPort | required "A container port is required on the container." }}
+              number: {{ .Values.deployment.container.containerPort | default "8080" }}
         {{- with .Values.ingress.addtionalPaths }}
         {{ toYaml . | nindent 6}}
         {{- end }}
