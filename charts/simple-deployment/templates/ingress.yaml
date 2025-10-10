@@ -43,7 +43,7 @@ spec:
             name: {{ include "deployment.name" $ }}
             port:
               number: {{ .Values.deployment.container.containerPort | required "A container port is required on the container." }}
-        {{- with .Values.ingress.addtionalPaths }}
+        {{- with .Values.ingress.additionalPaths }}
         {{ toYaml . | nindent 6}}
         {{- end }}
   tls:
