@@ -12,7 +12,7 @@ Here's a few bullet points on what it's capable of.
   - This is overwriteable with the boolean "exposure", or by setting your specific ingress with ingressClassName in your services' values file.
 - Public ingress by default in the GKE Cloud cluster.
 
-## Examples 1
+## Example 1
 
 First example is a very simple deployment of a pod.
 
@@ -24,7 +24,7 @@ deployment:
     tag: v0.1.5
 ```
 
-## Examples 2
+## Example 2
 
 Below example enables the Google Cloud SQL Proxy sidecar in the pod.
 
@@ -51,10 +51,9 @@ deployment:
     # secretKeyName: my-service-account-key
 ```
 
-## Examples 3
+## Example 3
 
-Below example enables a service and an ingress definition with the deployment. By default the ingress configuration will create a standard path rule. All traffic with a PathPrefix of "/" will be routed to the service.
-You can add more path rules with the `addtionalPaths` property. A TLS configuration will also be created.
+Below example enables a service and an ingress definition with the deployment using the standardized containerPort of 8080. By default the ingress configuration will create a standard path rule. All traffic with a PathPrefix of "/" will be routed to the service. You can add more path rules with the `addtionalPaths` property. A TLS configuration will also be created.
 
 ```yaml
 deployment:
@@ -62,7 +61,6 @@ deployment:
   container:
     image: my-image
     tag: v0.1.5
-    containerPort: 8080
 
 service:
   enable: true
@@ -194,7 +192,7 @@ All possible cluster/env combinations are listed below along with the supported 
 |Gen 2|yes|yes|
 |Cloud|no|yes|
 
-# Exampel 6: External Secret Store
+## Example 6: External Secret Store
 Prequisite: Extrnal Secret Store must be enabled on the given project. If possible, please use the nuget package instead.
 
 In order to use the external secret store to create a kubernetes secret, the simple-deployment can be templated as follows.
