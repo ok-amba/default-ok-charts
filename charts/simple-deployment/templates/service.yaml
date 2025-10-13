@@ -17,8 +17,8 @@ spec:
     app: {{ include "deployment.name" $ | quote }}
   ports:
   - protocol: TCP
-    port: {{ .Values.deployment.container.containerPort | required "A container port is required on the container." }}
-    targetPort: {{ .Values.deployment.container.containerPort | required "A container port is required on the container." }}
+    port: {{ .Values.deployment.container.containerPort | default "8080" }}
+    targetPort: {{ .Values.deployment.container.containerPort | default "8080" }}
     {{- if .Values.service.portName }}
     name: "{{ .Values.service.portName }}"
     {{- end}}
