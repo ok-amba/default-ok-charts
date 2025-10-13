@@ -63,7 +63,7 @@ tags.datadoghq.com/version: {{ .Values.deployment.container.tag | quote }}
 {{- define "deployment.livenessProbe" -}}
 httpGet:
   path: {{ .livenessProbe.httpGet.path }}
-  port: {{ .containerPort }}
+  port: {{ .containerPort | default 8080 }}
 initialDelaySeconds: {{ .livenessProbe.initialDelaySeconds | default 5 }}
 periodSeconds: {{ .livenessProbe.periodSeconds | default 10}}
 timeoutSeconds: {{ .livenessProbe.timeoutSeconds | default 1 }}
@@ -74,7 +74,7 @@ failureThreshold: {{ .livenessProbe.failureThreshold | default 3 }}
 {{- define "deployment.readinessProbe" -}}
 httpGet:
   path: {{ .readinessProbe.httpGet.path }}
-  port: {{ .containerPort }}
+  port: {{ .containerPort | default 8080 }}
 initialDelaySeconds: {{ .readinessProbe.initialDelaySeconds | default 5 }}
 periodSeconds: {{ .readinessProbe.periodSeconds | default 10}}
 timeoutSeconds: {{ .readinessProbe.timeoutSeconds | default 1 }}
@@ -85,7 +85,7 @@ failureThreshold: {{ .readinessProbe.failureThreshold | default 3 }}
 {{- define "deployment.startupProbe" -}}
 httpGet:
   path: {{ .startupProbe.httpGet.path }}
-  port: {{ .containerPort }}
+  port: {{ .containerPort | default 8080 }}
 initialDelaySeconds: {{ .startupProbe.initialDelaySeconds | default 0 }}
 periodSeconds: {{ .startupProbe.periodSeconds | default 10}}
 timeoutSeconds: {{ .startupProbe.timeoutSeconds | default 1 }}
