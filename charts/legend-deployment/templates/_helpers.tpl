@@ -52,7 +52,7 @@ tags.datadoghq.com/version: {{ .Values.deployment.container.tag | quote }}
 {{- define "deployment.livenessProbe" -}}
 httpGet:
   path: {{ .livenessProbe.httpGet.path }}
-  port: {{ .containerPort }}
+  port: {{ .containerPort | default 8080 }}
 initialDelaySeconds: {{ .livenessProbe.initialDelaySeconds | default 5 }}
 periodSeconds: {{ .livenessProbe.periodSeconds | default 10}}
 timeoutSeconds: {{ .livenessProbe.timeoutSeconds | default 1 }}
@@ -63,7 +63,7 @@ failureThreshold: {{ .livenessProbe.failureThreshold | default 3 }}
 {{- define "deployment.readinessProbe" -}}
 httpGet:
   path: {{ .readinessProbe.httpGet.path }}
-  port: {{ .containerPort }}
+  port: {{ .containerPort | default 8080 }}
 initialDelaySeconds: {{ .readinessProbe.initialDelaySeconds | default 5 }}
 periodSeconds: {{ .readinessProbe.periodSeconds | default 10}}
 timeoutSeconds: {{ .readinessProbe.timeoutSeconds | default 1 }}
@@ -120,7 +120,7 @@ failureThreshold: {{ .readinessProbe.failureThreshold | default 3 }}
   image: "{{ .gatekeeper.image }}"
   args:
     - --listen=0.0.0.0:{{ .gatekeeper.containerPort | default 8001 }}
-    - --upstream-url=http://localhost:{{ .container.containerPort }}
+    - --upstream-url=http://localhost:{{ .container.containerPort | default 8080 }}
     - --client-id={{ .gatekeeper.client }}
     - --client-secret=$(KCP_CLIENT_OIDC_SECRET)
     - --cookie-domain={{ .gatekeeper.cookieDomain }}
