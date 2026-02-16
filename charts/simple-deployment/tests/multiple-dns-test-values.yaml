@@ -1,0 +1,55 @@
+# Test configuration for multiple DNS/hosts that inherit parent settings
+
+global:
+  labels: {}
+  projectID: test-project
+  environment: test
+
+fullnameOverride: "multi-dns-test"
+
+deployment:
+  replicas: 1
+  podAnnotations: {}
+  podLabels: {}
+  imagePullSecrets:
+    - okamba-registry
+  
+  container:
+    image: nginx
+    tag: latest
+    containerPort: 8080
+    resources:
+      requests:
+        memory: 100Mi
+        cpu: 50m
+      limits:
+        memory: 200Mi
+        cpu: 100m
+    environment: {}
+
+service:
+  enable: true
+  labels: {}
+  annotations: {}
+
+ingress:
+  enable: true
+  labels: {}
+  annotations:
+    custom-annotation: "test-value"
+  
+  # Main host - all additional hosts inherit these settings
+  host: main.test.ok.dk
+  
+  # Additional hosts that inherit clusterIssuer, createDNSRecord, etc. from parent
+  additionalHosts:
+    - host: secondary.test.ok.dk
+    - host: tertiary.test.ok.dk
+  
+  createDNSRecord: true
+  sslRedirect: false
+  wwwRedirect: false
+  
+  # Cluster configuration - Gen 2 with internal exposure
+  exposure: internalOK
+  cluster: "Gen 2"

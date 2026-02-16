@@ -219,3 +219,20 @@ In order to use the external secret store to create a kubernetes secret, the sim
 ```
 It's possible to map one to one or multiple remote secrets into one kubernetes secret. The secret will automatically be mounted as a file with path `/secrets/<SECRET NAME>/<KEY NAME>`.
 
+## Example 7: Multiple DNS/Hosts
+
+Below example shows how to serve the same application from multiple domains. All hosts inherit settings (clusterIssuer, createDNSRecord, sslRedirect, wwwRedirect, etc.) from the parent ingress configuration.
+
+**Note:** When `wwwRedirect: true`, www versions are automatically created for ALL hosts (both main and additional).
+
+```yaml
+ingress:
+  enable: true
+  host: example.org
+  cluster: "Gen 2"
+  createDNSRecord: true
+  wwwRedirect: true  # Creates www.example.org, www.example2.org, www.example3.com
+  
+  additionalHosts:
+    - host: example2.org
+    - host: example3.com

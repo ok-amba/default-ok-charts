@@ -163,6 +163,12 @@ ingress:
   # URL of the application
   host: example.org
 
+  # Additional hosts that inherit all settings from the parent ingress
+  # Each host serves the same application with default "/" path
+  additionalHosts: []
+  # - host: example2.org
+  # - host: example3.com
+
   # Creating DNS records is only supported in our test and prod-test environment.
   # If needed, only enable this setting on the specific enrionment value file.
   createDNSRecord: false

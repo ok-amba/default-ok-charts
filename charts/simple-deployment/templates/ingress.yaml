@@ -3,6 +3,28 @@
 {{- end }}
 
 {{- if and (.Values.ingress.enable) (.Values.service.enable) }}
+{{- /* Build list of all hostnames */ -}}
+{{- $hosts := list .Values.ingress.host }}
+
+{{- /* Add www redirect host if enabled */ -}}
+{{- if .Values.ingress.wwwRedirect }}
+{{- $hosts = append $hosts (printf "www.%s" .Values.ingress.host) }}
+{{- end }}
+
+{{- /* Add additional hosts (supports both string and object formats for backward compatibility) */ -}}
+{{- range .Values.ingress.additionalHosts }}
+  {{- $additionalHost := "" }}
+  {{- if kindIs "string" . }}
+    {{- $additionalHost = . }}
+  {{- else }}
+    {{- $additionalHost = .host }}
+  {{- end }}
+  {{- $hosts = append $hosts $additionalHost }}
+  {{- /* Add www version if wwwRedirect is enabled */ -}}
+  {{- if $.Values.ingress.wwwRedirect }}
+  {{- $hosts = append $hosts (printf "www.%s" $additionalHost) }}
+  {{- end }}
+{{- end }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -33,7 +55,8 @@ metadata:
 spec:
   ingressClassName: {{ .Values.ingress.ingressClassName | default ( include "ingress.classname" $) | trim }}
   rules:
-  - host: {{ .Values.ingress.host }}
+  {{- range $hosts }}
+  - host: {{ . }}
     http:
       paths:
       - path: /
@@ -42,15 +65,15 @@ spec:
           service:
             name: {{ include "deployment.name" $ }}
             port:
-              number: {{ .Values.deployment.container.containerPort | default "8080" }}
-        {{- with .Values.ingress.addtionalPaths }}
-        {{ toYaml . | nindent 6}}
-        {{- end }}
+              number: {{ $.Values.deployment.container.containerPort | default "8080" }}
+      {{- with $.Values.ingress.addtionalPaths }}
+      {{ toYaml . | nindent 6}}
+      {{- end }}
+  {{- end }}
   tls:
+  {{- range $hosts }}
   - hosts:
-    - {{ .Values.ingress.host }}
-    {{- if .Values.ingress.wwwRedirect }}
-    - "www.{{ .Values.ingress.host }}"
-    {{- end }}
-    secretName: "le-cert-{{ .Values.ingress.host | replace "." "-" | trunc 54 | trimSuffix "-" }}"
+    - {{ . }}
+    secretName: "le-cert-{{ . | replace "." "-" | trunc 54 | trimSuffix "-" }}"
+  {{- end }}
 {{- end }}

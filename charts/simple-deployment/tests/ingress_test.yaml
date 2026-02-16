@@ -142,3 +142,105 @@ tests:
 
       - notContains:
           path: "metadata.annotations['cert-manager.io/cluster-issuer']"
+
+  - it: "10: Should support multiple hosts with inherited settings"
+    set:
+      service.enable: true
+      deployment.container.containerPort: 8080
+      ingress:
+        enable: true
+        host: "example.test.ok.dk"
+        cluster: "cloud"
+        additionalHosts:
+          - host: "example2.test.ok.dk"
+          - host: "example3.test.ok.dk"
+    asserts:
+      - equal:
+          path: "spec.rules[0].host"
+          value: "example.test.ok.dk"
+      - equal:
+          path: "spec.rules[1].host"
+          value: "example2.test.ok.dk"
+      - equal:
+          path: "spec.rules[2].host"
+          value: "example3.test.ok.dk"
+      - equal:
+          path: "spec.tls[0].hosts[0]"
+          value: "example.test.ok.dk"
+      - equal:
+          path: "spec.tls[1].hosts[0]"
+          value: "example2.test.ok.dk"
+      - equal:
+          path: "spec.tls[2].hosts[0]"
+          value: "example3.test.ok.dk"
+
+  - it: "11: Should support object format for additionalHosts"
+    set:
+      service.enable: true
+      deployment.container.containerPort: 8080
+      ingress:
+        enable: true
+        host: "example.test.ok.dk"
+        cluster: "Gen 2"
+        additionalHosts:
+          - host: "example2.test.ok.dk"
+    asserts:
+      - equal:
+          path: "spec.rules[0].host"
+          value: "example.test.ok.dk"
+      - equal:
+          path: "spec.rules[0].http.paths[0].path"
+          value: "/"
+      - equal:
+          path: "spec.rules[1].host"
+          value: "example2.test.ok.dk"
+      - equal:
+          path: "spec.rules[1].http.paths[0].path"
+          value: "/"
+      - equal:
+          path: "spec.rules[1].http.paths[0].backend.service.name"
+          value: "RELEASE-NAME"
+
+  - it: "12: Should inherit createDNSRecord from parent ingress"
+    set:
+      service.enable: true
+      deployment.container.containerPort: 8080
+      ingress:
+        enable: true
+        host: "example.test.ok.dk"
+        cluster: "cloud"
+        createDNSRecord: true
+        additionalHosts:
+          - host: "example2.test.ok.dk"
+    asserts:
+      - equal:
+          path: "metadata.labels['external-dns-create']"
+          value: "true"
+
+  - it: "13: Should create www versions for all hosts when wwwRedirect is enabled"
+    set:
+      service.enable: true
+      deployment.container.containerPort: 8080
+      ingress:
+        enable: true
+        host: "example.test.ok.dk"
+        cluster: "Gen 2"
+        wwwRedirect: true
+        additionalHosts:
+          - host: "example2.test.ok.dk"
+    asserts:
+      - equal:
+          path: "spec.rules[0].host"
+          value: "example.test.ok.dk"
+      - equal:
+          path: "spec.rules[1].host"
+          value: "www.example.test.ok.dk"
+      - equal:
+          path: "spec.rules[2].host"
+          value: "example2.test.ok.dk"
+      - equal:
+          path: "spec.rules[3].host"
+          value: "www.example2.test.ok.dk"
+      - equal:
+          path: "spec.tls[3].hosts[0]"
+          value: "www.example2.test.ok.dk"
