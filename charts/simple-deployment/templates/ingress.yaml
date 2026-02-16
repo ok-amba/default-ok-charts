@@ -71,9 +71,9 @@ spec:
       {{- end }}
   {{- end }}
   tls:
-  {{- range $hosts }}
   - hosts:
+    {{- range $hosts }}
     - {{ . }}
-    secretName: "le-cert-{{ . | replace "." "-" | trunc 54 | trimSuffix "-" }}"
-  {{- end }}
+    {{- end }}
+    secretName: "le-cert-{{ .Values.ingress.host | replace "." "-" | trunc 54 | trimSuffix "-" }}"
 {{- end }}

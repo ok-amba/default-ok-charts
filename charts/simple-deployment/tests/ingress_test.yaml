@@ -168,10 +168,10 @@ tests:
           path: "spec.tls[0].hosts[0]"
           value: "example.test.ok.dk"
       - equal:
-          path: "spec.tls[1].hosts[0]"
+          path: "spec.tls[0].hosts[1]"
           value: "example2.test.ok.dk"
       - equal:
-          path: "spec.tls[2].hosts[0]"
+          path: "spec.tls[0].hosts[2]"
           value: "example3.test.ok.dk"
 
   - it: "11: Should support object format for additionalHosts"
@@ -242,5 +242,14 @@ tests:
           path: "spec.rules[3].host"
           value: "www.example2.test.ok.dk"
       - equal:
-          path: "spec.tls[3].hosts[0]"
+          path: "spec.tls[0].hosts[0]"
+          value: "example.test.ok.dk"
+      - equal:
+          path: "spec.tls[0].hosts[1]"
+          value: "www.example.test.ok.dk"
+      - equal:
+          path: "spec.tls[0].hosts[2]"
+          value: "example2.test.ok.dk"
+      - equal:
+          path: "spec.tls[0].hosts[3]"
           value: "www.example2.test.ok.dk"
