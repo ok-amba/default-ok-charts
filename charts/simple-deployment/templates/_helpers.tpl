@@ -112,7 +112,7 @@ failureThreshold: {{ .startupProbe.failureThreshold | default 60 }}
 {{- $instanceNames := $cloudSQLProxy.instanceName }}
 {{- $instanceNames = (typeIs "[]interface {}" $instanceNames | ternary $instanceNames (list $instanceNames)) }}
 - name: cloud-sql-proxy
-  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:{{ .cloudSQLProxy.imageTag | default "2.17.1" }}"
+  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:{{ .cloudSQLProxy.imageTag | default "2.21.3" }}"
   command:
     - "/cloud-sql-proxy"
     {{- range $instanceName := $instanceNames}}
